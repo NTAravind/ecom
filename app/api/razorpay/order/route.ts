@@ -15,7 +15,7 @@ export async function POST(req:NextRequest){
    const amount =  cartitems.reduce((total : number, cartItem : CartItem) => {
           return total + (cartItem.item.price * cartItem.qty);
         }, 0);
-    const cha = await fetch(`${process.env.BASEURL}/api/price`,{method:"POST",body:JSON.stringify({pincode:pincode}), headers: {
+    const cha = await fetch(`https://ecom-9say63dk5-aravinds-projects-7ccf01ad.vercel.app/api/price`,{method:"POST",body:JSON.stringify({pincode:pincode}), headers: {
     "Content-Type": "application/json"
 },})
 
