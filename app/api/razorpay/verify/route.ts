@@ -72,6 +72,7 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
+      console.log("webhook verification",payment.id)
       const order = await prisma.order.update({
         where:{paymentid : payment.id},
         data:{paid:true}
