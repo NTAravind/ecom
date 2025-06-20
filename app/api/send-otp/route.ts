@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer EAAOZCHki4cpcBOxfWEI7SyUl638RR2g7GSmNJUivaZAiEUSBZBKFUUfh6HFEPqj4W0X5pSWzhS3lISm6Uhx6NZBla9ybsgNRMwc37mZBcKQ2kgX84ocZC6oL6kzELczwoUNOxSZCI8c90BlVsgN6dCNZA2Q3KNaubZAsNYHedFDLYEoNLii4bUWBLtcybVmXeZAQqs4iSiRQxWr0ZBSBFqHBsYXgRwbuFr7L3jnfZB0ZD',
+          Authorization: 'Bearer EAAOZCHki4cpcBO8JUZAcCZCzC4fLLZC48a25FYEZBzntjZBStZAV5Myndjbte0RI3ogGcRdFKTuhXKjl4pEv33YZBDKY5XcdvGIbjUOUDu5E8H7VBR19ZAfBK08YwZCPXv5srzTVF0UgfbDWqe8MZCpiZARn24dNhzsuAcVH43QZBnIpGoZAsPeMxKIpkOxxG1GhAvTKmNQohCZCrOjd3pa0RCqQptzY2rmRVGK0V67grfUSRPFp7jkoLkZD',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
