@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";// adjust path if needed
+import { auth } from "@/auth";
 export const dynamic = 'force-dynamic'; // for Next.js App Router + Prisma
 
 export async function POST(req: NextRequest) {
+  const aut = await auth();
+  if(!aut?.user){return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });}
   try {
     const body = await req.json();
       console.log(body)

@@ -1,7 +1,7 @@
 import { CartItem } from "@/app/store/store";
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
-
+import { auth } from "@/auth";
 // Razorpay config
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -9,6 +9,8 @@ const razorpay = new Razorpay({
 });
 
 export async function POST(req: NextRequest) {
+    const aut = await auth();
+    if(!aut?.user){return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });}
   try {
     const body = await req.json();
     const { phoneno, cartitems, pincode } = body;

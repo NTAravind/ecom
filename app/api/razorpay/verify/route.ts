@@ -73,8 +73,8 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
       console.log("webhook verification",payment.id)
-      const order = await prisma.order.update({
-        where:{paymentid : payment.id},
+     await prisma.order.update({
+        where:{id:payment.order_id},
         data:{paid:true}
       })
       // Extract cart items if they exist in the payload
