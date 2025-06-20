@@ -9,9 +9,12 @@ export default  async function Order(){
   });
 
   return (
+
     <div className="p-4">
+
       <h1 className="text-2xl font-bold mb-4">Orders</h1>
       <DataTable columns={columns} data={orders} />
+      {JSON.stringify(orders)}
     </div>
   )
 }
