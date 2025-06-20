@@ -15,7 +15,7 @@ export async function POST(req:NextRequest){
    const amount =  cartitems.reduce((total : number, cartItem : CartItem) => {
           return total + (cartItem.item.price * cartItem.qty);
         }, 0);
-    const cha = await fetch(`${process.env.NEXT_PUBLIC_BASEURL}/api/price`,{method:"POST",body:JSON.stringify({pincode:pincode}), headers: {
+    const cha = await fetch(`${process.env.BASEURL}/api/price`,{method:"POST",body:JSON.stringify({pincode:pincode}), headers: {
     "Content-Type": "application/json"
 },})
 
