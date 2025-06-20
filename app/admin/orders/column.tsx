@@ -1,4 +1,5 @@
-// app/(admin)/orders/columns.tsx
+// app/(admin)/orders/columns.tsx'
+"use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Order, User } from "@/app/generated/prisma";
 
