@@ -100,7 +100,7 @@ export default function OTPButton({
             Try Again
           </>
         ) : (
-          'Send Verification Code'
+          "Send Verification Code"
         )}
       </Button>
       
@@ -128,7 +128,7 @@ export default function OTPButton({
       {/* Helper Text */}
       {!success && !error && !loading && (
         <p className="text-xs text-muted-foreground text-center">
-          We'll send you a 6-digit verification code
+          {"We'll send you a 6-digit verification code"}
         </p>
       )}
     </div>

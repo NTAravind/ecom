@@ -77,6 +77,8 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
         where:{id:payment.order_id},
         data:{paid:true}
       })
+      const phone = await getPhoneNumberByOrderId(payment.order_id)
+      SendWhatsappmsg(phone,payment.order_id)
       // Extract cart items if they exist in the payload
       // Note: Razorpay webhooks don't typically contain custom cart data
       // You might need to fetch this from your database using the order_id
@@ -188,4 +190,46 @@ async function handlePaymentVerification(body: any) {
       { status: 500 }
     );
   }
+}
+
+async function SendWhatsappmsg(phone:string,orderid:string){
+ const whatsappResponse = await fetch(
+      `https://graph.facebook.com/v22.0/725053144013610/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.WHATSAPPENV}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to: `91${phone}`,
+          type: 'template',
+          template: {
+            name: 'tracking',
+            language: { code: 'en' },
+            components: [
+              {
+                type: 'body',
+                parameters: [{ type: 'text', text: orderid }],
+              },
+       ],
+          },
+        }),
+      }
+    )
+
+}
+
+
+ async function getPhoneNumberByOrderId(orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      user: true,
+    },
+  })
+
+  if (!order) throw new Error("Order not found")
+  return order.user.phone
 }

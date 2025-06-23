@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.WHATSAPP_ENV}`,
+          Authorization: `Bearer ${process.env.WHATSAPPENV}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
