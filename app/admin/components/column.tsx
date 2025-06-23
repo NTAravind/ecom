@@ -1,11 +1,10 @@
-
 "use client"
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { fcurrency } from "@/utils/utils"
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { deleteproduct, ToggleAvailability } from "../_actions/products"
 import { Available, DelButton } from "../products/_components/ProductButton"
 import { useRouter } from "next/navigation"
@@ -27,26 +26,66 @@ export type products = {
 export const columns: ColumnDef<products>[] = [
   {
     accessorKey: "brand",
-    header: "brand",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Brand
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "price",
-    header: "price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
     cell: ({ getValue }) => (
       fcurrency(Number(getValue()))
     )
   },
   {
     accessorKey: "pname",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "stock",
-    header: "stock",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Stock
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey:"y_weight",
-    header:"Yarn Weight",
+    header: "Yarn Weight",
   },
   {
     accessorKey: "Shown",
@@ -57,8 +96,6 @@ export const columns: ColumnDef<products>[] = [
         : <span className="text-red-600 font-semibold">No</span>
     )
   },
-
-
   {
     accessorKey: "color",
     header: "Color",
@@ -70,33 +107,34 @@ export const columns: ColumnDef<products>[] = [
             className="w-4 h-4 rounded-full border"
             style={{ backgroundColor: color }}
           />
+          <span className="text-sm">{color}</span>
         </div>
       )
     },
   },
-
   {
     id: "actions",
     cell: ({ row }) => {
       const product = row.original
       const router = useRouter()
       return (
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end"><DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <Available id={product.id} isavail={product.Shown} />
-            <DropdownMenuItem onClick={() => router.push(`/admin/products/${product.id}`)}>Edit</DropdownMenuItem>
-            <DropdownMenuSeparator></DropdownMenuSeparator>
+            <DropdownMenuItem onClick={() => router.push(`/admin/products/${product.id}`)}>
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DelButton id={product.id} />
           </DropdownMenuContent>
-
         </DropdownMenu>
       )
     }
-  }
+  },
 ]
-
-

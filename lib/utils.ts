@@ -2,7 +2,8 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import namer from 'color-namer'
 import { Product } from "@/app/generated/prisma"
-
+import {cache} from "react"
+import { unstable_cache } from "next/cache"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -28,3 +29,4 @@ export function getColorName(hex: string | undefined): string {
 export function CalcWeight(product: Product, qty: number): number {
   return product.weight_g * qty;
 }
+

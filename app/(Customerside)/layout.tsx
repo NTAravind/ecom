@@ -3,11 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { NavBar } from "../components/Nav";
 import { ReactNode } from "react";
-import { Sidebar, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "../components/SideMenu";
-import { SessionProvider } from "next-auth/react";
-
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +24,11 @@ export const metadata: Metadata = {
       <>
      <html>
       <body>
+    
   <NavBar />
-  <SessionProvider>
-    {children}
-  </SessionProvider>
+   
+      {children}
+     
   </body>
 </html>
   </>

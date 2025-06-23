@@ -1,122 +1,247 @@
-"use client"; // This directive is often needed for client-side components in Next.js
+"use client";
 
 import { Product } from "@/app/generated/prisma";
 import ProductCart, { CartItem } from "@/app/store/store";
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button"; // Assuming shadcn/ui components are in this path
-import { Input } from "@/components/ui/input"; // Assuming shadcn/ui components are in this path
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { toast } from "sonner"; // If you're using sonner for toasts
 
 export default function BuySection({ prop }: { prop: Product }) {
-  // Destructure functions from your Zustand store
+  const router = useRouter();
   const { AddProduct, RemoveProduct, getItemQuantity, SetItemQuantity } = ProductCart();
 
-  // Local state to manage the quantity displayed in the input field
-  // Initialize with the quantity of the current product from the cart, or 0 if not in cart
   const [quantity, setQuantity] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
 
-  // Effect to synchronize local quantity state with the global cart state
-  // This runs on mount and when `prop.id` or `getItemQuantity` changes,
-  // ensuring the counter always reflects the actual cart quantity.
   useEffect(() => {
     setQuantity(getItemQuantity(prop.id));
   }, [prop.id, getItemQuantity]);
 
-  // Handle incrementing the quantity
   const handleIncrement = () => {
+    if (quantity >= prop.stock) {
+      toast?.("Maximum stock reached", {
+        description: `Only ${prop.stock} items available in stock.`,
+      });
+      return;
+    }
+    
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
-    // Update the cart store
     SetItemQuantity(prop.id, newQuantity);
   };
 
-  // Handle decrementing the quantity
   const handleDecrement = () => {
-    if (quantity > 0) { // Prevent quantity from going below zero
+    if (quantity > 0) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      // Update the cart store
       SetItemQuantity(prop.id, newQuantity);
     }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
-    const newQuantity = Math.max(0, parseInt(value, 10) || 0); // parseInt can return NaN, so use || 0 as fallback
+    let newQuantity = Math.max(0, parseInt(value, 10) || 0);
+    
+    // Ensure quantity doesn't exceed stock
+    if (newQuantity > prop.stock) {
+      newQuantity = prop.stock;
+      toast?.("Quantity adjusted", {
+        description: `Maximum ${prop.stock} items available.`,
+      });
+    }
+    
     setQuantity(newQuantity);
- 
     SetItemQuantity(prop.id, newQuantity);
   };
 
-  return (
-<>
-    <div className="flex gap-2 border-2 p-2 rounded-2xl">
+  const handleBuyNow = async () => {
+    if (quantity === 0) {
+      toast?.("Select quantity", {
+        description: "Please select at least 1 item to purchase.",
+      });
+      return;
+    }
 
-      <Button
-        onClick={handleDecrement}
-        variant="outline"
-        size="icon"
-        className="h-8 w-8 rounded-full"
-        disabled={quantity <= 0}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="h-4 w-4"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-        </svg>
-        <span className="sr-only">Decrement quantity</span>
-      </Button>
+    if (!prop.Shown) {
+      toast?.("Out of stock", {
+        description: "This item is currently out of stock.",
+      });
+      return;
+    }
 
-      {/* Quantity Input */}
-      <Input
-        type="number"
-        value={quantity}
-        onChange={handleInputChange}
-        min={0}
-        className="w-16 text-center appearance-none [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-        aria-label="Product quantity"
-      />
+    setIsLoading(true);
+    try {
+      AddProduct({ item: prop, qty: quantity });
+      router.push('/checkout');
+    } catch (error) {
+      toast?.("Error", {
+        description: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      {/* Increment Button */}
-      <Button
-        onClick={handleIncrement}
-        variant="outline"
-        size="icon"
-        className="h-8 w-8 rounded-full"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="h-4 w-4"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-        <span className="sr-only">Increment quantity</span>
-      </Button>
+  const handleAddToCart = async () => {
+    if (quantity === 0) {
+      toast?.("Select quantity", {
+        description: "Please select at least 1 item to add to cart.",
+      });
+      return;
+    }
+
+    if (!prop.Shown) {
+      toast?.("Out of stock", {
+        description: "This item is currently out of stock.",
+      });
+      return;
+    }
+
+    setIsAddingToCart(true);
     
+    // Add a small delay for better visual feedback
+    setTimeout(() => {
+      AddProduct({ item: prop, qty: quantity });
+      toast?.("Added to cart", {
+        description: `${quantity} × ${prop.pname} added to your cart.`,
+      });
+      setIsAddingToCart(false);
+    }, 600);
+  };
+
+  const isOutOfStock = !prop.Shown || prop.stock === 0;
+  const isMaxQuantity = quantity >= prop.stock;
+
+  return (
+    <div className="space-y-4">
+      {/* Stock Information */}
+      <div className="flex items-center gap-2">
+        {isOutOfStock ? (
+          <Badge variant="destructive">Out of Stock</Badge>
+        ) : (
+          <Badge variant="secondary" className="text-sm">
+            {prop.stock} in stock
+          </Badge>
+        )}
+      </div>
+
+      {/* Quantity Selector */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Quantity</label>
+        <div className="flex items-center justify-center w-fit mx-auto sm:mx-0">
+          <div className="flex items-center border rounded-lg bg-background overflow-hidden">
+            <Button
+              onClick={handleDecrement}
+              variant="ghost"
+              size="sm"
+              className="h-10 w-10 p-0 rounded-none border-r hover:bg-muted"
+              disabled={quantity <= 0 || isOutOfStock}
+            >
+              <Minus className="h-4 w-4" />
+              <span className="sr-only">Decrease quantity</span>
+            </Button>
+
+            <div className="relative">
+              <Input
+                type="number"
+                value={quantity}
+                onChange={handleInputChange}
+                min={0}
+                max={prop.stock}
+                disabled={isOutOfStock}
+                className="w-16 h-10 text-center border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium"
+                aria-label="Product quantity"
+              />
+            </div>
+
+            <Button
+              onClick={handleIncrement}
+              variant="ghost"
+              size="sm"
+              className="h-10 w-10 p-0 rounded-none border-l hover:bg-muted"
+              disabled={isMaxQuantity || isOutOfStock}
+            >
+              <Plus className="h-4 w-4" />
+              <span className="sr-only">Increase quantity</span>
+            </Button>
+          </div>
+        </div>
+        
+        {quantity > 0 && (
+          <div className="text-center sm:text-left">
+            <p className="text-sm font-medium text-foreground">
+              Total: <span className="text-lg font-semibold text-green-600">₹{(prop.price * quantity).toLocaleString()}</span>
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button
+          onClick={handleBuyNow}
+          disabled={isOutOfStock || quantity === 0 || isLoading}
+          className="flex-1 h-11"
+          size="lg"
+        >
+          {isLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+              Processing...
+            </>
+          ) : (
+            <>Buy Now {quantity > 0 && `(${quantity})`}</>
+          )}
+        </Button>
+
+        <Button
+          onClick={handleAddToCart}
+          variant="outline"
+          disabled={isOutOfStock || quantity === 0 || isAddingToCart}
+          className="flex-1 h-11 relative overflow-hidden transition-all duration-300"
+          size="lg"
+        >
+          <div className={`flex items-center justify-center transition-all duration-300 ${
+            isAddingToCart ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
+          }`}>
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Add to Cart
+          </div>
+          
+          {/* Loading animation */}
+          <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+            isAddingToCart ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+          }`}>
+            <div className="flex items-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+              <span>Adding...</span>
+            </div>
+          </div>
+          
+          {/* Success checkmark animation */}
+          <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${
+            isAddingToCart ? 'scale-110 opacity-100' : 'scale-0 opacity-0'
+          }`}>
+            <div className="animate-pulse">
+              <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+        </Button>
+      </div>
+
+      {/* Additional Info */}
+      {isOutOfStock && (
+        <p className="text-sm text-muted-foreground">
+          This item is currently unavailable. Check back later or contact us for more information.
+        </p>
+      )}
     </div>
-    <BuyNowButton prop={{item:prop,qty:quantity}}/>
-      <Button onClick={()=>{AddProduct({item:prop,qty:quantity})}}>Add to cart</Button>
-</>
   );
-}
-
-function BuyNowButton({prop}:{prop:CartItem}){
-  return(<>
-  <Button>  Buy Now {prop.qty}</Button>
-
-  </>)
-}
-function AddtoCart({prop}:{prop:CartItem}){
-  return(<>
-
-  </>)
 }

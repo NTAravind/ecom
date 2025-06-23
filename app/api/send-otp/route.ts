@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer EAAOZCHki4cpcBO17l5mnZCjtzXXRONceexhQMFIrf9tZApmZAF5B5vGSpRuZAFM3cZCNa2e5X7vLIlqleozdSJCZBZBwyd8vup8R66ChyZCYr83hoeUnvub1stRD3c4xFY3g6DuoouZCKTG8PDiJM7680qp6wBSBLC1tfoPwWaMFPivlPCcMEIi1j6hOOG7ZBShH8FabfrXZAU9fIXWGgBCoHWebzzltSLpGC4am8JcB8PwSZC7IwYAZDZD',
+          Authorization: `Bearer ${process.env.WHATSAPP_ENV}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

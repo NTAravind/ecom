@@ -1,5 +1,4 @@
 "use client"
-
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
@@ -7,9 +6,20 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
+import { useState, useEffect } from "react"
+import { ShoppingBagIcon } from "lucide-react"
+import ProductCart from "../store/store"
+import CartSidebar from "./SideBar"
 
 export function NavBar() {
   const pathname = usePathname()
+  const [qty, setQty] = useState(0)
+  const { getBasketCount } = ProductCart()
+
+  // Use useEffect to update qty when basket count changes
+  useEffect(() => {
+    setQty(getBasketCount())
+  }, [getBasketCount])
 
   const navlink = (path: string) =>
     pathname === path
@@ -18,13 +28,12 @@ export function NavBar() {
 
   return (
     <nav className="w-full border-b shadow-sm bg-white">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between px-6 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
         <Link href="/" className="text-2xl font-extrabold tracking-tight text-black">
           Patel Yarn
         </Link>
-
         <NavigationMenu>
-          <NavigationMenuList className="flex gap-4">
+          <NavigationMenuList className="flex gap-4 items-center">
             <NavigationMenuItem>
               <Link href="/" className={navlink("/")}>Home</Link>
             </NavigationMenuItem>
@@ -34,15 +43,22 @@ export function NavBar() {
             <NavigationMenuItem>
               <Link href="/orders" className={navlink("/orders")}>Orders</Link>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <div className="flex items-center gap-1 p-2">
+                  <CartSidebar/>
+                <span className="text-sm font-medium">{qty}</span>
+              </div>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
     </nav>
   )
 }
+
 export function Nav() {
   const pathname = usePathname()
-
+  
   const navlink = (path: string) =>
     pathname === path
       ? "bg-black text-white rounded-lg px-4 py-2 transition"
@@ -50,7 +66,7 @@ export function Nav() {
 
   return (
     <nav className="w-full border-b bg-gray-50 shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-center px-6 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-center px-4 py-2">
         <NavigationMenu>
           <NavigationMenuList className="flex gap-4">
             <NavigationMenuItem>

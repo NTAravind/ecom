@@ -1,12 +1,21 @@
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Nav } from "../components/Nav";
+import { AppSideBar } from "./components/appsidebar";
 
 export default function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="container py-4 mx-auto">
-      <Nav />
-      {children}
+    <div className="">
+
+      <SidebarProvider >
+        <AppSideBar/>
+  
+          <SidebarTrigger/>
+          {children}
+        
+      </SidebarProvider>
+  
     </div>
   );
 }

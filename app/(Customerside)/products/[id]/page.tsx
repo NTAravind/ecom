@@ -6,14 +6,10 @@ import { getColorName } from "@/lib/utils"
 import prisma from "@/lib/prisma"
 import { ProductCard } from "@/app/components/ProductCard"
 import Header from "@/app/components/Header"
-
 import BuyButton from "@/app/components/BuyNow"
 import BuySection from "@/app/(Customerside)/components/BuySection"
-
+import ProductCarousel from "../../components/ProductCourelel"
 import { Metadata } from 'next'
-
-
-
 
 export default async function ProductPage({ params }: { params: Promise<{id:string}>}) {
   const { id } = await params
@@ -28,44 +24,88 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
     take: 10,
   })
 
+  // Prepare images for carousel
+  const productImages = [
+    {
+      url: data.irul || "/placeholder.png",
+      alt: `${data.pname} - Main Image`,
+      id: 1,
+    },
+    // Add more images if available
+    ...(data.iurl1 ? [{
+      url: data.iurl1,
+      alt: `${data.pname} - Image 2`,
+      id: 2,
+    }] : []),
+  ].filter(img => img.url && img.url !== "/placeholder.png")
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
-      <div className="flex justify-center items-start">
-        <Image
-          src={data.iurl1 || "/placeholder.png"}
-          alt={data.pname || "Product Image"}
-          width={500}
-          height={500}
-          className="rounded-xl object-contain border shadow-md"
-          unoptimized
-        />
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+        <div className="flex justify-center items-start">
+          <ProductCarousel 
+            images={productImages}
+            baseWidth={500}
+            autoplay={true}
+            autoplayDelay={4000}
+            pauseOnHover={true}
+            loop={true}
+          />
+        </div>
 
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">{data.brand}, {data.pname}, {color} {data.y_weight} - {data.category}</h1>
-        <div className="text-2xl text-green-600 font-semibold">₹{data.price}</div>
-        <div className="space-y-2 text-sm text-muted-foreground">
-          <p><span className="font-medium text-foreground">Category:</span> {data.category}</p>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-foreground">Color:</span>
-            <div className="w-5 h-5 rounded-full border border-gray-300" style={{ backgroundColor: data.color }}></div>
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold">{data.brand}, {data.pname}, {color} {data.y_weight} - {data.category}</h1>
+          
+          <div className="text-2xl text-green-600 font-semibold">₹{data.price}</div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium min-w-[80px]">Category:</span>
+              <span className="text-muted-foreground">{data.category}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium min-w-[80px]">Color:</span>
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-5 h-5 rounded-full border border-border shadow-sm" 
+                  style={{ backgroundColor: data.color }}
+                />
+                <span className="text-muted-foreground">{color}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium min-w-[80px]">Weight:</span>
+              <span className="text-muted-foreground">{data.y_weight}</span>
+            </div>
+              <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium min-w-[80px]">Material:</span>
+              <span className="text-muted-foreground">{data.category}</span>
+            </div>
           </div>
-          <p><span className="font-medium text-foreground">Weight:</span> {data.y_weight}</p>
-        </div>
-        <p className="text-base text-foreground">{data.desc}</p>
-        {data.Shown ? (
-          <Badge variant="default">In Stock</Badge>
-        ) : (
-          <Badge variant="destructive">Out of Stock</Badge>
-        )}
-        <div className="flex gap-4 mt-6">
-          <BuySection prop={data} />
+    
+       
+
+          <div className="flex items-center gap-3">
+            {data.Shown ? (
+              <Badge variant="default" className="px-3 py-1">In Stock</Badge>
+            ) : (
+              <Badge variant="destructive" className="px-3 py-1">Out of Stock</Badge>
+            )}
+          </div>
+               <div className="border-t pt-4">
+            <p className="text-base leading-relaxed">{data.desc}</p>
+          </div>
+          <div className="pt-4">
+            <BuySection prop={data} />
+          </div>
         </div>
       </div>
 
-      <div className="block my-10 col-span-2">
+      <div className="border-t pt-10">
         <Header>Similar Products</Header>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
           {simprods.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))}

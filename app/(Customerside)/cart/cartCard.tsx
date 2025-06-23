@@ -1,11 +1,11 @@
-"use client"; // This directive is often needed for client-side components in Next.js
+"use client";
 
-import ProductCart, { CartItem } from "@/app/store/store"; // Using the alias path from your existing CartCard
+import ProductCart, { CartItem } from "@/app/store/store";
 import Image from "next/image";
-import React, { useEffect, useState } from "react"; // Import useState and useEffect
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardDescription} from "@/components/ui/card"; // Added CardDescription, CardFooter for more structure
-import { Input } from "@/components/ui/input"; // Import Input for the quantity counter
+import { Input } from "@/components/ui/input";
+import { Minus, Plus, X } from "lucide-react";
 
 export default function CartCard({ prop }: { prop: CartItem }) {
   const { RemoveProduct, SetItemQuantity } = ProductCart();
@@ -14,26 +14,24 @@ export default function CartCard({ prop }: { prop: CartItem }) {
   const [quantity, setQuantity] = useState<number>(prop.qty);
 
   // Effect to synchronize local quantity state with the global cart state
-  // This runs on mount and when `prop.item.id` or `prop.qty` changes (e.g., if cart is loaded or updated elsewhere)
   useEffect(() => {
-    setQuantity(prop.qty); // Initialize or update with the prop's quantity
-  }, [prop.qty]); // Depend on prop.qty to update when the cart item's quantity changes in the store
+    setQuantity(prop.qty);
+  }, [prop.qty]);
 
   // Handle incrementing the quantity
   const handleIncrement = () => {
     const newQuantity = quantity + 1;
-    setQuantity(newQuantity); // Update local state
-    SetItemQuantity(prop.item.id, newQuantity); // Update cart store
+    setQuantity(newQuantity);
+    SetItemQuantity(prop.item.id, newQuantity);
   };
 
   // Handle decrementing the quantity
   const handleDecrement = () => {
-    if (quantity > 1) { // Prevent quantity from going below one via decrement button
+    if (quantity > 1) {
       const newQuantity = quantity - 1;
-      setQuantity(newQuantity); // Update local state
-      SetItemQuantity(prop.item.id, newQuantity); // Update cart store
+      setQuantity(newQuantity);
+      SetItemQuantity(prop.item.id, newQuantity);
     } else {
-      // If quantity is 1 and user tries to decrement, remove the product
       RemoveProduct(prop.item.id);
     }
   };
@@ -41,102 +39,86 @@ export default function CartCard({ prop }: { prop: CartItem }) {
   // Handle manual input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const newQuantity = Math.max(0, parseInt(value, 10) || 0); // Ensure non-negative number
+    const newQuantity = Math.max(0, parseInt(value, 10) || 0);
 
-    setQuantity(newQuantity); // Update local state
+    setQuantity(newQuantity);
     if (newQuantity === 0) {
-      RemoveProduct(prop.item.id); // If manually set to 0, remove item
+      RemoveProduct(prop.item.id);
     } else {
-      SetItemQuantity(prop.item.id, newQuantity); // Update cart store
+      SetItemQuantity(prop.item.id, newQuantity);
     }
   };
 
   return (
-    <Card className="flex flex-col sm:flex-row gap-4 p-4 items-center sm:items-start max-w-2xl mx-auto border-2 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 m-5">
+    <div className="group flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors mb-3">
       {/* Product Image */}
-      <div className="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 relative rounded-lg overflow-hidden border">
-        <Image
-          src={prop.item.irul}
-          alt={prop.item.pname}
-          layout="fill" // Use layout="fill" for responsive images
-          objectFit="cover"
-          className="rounded-lg" // Rounded corners for the image
-          unoptimized // If you're handling optimization externally or don't need Next.js Image optimization
-        />
-      </div>
-
-      {/* Product Details and Controls */}
-      <div className="flex flex-col justify-between w-full sm:flex-grow">
-        <CardHeader className="p-0 pb-2">
-          <h3 className="text-xl font-bold text-gray-800">{prop.item.pname}</h3>
-          <CardDescription className="text-base text-gray-600">
-            Price: ₹{prop.item.price.toFixed(2)} {/* Format price to 2 decimal places */}
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent className="p-0 flex flex-col gap-3 mt-2">
-          {/* Quantity Counter */}
-          <div className="flex items-center space-x-2">
-            <Button
-              onClick={handleDecrement}
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 rounded-full border-gray-300 hover:bg-gray-100"
-              disabled={quantity <= 0} // Disable if quantity is 0
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="h-5 w-5"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-              </svg>
-              <span className="sr-only">Decrease quantity</span>
-            </Button>
-
-            <Input
-              type="number"
-              value={quantity}
-              onChange={handleInputChange}
-              min={0}
-              className="w-20 text-center text-lg font-medium appearance-none [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              aria-label={`Quantity of ${prop.item.pname}`}
-            />
-
-            <Button
-              onClick={handleIncrement}
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 rounded-full border-gray-300 hover:bg-gray-100"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="h-5 w-5"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              <span className="sr-only">Increase quantity</span>
-            </Button>
+      <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden relative">
+        {prop.item.irul ? (
+          <Image
+            src={prop.item.irul}
+            alt={prop.item.pname}
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+            <span className="text-blue-600 font-semibold text-sm">
+              {prop.item.pname?.charAt(0)?.toUpperCase() || 'P'}
+            </span>
           </div>
-
-          {/* Remove Button - remains separate for explicit removal */}
-          <Button
-            variant="destructive"
-            size="sm"
-            className="mt-3 w-fit rounded-md shadow-sm hover:shadow-md transition-shadow"
-            onClick={() => RemoveProduct(prop.item.id)}
-          >
-            Remove Item
-          </Button>
-        </CardContent>
+        )}
       </div>
-    </Card>
+
+      {/* Product Name */}
+      <div className="flex-1 min-w-0">
+        <h4 className="text-base font-medium text-gray-900 truncate">
+          {prop.item.pname}
+        </h4>
+      </div>
+
+      {/* Quantity Controls */}
+      <div className="flex items-center bg-white rounded-full border border-gray-200 p-1">
+        <button
+          onClick={handleDecrement}
+          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={quantity <= 0}
+          aria-label="Decrease quantity"
+        >
+          <Minus className="h-4 w-4 text-gray-600" />
+        </button>
+
+        <span className="text-base font-medium px-4 min-w-[40px] text-center">
+          {quantity}
+        </span>
+
+        <button
+          onClick={handleIncrement}
+          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
+          aria-label="Increase quantity"
+        >
+          <Plus className="h-4 w-4 text-gray-600" />
+        </button>
+      </div>
+
+      {/* Price Display */}
+      <div className="text-right min-w-[100px]">
+        <p className="text-sm text-gray-500">
+          ₹{prop.item.price.toFixed(2)} × {quantity}
+        </p>
+        <p className="text-lg font-semibold text-gray-900">
+          ₹{(prop.item.price * quantity).toLocaleString()}
+        </p>
+      </div>
+
+      {/* Remove Button */}
+      <button
+        onClick={() => RemoveProduct(prop.item.id)}
+        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all duration-200 p-1 ml-2"
+        aria-label={`Remove ${prop.item.pname} from cart`}
+      >
+        <X className="h-5 w-5" />
+      </button>
+    </div>
   );
 }

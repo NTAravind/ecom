@@ -13,13 +13,13 @@ export default async function AdminProducts() {
   const data = await ProductsTable()
   return (
     <>
-      <div className="mx-5 lg:mx-20 my-3">
+      <div className="mx-5 lg:mx-5 my-3 ">
         <div className="flex justify-between gap-4 items-center">
           <Header>Products</Header>
           <Button asChild>
             <Link href="/admin/products/new">Add</Link>
           </Button>
-        </div><div className="lg:my-10  my-4">
+        </div><div className="lg:my-5  my-4 min-w-full">
           <DataTable columns={columns} data={data} />
         </div>
       </div>
