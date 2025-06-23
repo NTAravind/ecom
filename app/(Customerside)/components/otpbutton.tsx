@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Check, RotateCcw, AlertCircle } from "lucide-react"
@@ -18,11 +17,11 @@ interface OTPResponse {
   message?: string
 }
 
-export default function OTPButton({ 
-  phone, 
-  onOtpSent, 
-  disabled = false, 
-  className 
+export default function OTPButton({
+  phone,
+  onOtpSent,
+  disabled = false,
+  className
 }: OTPButtonProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
@@ -79,7 +78,7 @@ export default function OTPButton({
 
   return (
     <div className="space-y-3">
-      <Button 
+      <Button
         onClick={success ? resetState : sendOTP}
         disabled={loading || (disabled && !success)}
         className={cn("w-full h-11 transition-all duration-200", className)}
@@ -101,10 +100,10 @@ export default function OTPButton({
             Try Again
           </>
         ) : (
-          'Send Verification Code'
+          &apos;Send Verification Code&apos;
         )}
       </Button>
-
+      
       {/* Error Message */}
       {error && (
         <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20">
@@ -112,7 +111,7 @@ export default function OTPButton({
           <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
-
+      
       {/* Success Message */}
       {success && !error && (
         <div className="flex items-start gap-2 p-3 rounded-md bg-green-50 border border-green-200 dark:bg-green-950/20 dark:border-green-800/30">
@@ -125,11 +124,11 @@ export default function OTPButton({
           </div>
         </div>
       )}
-
+      
       {/* Helper Text */}
       {!success && !error && !loading && (
         <p className="text-xs text-muted-foreground text-center">
-          We'll send you a 6-digit verification code
+          We&apos;ll send you a 6-digit verification code
         </p>
       )}
     </div>

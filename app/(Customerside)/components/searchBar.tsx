@@ -280,7 +280,7 @@ export function EnhancedSearchBar({ onSearch }: SearchBarProps) {
       {searchQuery && (
         <div className="mt-2">
           <Badge variant="secondary" className="text-xs">
-            Searching for: "{searchQuery}"
+            Searching for: &ldquo;{searchQuery}&rdquo;
             <Button
               variant="ghost"
               size="sm"
