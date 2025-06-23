@@ -16,10 +16,8 @@
      // ... your existing options
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-     "ts-node": {
-    "compilerOptions": {
-      "strict": false
-    },
+ 
+    
     "plugins": [
       {
         "name": "next"
