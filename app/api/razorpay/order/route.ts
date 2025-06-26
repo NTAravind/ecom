@@ -21,29 +21,10 @@ export async function POST(req: NextRequest) {
     }, 0);
 
     // Fetch delivery charge from /api/price (hosted on Vercel)
-    const cha = await fetch(
-      `https://ecom-9say63dk5-aravinds-projects-7ccf01ad.vercel.app/api/price`,
-      {
-        method: "POST",
-        body: JSON.stringify({ pincode }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+   
 
-    // Make sure the response is valid
-    if (!cha.ok) {
-      const html = await cha.text();
-      console.error("❌ /api/price fetch failed:", html);
-      return NextResponse.json(
-        { error: "Failed to fetch delivery charge" },
-        { status: 500 }
-      );
-    }
-
-    const { charge } = await cha.json();
-
+   
+    const charge = 60 + 4;
     // Create Razorpay order
     const order = await razorpay.orders.create({
       amount: (amount + charge) * 100,

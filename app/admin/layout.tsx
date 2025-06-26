@@ -1,5 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Nav } from "../components/Nav";
+
 import { AppSideBar } from "./components/appsidebar";
 
 export default function AdminLayout({

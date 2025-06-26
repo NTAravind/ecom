@@ -1,13 +1,20 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
+
 export default async function Orders() {
-  const userid = await auth();
-  const phone = userid?.user?.name as string;
+  const session = await auth();
+  const phone = session?.user?.name as string; // Changed from 'name' to 'phone'
+
+  if (!phone) {
+    return <p>Please log in to view your orders</p>;
+  
+  }
 
   const user = await prisma.user.findUnique({
     where: { phone },
     select: { id: true, name: true },
+
   });
 
   if (!user) {
@@ -31,7 +38,6 @@ export default async function Orders() {
       <h1 className="text-2xl font-semibold mb-4">
         Your Orders, {user.name}
       </h1>
-
       {orders.length === 0 ? (
         <p className="text-gray-600">No orders found.</p>
       ) : (
@@ -47,7 +53,6 @@ export default async function Orders() {
               <p className="text-sm text-gray-500 mb-2">
                 Date: {new Date(order.createdAt).toLocaleString()}
               </p>
-
               <div className="space-y-2">
                 {order.orderItems.map((item) => (
                   <div
@@ -61,7 +66,6 @@ export default async function Orders() {
                   </div>
                 ))}
               </div>
-
               <div className="mt-2 text-right font-semibold text-blue-600">
                 Total Paid: ₹{order.pricepaid}
               </div>

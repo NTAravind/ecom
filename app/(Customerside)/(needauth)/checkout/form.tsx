@@ -10,7 +10,7 @@ import { use, useEffect, useState } from "react";
 import { useActionState } from "react";
 import ProductCart from "@/app/store/store";
 import { fcurrency } from "@/utils/utils";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, ServerIcon, X } from "lucide-react";
 import { Edit3, User as UserIcon, MapPin, Phone, ShoppingBag, CreditCard, Truck } from "lucide-react";
 import { set } from "zod/v4";
 import Script from "next/script";
@@ -303,13 +303,7 @@ function PriceBreakdown({user}:{user: UserData}) {
 
     const fetchDeliveryCharge = async () => {
       try {
-        setLoading(true);
-        const response = await fetch('/api/price', {
-          method: "POST",
-          body: JSON.stringify({pincode: user.us?.pincode}),
-          headers: {"Content-Type": "application/json"}
-        });
-        const {charge} = await response.json();
+         const charge = 60;
         setDeliveryCharge(charge);
       } catch (err) {
         console.log(err);
@@ -336,6 +330,17 @@ function PriceBreakdown({user}:{user: UserData}) {
         <span className="text-gray-600 flex items-center gap-1">
           <Truck className="h-4 w-4" />
           Delivery Charge:
+        </span>
+        <span className="font-medium">
+          {loading ? "Calculating..." : 
+           deliveryCharge !== null ? fcurrency(deliveryCharge) : 
+           user.us?.pincode ? "Error" : "Enter pincode"}
+        </span>
+      </div>
+        <div className="flex justify-between text-sm">
+        <span className="text-gray-600 flex items-center gap-1">
+         <ServerIcon className="h-4 w-4" />
+          Taxes: {fcurrency(4)}
         </span>
         <span className="font-medium">
           {loading ? "Calculating..." : 

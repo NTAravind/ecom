@@ -118,75 +118,85 @@ export default function BuySection({ prop }: { prop: Product }) {
   const isMaxQuantity = quantity >= prop.stock;
 
   return (
-    <div className="space-y-4">
-      {/* Stock Information */}
-      <div className="flex items-center gap-2">
-        {isOutOfStock ? (
-          <Badge variant="destructive">Out of Stock</Badge>
-        ) : (
-          <Badge variant="secondary" className="text-sm">
-            {prop.stock} in stock
-          </Badge>
-        )}
-      </div>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-3 sm:space-y-4">
+        {/* Stock Information */}
+        <div className="flex items-center justify-between sm:justify-start gap-3">
+          {isOutOfStock ? (
+            <Badge variant="destructive" className="text-sm">Out of Stock</Badge>
+          ) : (
+            <Badge variant="secondary" className="text-sm">
+              {prop.stock} in stock
+            </Badge>
+          )}
+        </div>
 
-      {/* Quantity Selector */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Quantity</label>
-        <div className="flex items-center justify-center w-fit mx-auto sm:mx-0">
-          <div className="flex items-center border rounded-lg bg-background overflow-hidden">
-            <Button
-              onClick={handleDecrement}
-              variant="ghost"
-              size="sm"
-              className="h-10 w-10 p-0 rounded-none border-r hover:bg-muted"
-              disabled={quantity <= 0 || isOutOfStock}
-            >
-              <Minus className="h-4 w-4" />
-              <span className="sr-only">Decrease quantity</span>
-            </Button>
+        {/* Quantity Selector */}
+        <div className="space-y-3">
+          <label className="text-sm sm:text-base font-medium text-gray-900">Quantity</label>
+          
+          {/* Mobile-First Quantity Controls */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+            {/* Quantity Input Section */}
+            <div className="flex items-center justify-center">
+              <div className="flex items-center border-2 border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                <Button
+                  onClick={handleDecrement}
+                  variant="ghost"
+                  size="sm"
+                  className="h-12 w-12 sm:h-10 sm:w-10 p-0 rounded-none border-r border-gray-200 hover:bg-gray-50 transition-colors"
+                  disabled={quantity <= 0 || isOutOfStock}
+                >
+                  <Minus className="h-4 w-4" />
+                  <span className="sr-only">Decrease quantity</span>
+                </Button>
 
-            <div className="relative">
-              <Input
-                type="number"
-                value={quantity}
-                onChange={handleInputChange}
-                min={0}
-                max={prop.stock}
-                disabled={isOutOfStock}
-                className="w-16 h-10 text-center border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium"
-                aria-label="Product quantity"
-              />
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={quantity}
+                    onChange={handleInputChange}
+                    min={0}
+                    max={prop.stock}
+                    disabled={isOutOfStock}
+                    className="w-20 sm:w-16 h-12 sm:h-10 text-center text-lg sm:text-base border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-semibold bg-gray-50"
+                    aria-label="Product quantity"
+                  />
+                </div>
+
+                <Button
+                  onClick={handleIncrement}
+                  variant="ghost"
+                  size="sm"
+                  className="h-12 w-12 sm:h-10 sm:w-10 p-0 rounded-none border-l border-gray-200 hover:bg-gray-50 transition-colors"
+                  disabled={isMaxQuantity || isOutOfStock}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="sr-only">Increase quantity</span>
+                </Button>
+              </div>
             </div>
-
-            <Button
-              onClick={handleIncrement}
-              variant="ghost"
-              size="sm"
-              className="h-10 w-10 p-0 rounded-none border-l hover:bg-muted"
-              disabled={isMaxQuantity || isOutOfStock}
-            >
-              <Plus className="h-4 w-4" />
-              <span className="sr-only">Increase quantity</span>
-            </Button>
+            
+            {/* Total Price Display */}
+            {quantity > 0 && (
+              <div className="flex-1 text-center sm:text-left">
+                <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 sm:px-4 sm:py-2">
+                  <p className="text-sm font-medium text-green-800">
+                    Total: <span className="text-lg sm:text-xl font-bold text-green-600">₹{(prop.price * quantity).toLocaleString()}</span>
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-        
-        {quantity > 0 && (
-          <div className="text-center sm:text-left">
-            <p className="text-sm font-medium text-foreground">
-              Total: <span className="text-lg font-semibold text-green-600">₹{(prop.price * quantity).toLocaleString()}</span>
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Action Buttons - Full Width on Mobile */}
+      <div className="space-y-3 sm:space-y-0 sm:flex sm:gap-3">
         <Button
           onClick={handleBuyNow}
           disabled={isOutOfStock || quantity === 0 || isLoading}
-          className="flex-1 h-11"
+          className="w-full sm:flex-1 h-12 sm:h-11 text-base sm:text-sm font-semibold"
           size="lg"
         >
           {isLoading ? (
@@ -195,7 +205,10 @@ export default function BuySection({ prop }: { prop: Product }) {
               Processing...
             </>
           ) : (
-            <>Buy Now {quantity > 0 && `(${quantity})`}</>
+            <>
+              Buy Now 
+              {quantity > 0 && <span className="ml-1">({quantity} item{quantity > 1 ? 's' : ''})</span>}
+            </>
           )}
         </Button>
 
@@ -203,7 +216,7 @@ export default function BuySection({ prop }: { prop: Product }) {
           onClick={handleAddToCart}
           variant="outline"
           disabled={isOutOfStock || quantity === 0 || isAddingToCart}
-          className="flex-1 h-11 relative overflow-hidden transition-all duration-300"
+          className="w-full sm:flex-1 h-12 sm:h-11 text-base sm:text-sm font-semibold relative overflow-hidden transition-all duration-300 border-2"
           size="lg"
         >
           <div className={`flex items-center justify-center transition-all duration-300 ${
@@ -238,9 +251,20 @@ export default function BuySection({ prop }: { prop: Product }) {
 
       {/* Additional Info */}
       {isOutOfStock && (
-        <p className="text-sm text-muted-foreground">
-          This item is currently unavailable. Check back later or contact us for more information.
-        </p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
+          <p className="text-sm sm:text-base text-red-800 font-medium">
+            This item is currently unavailable. Check back later or contact us for more information.
+          </p>
+        </div>
+      )}
+      
+      {/* Stock Warning for Low Stock */}
+      {!isOutOfStock && prop.stock <= 5 && prop.stock > 0 && (
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-4">
+          <p className="text-sm sm:text-base text-orange-800 font-medium">
+            ⚠️ Only {prop.stock} items left in stock! Order soon.
+          </p>
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Menu, X, Filter } from "lucide-react";
 
@@ -26,12 +26,52 @@ const weights = [
   { value: "jumbo", label: "Weight 7 – Jumbo" }
 ];
 
-export function CollapsibleSideMenu() {
+// Loading component for the sidebar
+function SideMenuSkeleton() {
+  return (
+    <div className="lg:w-64 flex-shrink-0">
+      {/* Mobile Filter Button Skeleton */}
+      <div className="lg:hidden mb-3">
+        <div className="flex items-center gap-2 px-3 py-2 bg-gray-200 animate-pulse rounded-lg h-10 w-full"></div>
+      </div>
+      
+      {/* Desktop Sidebar Skeleton */}
+      <div className="hidden lg:block bg-white border rounded-lg shadow-sm">
+        <div className="p-3 border-b bg-gray-50 rounded-t-lg">
+          <div className="h-6 bg-gray-200 animate-pulse rounded w-20"></div>
+        </div>
+        <div className="p-3 space-y-4">
+          <div className="space-y-2">
+            <div className="h-5 bg-gray-200 animate-pulse rounded w-16"></div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-4 bg-gray-200 animate-pulse rounded flex-1"></div>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2">
+            <div className="h-5 bg-gray-200 animate-pulse rounded w-20"></div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-4 bg-gray-200 animate-pulse rounded flex-1"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// The actual sidebar component (unchanged)
+function SideMenuContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   // Get current filters from URL
   const selectedCategories = searchParams.get("categories")?.split(",").filter(Boolean) || [];
   const selectedWeights = searchParams.get("weights")?.split(",").filter(Boolean) || [];
@@ -46,7 +86,7 @@ export function CollapsibleSideMenu() {
       : [...currentValues, value];
 
     const params = new URLSearchParams(searchParams);
-    
+
     if (newValues.length > 0) {
       params.set(type, newValues.join(","));
     } else {
@@ -60,7 +100,7 @@ export function CollapsibleSideMenu() {
 
   const clearAllFilters = () => {
     startTransition(() => {
-      router.push("/", { scroll: false });
+      router.push("/products", { scroll: false });
     });
   };
 
@@ -95,7 +135,7 @@ export function CollapsibleSideMenu() {
 
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={closeSidebar}
         />
@@ -220,5 +260,14 @@ export function CollapsibleSideMenu() {
         </div>
       </div>
     </>
+  );
+}
+
+// Main export with Suspense wrapper
+export function CollapsibleSideMenu() {
+  return (
+    <Suspense fallback={<SideMenuSkeleton />}>
+      <SideMenuContent />
+    </Suspense>
   );
 }

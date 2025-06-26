@@ -27,7 +27,8 @@ export interface ProductCarouselProps {
 const DRAG_BUFFER = 50;
 const VELOCITY_THRESHOLD = 500;
 const GAP = 16;
-const SPRING_OPTIONS = { type: "spring", stiffness: 300, damping: 30 };
+// Fix: Use 'as const' to ensure literal type instead of string
+const SPRING_OPTIONS = { type: "spring" as const, stiffness: 300, damping: 30 };
 
 export default function ProductCarousel({
   images,
@@ -86,7 +87,7 @@ export default function ProductCarousel({
     }
   }, [pauseOnHover]);
 
-  // Autoplay functionality
+  // Autoplay functionality - Fixed: Added goToNext to dependency array
   useEffect(() => {
     if (autoplay && images.length > 1 && (!pauseOnHover || !isHovered) && !isDragging) {
       autoplayTimerRef.current = setInterval(goToNext, autoplayDelay);

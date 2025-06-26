@@ -2,51 +2,64 @@ import Link from "next/link";
 import { Product } from "../generated/prisma";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { ShoppingCart } from "lucide-react";
 import { fcurrency } from "@/utils/utils";
 import { getColorName } from "@/lib/utils";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-100 w-48">
+    <Card className="group bg-white border border-black shadow-sm hover:shadow-lg transition-all duration-500 w-full">
       <Link href={`/products/${product.id}`}>
-        <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 aspect-square">
+        <div className="aspect-[4/3] bg-white border-b border-black overflow-hidden">
           <Image 
             src={product.irul} 
-            height={150} 
-            width={150} 
-            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-200" 
+            height={400} 
+            width={400} 
+            className="object-contain w-full h-full p-1 sm:p-2 group-hover:scale-105 transition-transform duration-700" 
             alt={product.pname} 
             unoptimized
           />
         </div>
         
-        <div className="p-3 space-y-2">
-          <div>
-            <h3 className="font-semibold text-gray-900 text-xl leading-tight mb-1">
-              {product.pname}
-            </h3>
-            <div className="flex  gap-1 text-xm text-gray-500 ">
-              <span className="truncate">{product.category}</span>
-              <span>•</span>
-              <span>{product.y_weight}</span>
-             ,<br></br>
-              <span>{getColorName(product.color)}</span>
+        <CardHeader className="pb-1 mt-3">
+          <div className="flex justify-between items-start">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="font-semibold text-black text-sm sm:text-base lg:text-lg leading-tight line-clamp-2">
+                {product.pname}
+              </CardTitle>
             </div>
+       
+          </div>
+        </CardHeader>
+
+        <CardContent className="space-y-2">
+               <Badge variant="outline" className="text-xs border-black text-black flex-shrink-0">
+              {product.category}
+            </Badge>
+          <div className="flex flex-wrap gap-1 text-xs sm:text-sm text-black">
+            <span>Weight: {product.y_weight}</span>
           </div>
           
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-sm font-bold text-gray-900">
+          {product.color && (
+            <div className="flex items-center gap-2 text-sm text-black">
+              <span>Color:</span>
+              <span className="font-light">{getColorName(product.color)}</span>
+            </div>
+          )}
+          
+          <Separator className="my-4 bg-black" />
+          
+          <div className="flex justify-between items-center">
+            <span className="text-2xl font-light text-black">
               {fcurrency(product.price)}
             </span>
-            
-            <Button 
-              className="bg-black hover:bg-gray-800 text-white rounded px-3 py-1 text-xs font-medium transition-colors"
-            >
-              Add
-            </Button>
+        
           </div>
-        </div>
+        </CardContent>
       </Link>
-    </div>
+    </Card>
   );
 }

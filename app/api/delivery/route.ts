@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   if(!aut?.user){return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });}
   try {
     const body = await req.json();
-      console.log(body)
+   
     const { userId, cartItems, pricepaid ,paymentid,order_id} = body;
   
     if (!userId || !Array.isArray(cartItems) || cartItems.length === 0) {
@@ -34,7 +34,17 @@ export async function POST(req: NextRequest) {
         paymentid: paymentid,
       },
     });
-
+    // Decrease product quantity
+for (const cartItem of cartItems) {
+  await prisma.product.update({
+    where: { id: cartItem.item.id },
+    data: {
+      stock: {
+        decrement: cartItem.qty,
+      },
+    },
+  });
+}
     return NextResponse.json({ success: true, order }, { status: 200 });
 
   } catch (err) {
