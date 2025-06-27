@@ -11,7 +11,8 @@ import { Menu, X, Search } from "lucide-react"
 import ProductCart from "../store/store"
 import CartSidebar from "./SideBar"
 import { ModernSearchSystem } from "./../(Customerside)/components/searchBar"
-
+import logo from '@/public/logo.jpeg'
+import Image from "next/image"
 export function NavBar() {
   const pathname = usePathname()
   const [qty, setQty] = useState(0)
@@ -48,12 +49,12 @@ export function NavBar() {
         <div className="flex items-center justify-between min-h-16 py-3">
           {/* Left: Logo + Navigation */}
           <div className="flex items-center space-x-6">
-            {/* Logo */}
+            <Image src={logo} alt="Patel Yarn Logo" width={50} height={50} className="hidden lg:block rounded-full" />
             <Link 
               href="/" 
               className="text-xl sm:text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors duration-300 flex-shrink-0"
             >
-              Patel Yarn
+              Patel YarnHouse
             </Link>
 
             {/* Desktop Navigation */}

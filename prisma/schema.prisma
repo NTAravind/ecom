@@ -27,7 +27,7 @@ model Product {
   category  String
   stock     Int
   color     String
-
+  isYarn    Boolean   @default(true)
 
   orderItems OrderItem[]
 }

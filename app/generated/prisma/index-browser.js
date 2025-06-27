@@ -133,7 +133,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   weight_g: 'weight_g',
   category: 'category',
   stock: 'stock',
-  color: 'color'
+  color: 'color',
+  isYarn: 'isYarn'
 };
 
 exports.Prisma.UserScalarFieldEnum = {

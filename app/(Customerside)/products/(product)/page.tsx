@@ -8,6 +8,7 @@ import { CollapsibleSideMenu } from "@/app/components/SideMenu";
 interface SearchParams {
   categories?: string;
   weights?: string;
+  brands?: string;
   search?: string;
 }
 
@@ -34,12 +35,13 @@ const GetPopularProducts = unstable_cache(
 const GetProducts = async (filters: {
   categories?: string[];
   weights?: string[];
+  brands?: string[];
   search?: string;
 }) => {
-  const { categories, weights, search } = filters;
+  const { categories, weights, brands, search } = filters;
   
   // Create a unique cache key based on the filters
-  const cacheKey = `products-${(categories || []).sort().join('-')}-${(weights || []).sort().join('-')}-${search || ''}`;
+  const cacheKey = `products-${(categories || []).sort().join('-')}-${(weights || []).sort().join('-')}-${(brands || []).sort().join('-')}-${search || ''}`;
   
   return unstable_cache(
     async () => {
@@ -50,6 +52,9 @@ const GetProducts = async (filters: {
         }),
         ...(weights && weights.length > 0 && {
           y_weight: { in: weights }
+        }),
+        ...(brands && brands.length > 0 && {
+          brand: { in: brands }
         }),
       };
 
@@ -117,15 +122,18 @@ function FilteredProductsLoading() {
 async function FilteredProducts({
   categories,
   weights,
+  brands,
   search,
 }: {
   categories?: string[];
   weights?: string[];
+  brands?: string[];
   search?: string;
 }) {
   const hasFilters =
     (categories && categories.length > 0) || 
     (weights && weights.length > 0) || 
+    (brands && brands.length > 0) ||
     (search && search.trim().length > 0);
 
   if (!hasFilters) {
@@ -142,7 +150,7 @@ async function FilteredProducts({
     );
   }
 
-  const filteredProducts = await GetProducts({ categories, weights, search });
+  const filteredProducts = await GetProducts({ categories, weights, brands, search });
 
   const getResultsTitle = () => {
     if (search && search.trim()) {
@@ -156,6 +164,10 @@ async function FilteredProducts({
     
     if (search && search.trim()) {
       description += ` matching "${search}"`;
+    }
+    
+    if (brands && brands.length > 0) {
+      description += ` from brands: ${brands.join(", ")}`;
     }
     
     if (categories && categories.length > 0) {
@@ -212,11 +224,13 @@ export default async function ProductsPage({
   const params = await searchParams;
   const categories = params.categories?.split(",").filter(Boolean);
   const weights = params.weights?.split(",").filter(Boolean);
+  const brands = params.brands?.split(",").filter(Boolean);
   const search = params.search;
   
   const hasFilters =
     (categories && categories.length > 0) || 
     (weights && weights.length > 0) || 
+    (brands && brands.length > 0) ||
     (search && search.trim().length > 0);
 
   return (
@@ -254,6 +268,7 @@ export default async function ProductsPage({
                   <FilteredProducts 
                     categories={categories} 
                     weights={weights}
+                    brands={brands}
                     search={search}
                   />
                 </Suspense>

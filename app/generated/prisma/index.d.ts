@@ -1272,6 +1272,7 @@ export namespace Prisma {
     category: string | null
     stock: number | null
     color: string | null
+    isYarn: boolean | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -1288,6 +1289,7 @@ export namespace Prisma {
     category: string | null
     stock: number | null
     color: string | null
+    isYarn: boolean | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -1304,6 +1306,7 @@ export namespace Prisma {
     category: number
     stock: number
     color: number
+    isYarn: number
     _all: number
   }
 
@@ -1334,6 +1337,7 @@ export namespace Prisma {
     category?: true
     stock?: true
     color?: true
+    isYarn?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -1350,6 +1354,7 @@ export namespace Prisma {
     category?: true
     stock?: true
     color?: true
+    isYarn?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -1366,6 +1371,7 @@ export namespace Prisma {
     category?: true
     stock?: true
     color?: true
+    isYarn?: true
     _all?: true
   }
 
@@ -1469,6 +1475,7 @@ export namespace Prisma {
     category: string
     stock: number
     color: string
+    isYarn: boolean
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -1504,6 +1511,7 @@ export namespace Prisma {
     category?: boolean
     stock?: boolean
     color?: boolean
+    isYarn?: boolean
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -1522,6 +1530,7 @@ export namespace Prisma {
     category?: boolean
     stock?: boolean
     color?: boolean
+    isYarn?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1538,6 +1547,7 @@ export namespace Prisma {
     category?: boolean
     stock?: boolean
     color?: boolean
+    isYarn?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -1554,9 +1564,10 @@ export namespace Prisma {
     category?: boolean
     stock?: boolean
     color?: boolean
+    isYarn?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pname" | "brand" | "price" | "Shown" | "irul" | "iurl1" | "desc" | "y_weight" | "weight_g" | "category" | "stock" | "color", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pname" | "brand" | "price" | "Shown" | "irul" | "iurl1" | "desc" | "y_weight" | "weight_g" | "category" | "stock" | "color" | "isYarn", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1583,6 +1594,7 @@ export namespace Prisma {
       category: string
       stock: number
       color: string
+      isYarn: boolean
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -2020,6 +2032,7 @@ export namespace Prisma {
     readonly category: FieldRef<"Product", 'String'>
     readonly stock: FieldRef<"Product", 'Int'>
     readonly color: FieldRef<"Product", 'String'>
+    readonly isYarn: FieldRef<"Product", 'Boolean'>
   }
     
 
@@ -5782,7 +5795,8 @@ export namespace Prisma {
     weight_g: 'weight_g',
     category: 'category',
     stock: 'stock',
-    color: 'color'
+    color: 'color',
+    isYarn: 'isYarn'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -5926,6 +5940,7 @@ export namespace Prisma {
     category?: StringFilter<"Product"> | string
     stock?: IntFilter<"Product"> | number
     color?: StringFilter<"Product"> | string
+    isYarn?: BoolFilter<"Product"> | boolean
     orderItems?: OrderItemListRelationFilter
   }
 
@@ -5943,6 +5958,7 @@ export namespace Prisma {
     category?: SortOrder
     stock?: SortOrder
     color?: SortOrder
+    isYarn?: SortOrder
     orderItems?: OrderItemOrderByRelationAggregateInput
   }
 
@@ -5963,6 +5979,7 @@ export namespace Prisma {
     category?: StringFilter<"Product"> | string
     stock?: IntFilter<"Product"> | number
     color?: StringFilter<"Product"> | string
+    isYarn?: BoolFilter<"Product"> | boolean
     orderItems?: OrderItemListRelationFilter
   }, "id">
 
@@ -5980,6 +5997,7 @@ export namespace Prisma {
     category?: SortOrder
     stock?: SortOrder
     color?: SortOrder
+    isYarn?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -6004,6 +6022,7 @@ export namespace Prisma {
     category?: StringWithAggregatesFilter<"Product"> | string
     stock?: IntWithAggregatesFilter<"Product"> | number
     color?: StringWithAggregatesFilter<"Product"> | string
+    isYarn?: BoolWithAggregatesFilter<"Product"> | boolean
   }
 
   export type UserWhereInput = {
@@ -6200,6 +6219,7 @@ export namespace Prisma {
     category: string
     stock: number
     color: string
+    isYarn?: boolean
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
   }
 
@@ -6217,6 +6237,7 @@ export namespace Prisma {
     category: string
     stock: number
     color: string
+    isYarn?: boolean
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -6234,6 +6255,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
+    isYarn?: BoolFieldUpdateOperationsInput | boolean
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
   }
 
@@ -6251,6 +6273,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
+    isYarn?: BoolFieldUpdateOperationsInput | boolean
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -6268,6 +6291,7 @@ export namespace Prisma {
     category: string
     stock: number
     color: string
+    isYarn?: boolean
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -6284,6 +6308,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
+    isYarn?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -6300,6 +6325,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
+    isYarn?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateInput = {
@@ -6537,6 +6563,7 @@ export namespace Prisma {
     category?: SortOrder
     stock?: SortOrder
     color?: SortOrder
+    isYarn?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -6559,6 +6586,7 @@ export namespace Prisma {
     category?: SortOrder
     stock?: SortOrder
     color?: SortOrder
+    isYarn?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -6575,6 +6603,7 @@ export namespace Prisma {
     category?: SortOrder
     stock?: SortOrder
     color?: SortOrder
+    isYarn?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
@@ -7293,6 +7322,7 @@ export namespace Prisma {
     category: string
     stock: number
     color: string
+    isYarn?: boolean
   }
 
   export type ProductUncheckedCreateWithoutOrderItemsInput = {
@@ -7309,6 +7339,7 @@ export namespace Prisma {
     category: string
     stock: number
     color: string
+    isYarn?: boolean
   }
 
   export type ProductCreateOrConnectWithoutOrderItemsInput = {
@@ -7372,6 +7403,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
+    isYarn?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductUncheckedUpdateWithoutOrderItemsInput = {
@@ -7388,6 +7420,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
+    isYarn?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderItemCreateManyProductInput = {

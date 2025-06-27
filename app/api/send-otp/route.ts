@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     saveOtp(phone, code) // <-- use shared memory store
 
     const whatsappResponse = await fetch(
-      `https://graph.facebook.com/v22.0/725053144013610/messages`,
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPPPHONE}/messages`,
       {
         method: 'POST',
         headers: {
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
           type: 'template',
           template: {
             name: 'auth_custom',
-            language: { code: 'en' },
+            language: { code: 'en_US' },
             components: [
               {
                 type: 'body',

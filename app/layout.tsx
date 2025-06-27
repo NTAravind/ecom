@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ReactNode } from "react";
+import FloatingWhatsApp from "./components/whatsapp";
 
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
       <html>
         <body>
      {children}
-           
+           <FloatingWhatsApp/>
         </body>
       </html>
     )

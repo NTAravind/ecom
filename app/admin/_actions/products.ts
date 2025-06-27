@@ -1,6 +1,4 @@
-
 "use server"
-
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import z from "zod/v4"
@@ -16,23 +14,20 @@ const formdat = z.object({
   stock: z.coerce.number().int().min(1),
   color: z.string().min(1),
   url2: z.string().min(1),
-  weight:z.string().min(1),
-  desc : z.string().min(1),
+  weight: z.string().min(1),
+  desc: z.string().min(1),
   gweight: z.coerce.number().int().min(100),
 })
 
 export async function addProduct(prevState: unknown, formdata: FormData) {
   const res = formdat.safeParse(Object.fromEntries(formdata.entries()))
-
   if (res.success === false) {
     return { message: res.error.message }
   }
-
   const data = res.data
-
   await prisma.product.create({
     data: {
-      pname: data.name, 
+      pname: data.name,
       desc: data.desc,
       brand: data.brand,
       category: data.category,
@@ -41,11 +36,16 @@ export async function addProduct(prevState: unknown, formdata: FormData) {
       stock: data.stock,
       color: data.color,
       iurl1: data.url2,
-      y_weight:data.weight,
-      weight_g:data.gweight,
+      y_weight: data.weight,
+      weight_g: data.gweight,
     }
   })
-
+  
+  // Revalidate all relevant paths
+  revalidatePath('/')
+  revalidatePath('/products')
+  revalidatePath('/admin/products')
+  
   redirect("/admin/products")
 }
 
@@ -58,6 +58,10 @@ export async function deleteproduct(id: string) {
   await prisma.product.delete({
     where: { id: id }
   })
+  
+  // Revalidate all relevant paths
+  revalidatePath('/')
+  revalidatePath('/products')
   revalidatePath('/admin/products')
 }
 
@@ -66,22 +70,23 @@ export async function ToggleAvailability(id: string, isavail: boolean) {
     where: { id: id },
     data: { Shown: !isavail },
   })
+  
+  // Revalidate all relevant paths
+  revalidatePath('/')
+  revalidatePath('/products')
   revalidatePath('/admin/products')
 }
 
-
 export async function updateproduct(id: string, prevState: unknown, formdata: FormData) {
   const res = formdat.safeParse(Object.fromEntries(formdata.entries()))
-
   if (res.success === false) {
     return { message: res.error.message }
   }
-
   const data = res.data
   await prisma.product.update({
     where: { id },
     data: {
-      pname: data.name, 
+      pname: data.name,
       desc: data.desc,
       brand: data.brand,
       category: data.category,
@@ -90,12 +95,15 @@ export async function updateproduct(id: string, prevState: unknown, formdata: Fo
       stock: data.stock,
       color: data.color,
       iurl1: data.url2,
-      y_weight:data.weight,
-      weight_g:data.gweight,
+      y_weight: data.weight,
+      weight_g: data.gweight,
     }
   })
-
+  
+  // Revalidate all relevant paths
+  revalidatePath('/')
+  revalidatePath('/products')
+  revalidatePath('/admin/products')
+  
   redirect("/admin/products")
 }
-
-

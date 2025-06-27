@@ -26,6 +26,16 @@ const weights = [
   { value: "jumbo", label: "Weight 7 – Jumbo" }
 ];
 
+const brands = [
+  { value: "Gulmarg", label: "Gulmarg" },
+  { value: "Oswal", label: "Oswal" },
+  { value: "Ganga Delight", label: "Ganga Delight" },
+  { value: "Ganga SuperStitch", label: "Ganga SuperStitch" },
+  { value: "Ganga Desire", label: "Ganga Desire" },
+  { value: "Patel Blanket yarn", label: "Patel Blanket yarn" },
+  { value: "Patel Cotton", label: "Patel Cotton" }
+];
+
 // Loading component for the sidebar
 function SideMenuSkeleton() {
   return (
@@ -59,13 +69,22 @@ function SideMenuSkeleton() {
               </div>
             ))}
           </div>
+          <div className="space-y-2">
+            <div className="h-5 bg-gray-200 animate-pulse rounded w-16"></div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-4 bg-gray-200 animate-pulse rounded flex-1"></div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// The actual sidebar component (unchanged)
+// The actual sidebar component
 function SideMenuContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,9 +94,10 @@ function SideMenuContent() {
   // Get current filters from URL
   const selectedCategories = searchParams.get("categories")?.split(",").filter(Boolean) || [];
   const selectedWeights = searchParams.get("weights")?.split(",").filter(Boolean) || [];
+  const selectedBrands = searchParams.get("brands")?.split(",").filter(Boolean) || [];
 
   const updateFilters = (
-    type: 'categories' | 'weights',
+    type: 'categories' | 'weights' | 'brands',
     value: string,
     currentValues: string[]
   ) => {
@@ -104,8 +124,8 @@ function SideMenuContent() {
     });
   };
 
-  const hasActiveFilters = selectedCategories.length > 0 || selectedWeights.length > 0;
-  const activeFilterCount = selectedCategories.length + selectedWeights.length;
+  const hasActiveFilters = selectedCategories.length > 0 || selectedWeights.length > 0 || selectedBrands.length > 0;
+  const activeFilterCount = selectedCategories.length + selectedWeights.length + selectedBrands.length;
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -206,9 +226,31 @@ function SideMenuContent() {
             </div>
           )}
 
+          {/* Brands */}
+          <div>
+            <h3 className="font-semibold mb-2 text-gray-900">Brand</h3>
+            <div className="space-y-1">
+              {brands.map((brand) => (
+                <label key={brand.value} className="flex items-center space-x-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    value={brand.value}
+                    checked={selectedBrands.includes(brand.value)}
+                    onChange={() => updateFilters('brands', brand.value, selectedBrands)}
+                    disabled={isPending}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  />
+                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+                    {brand.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Categories */}
           <div>
-            <h3 className="font-semibold mb-2 text-gray-900">Category</h3>
+            <h3 className="font-semibold mb-2 text-gray-900">Material</h3>
             <div className="space-y-1">
               {categories.map((cat) => (
                 <label key={cat.value} className="flex items-center space-x-2 cursor-pointer group">

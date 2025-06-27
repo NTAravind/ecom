@@ -340,12 +340,10 @@ function PriceBreakdown({user}:{user: UserData}) {
         <div className="flex justify-between text-sm">
         <span className="text-gray-600 flex items-center gap-1">
          <ServerIcon className="h-4 w-4" />
-          Taxes: {fcurrency(4)}
+          Taxes: 
         </span>
         <span className="font-medium">
-          {loading ? "Calculating..." : 
-           deliveryCharge !== null ? fcurrency(deliveryCharge) : 
-           user.us?.pincode ? "Error" : "Enter pincode"}
+          {fcurrency(4)}
         </span>
       </div>
       

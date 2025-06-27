@@ -10,6 +10,7 @@ import { fcurrency } from "@/utils/utils";
 import { getColorName } from "@/lib/utils";
 
 export function ProductCard({ product }: { product: Product }) {
+  console.log("url", product.irul);
   return (
     <Card className="group bg-white border border-black shadow-sm hover:shadow-lg transition-all duration-500 w-full">
       <Link href={`/products/${product.id}`}>
