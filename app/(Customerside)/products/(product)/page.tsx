@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { unstable_cache } from "next/cache";
 import { CollapsibleSideMenu } from "@/app/components/SideMenu";
 
-
 interface SearchParams {
   categories?: string;
   weights?: string;
@@ -12,6 +11,10 @@ interface SearchParams {
   search?: string;
 }
 
+// Remove the custom Product interface - we'll use the actual Prisma type
+// The GetAllProducts function will return the correct type from Prisma
+
+// Cache popular products separately
 const GetPopularProducts = unstable_cache(
   async () => {
     const data = await prisma.product.findMany({
@@ -27,86 +30,80 @@ const GetPopularProducts = unstable_cache(
   },
   ['popular-products'],
   {
-    revalidate: 86400, // 24 hours in seconds
+    revalidate: 86400, // 24 hours
     tags: ['products', 'popular-products']
   }
 );
 
-const GetProducts = async (filters: {
-  categories?: string[];
-  weights?: string[];
-  brands?: string[];
-  search?: string;
-}) => {
+// Fetch ALL products once and cache them
+const GetAllProducts = unstable_cache(
+  async () => {
+    const data = await prisma.product.findMany({
+      where: { Shown: true }
+    });
+    return data;
+  },
+  ['all-products'],
+  {
+    revalidate: 86400, // 24 hours
+    tags: ['products', 'all-products']
+  }
+);
+
+// Client-side filtering function - using generic type for flexibility
+const filterProducts = <T extends {
+  category: string;
+  y_weight: string;
+  brand: string;
+  pname: string;
+  desc: string;
+}>(
+  products: T[],
+  filters: {
+    categories?: string[];
+    weights?: string[];
+    brands?: string[];
+    search?: string;
+  }
+): T[] => {
   const { categories, weights, brands, search } = filters;
   
-  // Create a unique cache key based on the filters
-  const cacheKey = `products-${(categories || []).sort().join('-')}-${(weights || []).sort().join('-')}-${(brands || []).sort().join('-')}-${search || ''}`;
-  
-  return unstable_cache(
-    async () => {
-      const whereClause: any = {
-        Shown: true,
-        ...(categories && categories.length > 0 && {
-          category: { in: categories }
-        }),
-        ...(weights && weights.length > 0 && {
-          y_weight: { in: weights }
-        }),
-        ...(brands && brands.length > 0 && {
-          brand: { in: brands }
-        }),
-      };
-
-      // Add search functionality
-      if (search && search.trim()) {
-        const searchTerm = search.trim();
-        whereClause.OR = [
-          {
-            pname: {
-              contains: searchTerm,
-              mode: 'insensitive'
-            }
-          },
-          {
-            category: {
-              contains: searchTerm,
-              mode: 'insensitive'
-            }
-          },
-          {
-            y_weight: {
-              contains: searchTerm,
-              mode: 'insensitive'
-            }
-          },
-          {
-            brand: {
-              contains: searchTerm,
-              mode: 'insensitive'
-            }
-          },
-          {
-            desc: {
-              contains: searchTerm,
-              mode: 'insensitive'
-            }
-          }
-        ];
-      }
-
-      const data = await prisma.product.findMany({
-        where: whereClause
-      });
-
-      return data;
-    },
-    [cacheKey],
-    {
-      revalidate: 86400, // 24 hours in seconds
-      tags: ['products', 'filtered-products', 'search-products']
+  return products.filter((product) => {
+    // Category filter
+    if (categories && categories.length > 0) {
+      if (!categories.includes(product.category)) return false;
     }
-  )();
+    
+    // Weight filter
+    if (weights && weights.length > 0) {
+      if (!weights.includes(product.y_weight)) return false;
+    }
+    
+    // Brand filter
+    if (brands && brands.length > 0) {
+      if (!brands.includes(product.brand)) return false;
+    }
+    
+    // Search filter
+    if (search && search.trim()) {
+      const searchTerm = search.trim().toLowerCase();
+      const searchableFields = [
+        product.pname,
+        product.category,
+        product.y_weight,
+        product.brand,
+        product.desc
+      ].map(field => field?.toLowerCase() || '');
+      
+      const matchesSearch = searchableFields.some(field => 
+        field.includes(searchTerm)
+      );
+      
+      if (!matchesSearch) return false;
+    }
+    
+    return true;
+  });
 };
 
 function FilteredProductsLoading() {
@@ -136,13 +133,15 @@ async function FilteredProducts({
     (brands && brands.length > 0) ||
     (search && search.trim().length > 0);
 
+  // Fetch all products once
+  const allProducts = await GetAllProducts();
+
   if (!hasFilters) {
-    const newProductData = await GetProducts({});
     return (
       <div>
         <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 px-1">All Products</h1>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-          {newProductData.map((product) => (
+          {allProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))}
         </div>
@@ -150,7 +149,13 @@ async function FilteredProducts({
     );
   }
 
-  const filteredProducts = await GetProducts({ categories, weights, brands, search });
+  // Filter products client-side
+  const filteredProducts = filterProducts(allProducts, {
+    categories,
+    weights,
+    brands,
+    search
+  });
 
   const getResultsTitle = () => {
     if (search && search.trim()) {
@@ -234,7 +239,7 @@ export default async function ProductsPage({
     (search && search.trim().length > 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-purple-200">
       {/* Main Container */}
       <div className="max-w-7xl mx-5 px-2 sm:px-3 md:px-4 py-3 sm:py-4">
         <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
@@ -246,8 +251,6 @@ export default async function ProductsPage({
           {/* Main Content */}
           <main className="flex-1 min-w-0">
             <div className="space-y-4 sm:space-y-6">
-              {/* Search Bar */}
-             
               {/* Popular Products Section - Only show when no filters */}
               {!hasFilters && (
                 <section className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">

@@ -60,8 +60,8 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
           
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium min-w-[80px]">Category:</span>
-              <span className="text-muted-foreground">{data.category}</span>
+              <span className="font-medium min-w-[80px]">Brand</span>
+              <span className="text-muted-foreground">{data.brand}</span>
             </div>
             
             <div className="flex items-center gap-2 text-sm">

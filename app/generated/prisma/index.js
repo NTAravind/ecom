@@ -202,7 +202,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Product {\n  id       String  @id @default(uuid())\n  pname    String\n  brand    String\n  price    Int\n  Shown    Boolean @default(true)\n  irul     String\n  iurl1    String\n  desc     String\n  y_weight String\n  weight_g Int\n  category String\n  stock    Int\n  color    String\n  isYarn   Boolean @default(true)\n\n  orderItems OrderItem[]\n}\n\nmodel User {\n  id      String @id @default(uuid())\n  name    String\n  phone   String @unique\n  Address String\n  pincode String\n\n  orders Order[]\n}\n\nmodel Order {\n  id         String      @id @default(uuid())\n  pricepaid  Int\n  createdAt  DateTime    @default(now())\n  userId     String\n  user       User        @relation(fields: [userId], references: [id])\n  paymentid  String      @unique\n  paid       Boolean     @default(false)\n  orderItems OrderItem[]\n  complete   Boolean     @default(false)\n}\n\nmodel OrderItem {\n  id        String @id @default(uuid())\n  orderId   String\n  productId String\n  quantity  Int\n\n  order   Order   @relation(fields: [orderId], references: [id])\n  product Product @relation(fields: [productId], references: [id])\n}\n",
   "inlineSchemaHash": "54b563dd256a2085b2577fb0055052281a64523601f85e2b0c7bda6a1291f2b8",
-  "copyEngine": false
+  "copyEngine": true
 }
 
 const fs = require('fs')
@@ -239,3 +239,9 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "app/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
+// file annotations for bundling tools to include these files
+path.join(__dirname, "schema.prisma");
+path.join(process.cwd(), "app/generated/prisma/schema.prisma")
