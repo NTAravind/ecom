@@ -27,13 +27,12 @@ const weights = [
 ];
 
 const brands = [
-  { value: "Gulmarg", label: "Gulmarg" },
-  { value: "Oswal", label: "Oswal" },
+  { value: "Gulmarg Oswal", label: "Gulmarg Oswal" },
   { value: "Ganga Delight", label: "Ganga Delight" },
   { value: "Ganga SuperStitch", label: "Ganga SuperStitch" },
   { value: "Ganga Desire", label: "Ganga Desire" },
-  { value: "Patel Blanket yarn", label: "Patel Blanket yarn" },
-  { value: "Patel Cotton", label: "Patel Cotton" }
+  { value: "Blanket yarn", label: "Blanket yarn" },
+  { value: "Cotton", label: "Cotton" }
 ];
 
 // Loading component for the sidebar

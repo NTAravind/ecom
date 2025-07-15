@@ -1,13 +1,13 @@
-'use client'
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent} from '@/components/ui/card';
 import Image, { StaticImageData } from 'next/image';
 import { Truck, Shield, Award } from 'lucide-react';
-import w1 from '@/app/assets/w3.jpg'
+import w1 from '@/public/assets/w3.jpg'
 import { BulkOrderSection, ProductScroll } from './components/psec';
 import prisma from '@/lib/prisma';
 import { unstable_cache } from 'next/cache';
 import { ProductCard } from '../components/ProductCard';
+
 
 const data = [
   {id:1,name:'wool',imgurl:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu7JIaGyEYXdlNqD36IRIQ3aFRi5sDpywsSg&s'},
@@ -17,13 +17,34 @@ const data = [
   {id:5,name:'Polyster',imgurl:'https://2.wlimg.com/product_images/bc-full/2022/11/10878802/100-40d-white-black-polyester-spandex-covered-yarn-1668751320-6630389.jpeg'},
   {id:6,name:'Acrylic',imgurl:'https://m.media-amazon.com/images/I/61Ek8QW6tFL.jpg'},
   {id:7, name:'wool blend',imgurl:'https://knittinghappiness.com/cdn/shop/products/DSR036_1000x1000.jpg?v=1667904098'}
-]
+];
 
-export default function Home(){
+// Cache function for popular products with monthly revalidation
+const getPopularProducts = unstable_cache(
+  async () => {
+    const data = await prisma.product.findMany({
+      where: { Shown: true },
+      orderBy: {
+        orderItems: {
+          _count: "desc"
+        }
+      },
+      take: 5
+    });
+    return data;
+  },
+  ['popular-products'],
+  {
+    revalidate: 2592000, // 30 days in seconds (30 * 24 * 60 * 60)
+    tags: ['products', 'popular-products']
+  }
+);
+
+export default async function Home(){
   return (
     <>
-      {/* Add CSS animations in a style tag */}
-      <style jsx>{`
+      {/* CSS animations with scroll-based triggers */}
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;
@@ -34,7 +55,6 @@ export default function Home(){
             transform: translateY(0);
           }
         }
-        
         @keyframes fadeInLeft {
           from {
             opacity: 0;
@@ -45,7 +65,6 @@ export default function Home(){
             transform: translateX(0);
           }
         }
-        
         @keyframes fadeInRight {
           from {
             opacity: 0;
@@ -56,7 +75,6 @@ export default function Home(){
             transform: translateX(0);
           }
         }
-        
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -66,52 +84,59 @@ export default function Home(){
           }
         }
         
-        .animate-on-scroll {
-          animation: fadeInUp 0.8s ease-out forwards;
+        /* CSS-only scroll animations using view-timeline */
+        @supports (animation-timeline: view()) {
+          .animate-on-scroll {
+            animation: fadeInUp 0.8s ease-out both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 50%;
+          }
+          .animate-on-scroll-left {
+            animation: fadeInLeft 0.8s ease-out both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 50%;
+          }
+          .animate-on-scroll-right {
+            animation: fadeInRight 0.8s ease-out both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 50%;
+          }
+          .animate-fade-in {
+            animation: fadeIn 1s ease-out both;
+          }
         }
         
-        .animate-on-scroll-left {
-          animation: fadeInLeft 0.8s ease-out forwards;
+        /* Fallback for browsers without view-timeline support */
+        @supports not (animation-timeline: view()) {
+          .animate-on-scroll,
+          .animate-on-scroll-left,
+          .animate-on-scroll-right,
+          .animate-fade-in {
+            opacity: 1;
+            transform: none;
+          }
         }
-        
-        .animate-on-scroll-right {
-          animation: fadeInRight 0.8s ease-out forwards;
-        }
-        
-        .animate-fade-in {
-          animation: fadeIn 1s ease-out forwards;
-        }
-        
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; }
-        .delay-600 { animation-delay: 0.6s; }
-        .delay-700 { animation-delay: 0.7s; }
-        .delay-800 { animation-delay: 0.8s; }
       `}</style>
-      
       <main className='mx-4 md:mx-5'>
         <div className="animate-fade-in">
           <HeroSection />
         </div>
-        <div className="animate-on-scroll delay-200">
+        <div className="animate-on-scroll" style={{animationDelay: '0.2s'}}>
           <Discover/>
         </div>
-        <div className="animate-on-scroll delay-300">
+        <div className="animate-on-scroll" style={{animationDelay: '0.3s'}}>
           <ProductScroll/>
         </div>
-        <div className="animate-on-scroll delay-400">
+        <div className="animate-on-scroll" style={{animationDelay: '0.4s'}}>
           <BulkBenefits/>
         </div>
-        <div className="animate-on-scroll delay-500">
+        <div className="animate-on-scroll" style={{animationDelay: '0.5s'}}>
           <PopularProducts/>
         </div>
-        <div className="animate-on-scroll delay-600">
+        <div className="animate-on-scroll" style={{animationDelay: '0.6s'}}>
           <WhyChooseUs/>
         </div>
-        <div className="animate-on-scroll delay-700">
+        <div className="animate-on-scroll" style={{animationDelay: '0.7s'}}>
           <BulkOrderSection/>
         </div>
       </main>
@@ -125,7 +150,7 @@ function HeroSection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
           {/* Left Content */}
-          <div className="flex-1 space-y-4 md:space-y-6 text-center lg:text-left animate-on-scroll-left delay-100">
+          <div className="flex-1 space-y-4 md:space-y-6 text-center lg:text-left animate-on-scroll-left" style={{animationDelay: '0.1s'}}>
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-black leading-tight">
               Discover Premium<br />
               Yarns for Your<br />
@@ -143,9 +168,8 @@ function HeroSection() {
               </Button>
             </div>
           </div>
-          
           {/* Right Image Container */}
-          <div className="flex-1 relative w-full max-w-md lg:max-w-none animate-on-scroll-right delay-300">
+          <div className="flex-1 relative w-full max-w-md lg:max-w-none animate-on-scroll-right" style={{animationDelay: '0.3s'}}>
             <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow duration-500">
               <CardContent className="p-4 md:p-6 lg:p-8">
                 <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
@@ -178,6 +202,8 @@ function HeroSection() {
 
 function Discover() {
   return (
+    <>
+    
     <section className="p-4 md:p-6 lg:p-8 mx-2 md:mx-5">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -186,7 +212,7 @@ function Discover() {
               Discover Our Diverse Yarn Collection Today
             </h2>
           </div>
-          <div className="space-y-6 text-center lg:text-left animate-on-scroll-right delay-200">
+          <div className="space-y-6 text-center lg:text-left animate-on-scroll-right" style={{animationDelay: '0.2s'}}>
             <p className="text-base md:text-lg text-gray-700 leading-relaxed">
               At Patel Yarn House, we offer an extensive selection of yarns to suit every project. Choose from luxurious wool, soft cotton, and versatile acrylic options, each designed to inspire creativity. Whether you&apos;re a seasoned crafter or just starting out, our variety ensures you&apos;ll find the perfect yarn for your needs.
             </p>
@@ -197,6 +223,7 @@ function Discover() {
         </div>
       </div>
     </section>
+      </>
   );
 }
 
@@ -212,7 +239,7 @@ function BulkBenefits() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {benefits.map((benefit, index) => (
-            <Card key={index} className={`bg-white border border-gray-200 hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 animate-on-scroll delay-${(index + 1) * 100}`}>
+            <Card key={index} className="bg-white border border-gray-200 hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 animate-on-scroll" style={{animationDelay: `${(index + 1) * 100}ms`}}>
               <CardContent className="p-6 md:p-8 text-center">
                 <div className="text-purple-600 mb-4 flex justify-center transform hover:scale-110 transition-transform duration-300">{benefit.icon}</div>
                 <h3 className="text-lg md:text-xl font-bold mb-3 text-gray-900">{benefit.title}</h3>
@@ -223,31 +250,12 @@ function BulkBenefits() {
         </div>
       </div>
     </section>
+  
   );
 }
 
 async function PopularProducts() {
-  const GetPopularProducts = unstable_cache(
-    async () => {
-      const data = await prisma.product.findMany({
-        where: { Shown: true },
-        orderBy: {
-          orderItems: {
-            _count: "desc"
-          }
-        },
-        take: 5
-      });
-      return data;
-    },
-    ['popular-products'],
-    {
-      revalidate: 2592000, // 30 days in seconds (30 * 24 * 60 * 60)
-      tags: ['products', 'popular-products']
-    }
-  );
-
-  const data = await GetPopularProducts();
+  const data = await getPopularProducts();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -257,10 +265,9 @@ async function PopularProducts() {
         </h2>
         <p className="text-base md:text-lg text-gray-600">Our Top Products That Have Been Purchased In this Month</p>
       </div>
-      
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 items-center justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4 ">
         {data.map((item, index) => (
-          <div key={item.id} className={`animate-on-scroll delay-${(index + 1) * 100} transform hover:scale-105 transition-transform duration-300`}>
+          <div key={item.id} className="animate-on-scroll transform hover:scale-105 transition-transform duration-300" style={{animationDelay: `${(index + 1) * 100}ms`}}>
             <ProductCard product={item} />
           </div>
         ))}
@@ -282,8 +289,7 @@ function WhyChooseUs() {
               </div>
             </div>
           </div>
-          
-          <div className="space-y-6 lg:space-y-8 order-1 lg:order-2 text-center lg:text-left animate-on-scroll-right delay-200">
+          <div className="space-y-6 lg:space-y-8 order-1 lg:order-2 text-center lg:text-left animate-on-scroll-right" style={{animationDelay: '0.2s'}}>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
               Why Choose Patel Yarn House for Your Needs
             </h2>
@@ -291,11 +297,11 @@ function WhyChooseUs() {
               With years of experience in the yarn industry, we understand what businesses need. Our commitment to quality, competitive pricing, and exceptional service makes us the preferred choice for bulk yarn purchases.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-              <div className="text-center lg:text-left animate-on-scroll delay-400 transform hover:scale-105 transition-transform duration-300">
+              <div className="text-center lg:text-left animate-on-scroll transform hover:scale-105 transition-transform duration-300" style={{animationDelay: '0.4s'}}>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Expertise</h3>
                 <p className="text-sm md:text-base text-gray-600">Over 25 years in the textile industry</p>
               </div>
-              <div className="text-center lg:text-left animate-on-scroll delay-500 transform hover:scale-105 transition-transform duration-300">
+              <div className="text-center lg:text-left animate-on-scroll transform hover:scale-105 transition-transform duration-300" style={{animationDelay: '0.5s'}}>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Value</h3>
                 <p className="text-sm md:text-base text-gray-600">Competitive wholesale pricing guaranteed</p>
               </div>

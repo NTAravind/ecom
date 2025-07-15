@@ -103,6 +103,12 @@ const Footer = () => {
 
             {/* Policy Links */}
             <div className="flex space-x-6 text-sm">
+                 <Link
+                href="https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" 
+                className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
+              >
+          Refund  Policy
+              </Link>
               <Link
                 href="/privacy-policy" 
                 className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
@@ -110,16 +116,16 @@ const Footer = () => {
                 Privacy Policy
               </Link>
               <Link
-                href="/terms-conditions" 
+                href="" 
                 className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
               >
                 Terms & Conditions
               </Link>
               <Link
-                href="/cookie-policy" 
+                href="/https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" 
                 className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
               >
-                Cookie Policy
+               Delivery policy
               </Link>
             </div>
           </div>

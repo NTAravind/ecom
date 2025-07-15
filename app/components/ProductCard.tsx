@@ -1,66 +1,87 @@
 import Link from "next/link";
-import { Product } from "../generated/prisma";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ShoppingCart } from "lucide-react";
+import { memo } from "react";
+import { Product } from "../generated/prisma";
 import { fcurrency } from "@/utils/utils";
-import { getColorName } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ProductCardActions } from "./Productcardclient";
 
-export function ProductCard({ product }: { product: Product }) {
-  console.log("url", product.irul);
+type ProductCardProps = {
+  product: Product & {
+    category?: string;
+    y_weight?: string;
+    stock_quantity?: number;
+  };
+};
+
+const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
+  // Memoize computed values
+  const imageUrl = product.irul || '/placeholder-image.jpg';
+  const stockQuantity = product.stock_quantity ?? 20;
+  const isInStock = stockQuantity > 0;
+  const category = product.category || 'Yarn';
+
   return (
-    <Card className="group bg-white border border-black shadow-sm hover:shadow-lg transition-all duration-500 w-full max-w-sm mx-auto">
-      <Link href={`/products/${product.id}`}>
-        <div className="aspect-[4/3] bg-white border-b border-black overflow-hidden">
+    <Card className="group w-full bg-white rounded-xl border-slate-200/80 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-violet-200">
+      <div className="flex flex-col h-full">
+        {/* Image section */}
+        <div className="relative aspect-square overflow-hidden">
           <Image
-            src={product.irul}
-            height={400}
-            width={400}
-            className="object-contain w-full h-full p-2 sm:p-3 group-hover:scale-105 transition-transform duration-700"
-            alt={product.pname}
-            unoptimized
+            src={imageUrl}
+            alt={product.pname || 'Product image'}
+            fill
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            priority={false}
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           />
-        </div>
-        <CardHeader className="pb-2 pt-3 px-3 sm:px-6">
-          <div className="flex justify-between items-start">
-            <div className="flex-1 min-w-0">
-              <CardTitle className="font-semibold text-black text-sm sm:text-base lg:text-lg leading-tight line-clamp-2 mb-1">
-                {product.pname}
-              </CardTitle>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3 px-3 sm:px-6 pb-4">
-          <Badge variant="outline" className="text-xs border-black text-black flex-shrink-0 w-fit">
-            {product.category}
-          </Badge>
           
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-1 text-xs sm:text-sm text-black">
-              <span className="font-medium">Weight:</span>
-              <span>{product.y_weight}</span>
+          <Badge 
+            variant="secondary" 
+            className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-600 border-0"
+          >
+            {category}
+          </Badge>
+        </div>
+
+        {/* Content section */}
+        <Link href={`/products/${product.id}`} className="flex-1">
+          <CardContent className="p-4 flex flex-col justify-between h-full">
+            <div className="space-y-2">
+              <h3 className="font-medium text-slate-800 leading-snug line-clamp-2 group-hover:text-violet-800 transition-colors">
+                {product.pname}
+              </h3>
+              
+              {product.y_weight && (
+                <p className="text-sm text-slate-500">{product.y_weight}</p>
+              )}
             </div>
             
-            {product.color && (
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-black">
-                <span className="font-medium">Color:</span>
-                <span className="font-light">{getColorName(product.color)}</span>
+            <div className="space-y-3 mt-4">
+              <div className="flex items-end justify-between">
+                <span className="text-2xl font-bold text-violet-900">
+                  {fcurrency(product.price)}
+                </span>
+                
+                <div className={`text-sm font-medium px-2 py-1 rounded-full ${
+                  isInStock
+                    ? 'text-emerald-800 bg-emerald-100'
+                    : 'text-rose-700 bg-rose-100'
+                }`}>
+                  {isInStock ? 'In Stock' : 'Sold Out'}
+                </div>
               </div>
-            )}
-          </div>
-          
-          <Separator className="my-3 bg-black" />
-          
-          <div className="flex justify-between items-center pt-1">
-            <span className="text-xl sm:text-2xl font-light text-black">
-              {fcurrency(product.price)}
-            </span>
-          </div>
-        </CardContent>
-      </Link>
+              
+              <ProductCardActions product={product} />
+            </div>
+          </CardContent>
+        </Link>
+      </div>
     </Card>
   );
-}
+});
+
+export { ProductCard };

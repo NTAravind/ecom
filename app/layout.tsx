@@ -16,7 +16,7 @@ export const metadata: Metadata = {
       <html>
         <body>
      {children}
-           <FloatingWhatsApp/>
+         
         </body>
       </html>
     )

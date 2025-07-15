@@ -33,7 +33,7 @@ export default async function OrderDetailPage({
       <h1 className="text-3xl font-bold">Order Details</h1>
       <p className="text-muted-foreground">Order ID: {order.id}</p>
     </div>
-    <MarkToComplete prop={{id}}/>
+    <MarkToComplete prop={{id,phone:order.user.phone}}/>
   </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

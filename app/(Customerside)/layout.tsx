@@ -4,6 +4,8 @@ import "../globals.css";
 import { NavBar } from "../components/Nav";
 import { ReactNode } from "react";
 import Footer from "../components/footer";
+import MarqueeComponent from "../components/marquee";
+import FloatingWhatsApp from "../components/whatsapp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,16 +25,15 @@ export const metadata: Metadata = {
   export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
       <>
-     <html>
-      <body>
+   
     <div>
   <NavBar />
-   
+ 
       {children}
      </div>
+     <FloatingWhatsApp/>
      <Footer/>
-  </body>
-</html>
+
   </>
     )
   }

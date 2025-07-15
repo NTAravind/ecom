@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 
 interface MarkToCompleteProps {
   prop: {
-    id: string
+    id: string,
+    phone:string
   }
 }
 

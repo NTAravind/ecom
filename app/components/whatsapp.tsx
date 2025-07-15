@@ -6,7 +6,7 @@ export default function FloatingWhatsApp() {
     // Replace with your WhatsApp number (include country code without + sign)
     const phoneNumber = "1234567890";
     const message = "Hello! I'm interested in your services.";
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.link/132fuh`;
     window.open(whatsappUrl, '_blank');
   };
 

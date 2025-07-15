@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
         <div className="flex justify-center items-start">
           <ProductCarousel 
             images={productImages}
-            baseWidth={500}
+            baseWidth={430}
             autoplay={true}
             autoplayDelay={4000}
             pauseOnHover={true}
