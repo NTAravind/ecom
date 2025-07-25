@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // Create file in GitHub repository
     const githubResponse = await fetch(
-      `https://api.github.com/repos/NTAravind/Yarn-images/contents/images/${filename}`,
+      `https://api.github.com/repos/NTAravind/Yarn-images/contents/images/${filename} `,
       {
         method: 'PUT',
         headers: {
