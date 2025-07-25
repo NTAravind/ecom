@@ -34,10 +34,10 @@ export default function Hero() {
           <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 text-center max-w-2xl px-4">
             Discover our curated collection of premium yarns and unleash your creative potential
           </p>
-          
+          <Link href={'/products'}>
           <button className="mt-6 sm:mt-8 px-6 sm:px-8 py-2 sm:py-3 bg-purple-600 hover:bg-purple-800 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg text-sm sm:text-base">
             Shop Now
-          </button>
+          </button></Link>
         </div>
       </div>
     </div>

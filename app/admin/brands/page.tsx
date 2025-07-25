@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { getBrands } from '../_actions/brands'
 
 // Cache the page for 1 hour
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 type BrandWithCount = {
   id: string
