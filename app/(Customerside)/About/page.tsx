@@ -9,6 +9,7 @@ import a1 from '@/public/assets/a1.webp'
 import Image from 'next/image';
 import a2 from '@/public/assets/a2.webp'
 import w from '@/public/assets/w.jpeg'
+
 export default function AboutPage() {
   const stats = [
     { icon: Calendar, number: '15+', label: 'Years of Excellence' },
@@ -46,16 +47,19 @@ export default function AboutPage() {
                   </Link>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-               
               </div>
             </div>
             
-            {/* Image Placeholder */}
-            <Card className="bg-white/10 border-white/20">
-              <CardContent className="p-8">
-              
-                  <Image src={a1} height={1024} width={1024} alt = "image" />
-              </CardContent>
+            {/* Image Card - Full Coverage */}
+            <Card className="bg-white/10 border-white/20 overflow-hidden">
+              <div className="relative w-full h-80 md:h-96">
+                <Image 
+                  src={a1} 
+                  alt="Yarn collection" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </Card>
           </div>
         </div>
@@ -109,22 +113,45 @@ export default function AboutPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-purple-50/50 border-purple-200">
-            <CardContent className="p-6">
-              <div className="bg-purple-100 rounded-lg h-48 flex items-center justify-center">
-             <Image src={a2} height={1024} width={1024} alt = "image" />
+          <Card className="bg-purple-50/50 border-purple-200 overflow-hidden">
+            <CardContent className="p-0">
+              <div className="relative w-full h-64">
+                <Image 
+                  src={a2} 
+                  alt="Yarn warehouse" 
+                  fill
+                  className="object-cover"
+                />
               </div>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <Card className="bg-indigo-50/50 border-indigo-200 md:order-2">
-           <Image src={w} height={1024} width={1024} alt = "image" />
+          <Card className="bg-indigo-50/50 border-indigo-200 md:order-2 overflow-hidden">
+            <CardContent className="p-0">
+              <div className="relative w-full h-64">
+                <Image 
+                  src={w} 
+                  alt="Yarn products" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </CardContent>
           </Card>
 
           <Card className="border-indigo-200 md:order-1">
-             <Image src={a1} height={1024} width={1024} alt = "image" />
+            <CardHeader>
+              <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
+                <Image 
+                  src={a1} 
+                  alt="Quality yarn" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </CardHeader>
             <CardContent>
               <p className="text-gray-600 leading-relaxed mb-4">
                 Today, Patel Yarn Store Online is a one-stop destination for crochet yarn, knitting accessories, 
@@ -204,14 +231,11 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href={'/products'}>
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
                 Start Shopping
               </Button>
-              <Button size="lg" variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
-                <Link href="/">
-                  Contact Us
-                </Link>
-              </Button>
+             </Link>
             </div>
           </CardContent>
         </Card>
