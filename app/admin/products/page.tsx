@@ -4,7 +4,7 @@ import { Table, TableCaption, TableHead, TableHeader, TableRow } from "@/compone
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { DataTable } from "../components/DataTable";
-import { columns, products } from "../components/column";
+import { columns } from "../components/column";
 import { ProductsTable } from "../_actions/products";
 
 

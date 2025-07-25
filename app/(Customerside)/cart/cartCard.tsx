@@ -20,9 +20,12 @@ export default function CartCard({ prop }: { prop: CartItem }) {
 
   // Handle incrementing the quantity
   const handleIncrement = () => {
-    const newQuantity = quantity + 1;
-    setQuantity(newQuantity);
-    SetItemQuantity(prop.item.id, newQuantity);
+    // Optional: Add a guard, although the disabled button is the primary UX
+    if (quantity < prop.item.stock) {
+      const newQuantity = quantity + 1;
+      setQuantity(newQuantity);
+      SetItemQuantity(prop.item.id, newQuantity);
+    }
   };
 
   // Handle decrementing the quantity
@@ -93,10 +96,10 @@ export default function CartCard({ prop }: { prop: CartItem }) {
           {/* Price Display */}
           <div className="text-left">
             <p className="text-xs text-gray-500">
-              ₹{prop.item.price.toFixed(2)} × {quantity}
+              ₹{prop.item.discountedPrice.toFixed(2)} × {quantity}
             </p>
             <p className="text-base font-semibold text-gray-900">
-              ₹{(prop.item.price * quantity).toLocaleString()}
+              ₹{(prop.item.discountedPrice * quantity).toLocaleString()}
             </p>
           </div>
 
@@ -105,7 +108,7 @@ export default function CartCard({ prop }: { prop: CartItem }) {
             <button
               onClick={handleDecrement}
               className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={quantity <= 0}
+              disabled={quantity <= 1} // Disabled when quantity is 1
               aria-label="Decrease quantity"
             >
               <Minus className="h-3 w-3 text-gray-600" />
@@ -117,8 +120,9 @@ export default function CartCard({ prop }: { prop: CartItem }) {
 
             <button
               onClick={handleIncrement}
-              className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
+              className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
               aria-label="Increase quantity"
+              disabled={quantity >= prop.item.stock} // Disable if quantity meets or exceeds stock
             >
               <Plus className="h-3 w-3 text-gray-600" />
             </button>
@@ -159,7 +163,7 @@ export default function CartCard({ prop }: { prop: CartItem }) {
           <button
             onClick={handleDecrement}
             className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={quantity <= 0}
+            disabled={quantity <= 1} // Disabled when quantity is 1
             aria-label="Decrease quantity"
           >
             <Minus className="h-4 w-4 text-gray-600" />
@@ -171,8 +175,9 @@ export default function CartCard({ prop }: { prop: CartItem }) {
 
           <button
             onClick={handleIncrement}
-            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
             aria-label="Increase quantity"
+            disabled={quantity >= prop.item.stock} // Disable if quantity meets or exceeds stock
           >
             <Plus className="h-4 w-4 text-gray-600" />
           </button>
@@ -181,10 +186,10 @@ export default function CartCard({ prop }: { prop: CartItem }) {
         {/* Price Display */}
         <div className="text-right min-w-[100px]">
           <p className="text-sm text-gray-500">
-            ₹{prop.item.price.toFixed(2)} × {quantity}
+            ₹{prop.item.discountedPrice.toFixed(2)} × {quantity}
           </p>
           <p className="text-lg font-semibold text-gray-900">
-            ₹{(prop.item.price * quantity).toLocaleString()}
+            ₹{(prop.item.discountedPrice * quantity).toLocaleString()}
           </p>
         </div>
 

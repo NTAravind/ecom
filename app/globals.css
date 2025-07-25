@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+@tailwind utilities;
 
 :root {
   --background: oklch(0.9777 0.0041 301.4256);
@@ -147,3 +147,5 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
+

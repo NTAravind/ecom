@@ -174,4 +174,30 @@ export const columns: ColumnDef<OrderWithUser>[] = [
       return true;
     },
   },
+  {
+  accessorKey: "delivered",
+  header: ({ column }) => (
+    <Button
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      Delivery Status
+      <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+  ),
+  cell: ({ row }) => (
+    <div className="flex items-center gap-2">
+      <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+        row.original.delivered 
+          ? 'bg-green-100 text-green-800' 
+          : 'bg-orange-100 text-orange-800'
+      }`}>
+        {row.original.delivered ? "Delivered" : "Not Delivered"}
+      </div>
+    </div>
+  ),
+  filterFn: (row, id, value) => {
+    return value === "" || row.getValue(id) === value;
+  },
+},
 ];

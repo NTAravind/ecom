@@ -10,7 +10,6 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
-
 import {
   Table,
   TableBody,
@@ -57,30 +56,37 @@ export function DataTable<Tdata, TValue>({
     },
   })
 
-  // Get unique values for filter dropdowns
-  const uniqueBrands = Array.from(new Set(data.map((item: any) => item.brand))).filter(Boolean)
-  const uniqueColors = Array.from(new Set(data.map((item: any) => item.color))).filter(Boolean)
+  // Get unique values for filter dropdowns - updated for new schema
+  const uniqueBrands = Array.from(
+    new Set(data.map((item: any) => item.brand?.name).filter(Boolean))
+  )
+  const uniqueColors = Array.from(
+    new Set(data.map((item: any) => item.color).filter(Boolean))
+  )
+  const uniqueCategories = Array.from(
+    new Set(data.map((item: any) => item.category).filter(Boolean))
+  )
 
   return (
     <div className="w-full space-y-4">
       {/* Filters */}
-      <div className="flex items-center gap-4 flex-wrap">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
         <Input
           placeholder="Filter by product name..."
           value={(table.getColumn("pname")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("pname")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="w-full"
         />
-        
+
         <Select
-          value={(table.getColumn("brand")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("brand-name")?.getFilterValue() as string) ?? ""}
           onValueChange={(value) =>
-            table.getColumn("brand")?.setFilterValue(value === "all" ? "" : value)
+            table.getColumn("brand-name")?.setFilterValue(value === "all" ? "" : value)
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by brand" />
           </SelectTrigger>
           <SelectContent>
@@ -94,12 +100,31 @@ export function DataTable<Tdata, TValue>({
         </Select>
 
         <Select
+          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
+          onValueChange={(value) =>
+            table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filter by category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {uniqueCategories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
           value={(table.getColumn("color")?.getFilterValue() as string) ?? ""}
           onValueChange={(value) =>
             table.getColumn("color")?.setFilterValue(value === "all" ? "" : value)
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by color" />
           </SelectTrigger>
           <SelectContent>
@@ -118,24 +143,123 @@ export function DataTable<Tdata, TValue>({
           </SelectContent>
         </Select>
 
+        <Select
+          value={(table.getColumn("Shown")?.getFilterValue() as string) ?? ""}
+          onValueChange={(value) =>
+            table.getColumn("Shown")?.setFilterValue(value === "all" ? "" : value === "true")
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filter by visibility" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Products</SelectItem>
+            <SelectItem value="true">Shown Only</SelectItem>
+            <SelectItem value="false">Hidden Only</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={(table.getColumn("isYarn")?.getFilterValue() as string) ?? ""}
+          onValueChange={(value) =>
+            table.getColumn("isYarn")?.setFilterValue(value === "all" ? "" : value === "true")
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filter by type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="true">Yarn Only</SelectItem>
+            <SelectItem value="false">Non-Yarn Only</SelectItem>
+          </SelectContent>
+        </Select>
+
         {/* Clear filters button */}
         <Button
           variant="outline"
           onClick={() => table.resetColumnFilters()}
-          className="h-8"
+          className="w-full"
         >
           Clear Filters
         </Button>
       </div>
 
+      {/* Stock and Price Range Filters */}
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Min stock"
+            type="number"
+            value={(table.getColumn("stock")?.getFilterValue() as [number, number])?.[0] ?? ""}
+            onChange={(event) => {
+              const value = event.target.value
+              const currentFilter = table.getColumn("stock")?.getFilterValue() as [number, number] | undefined
+              table.getColumn("stock")?.setFilterValue([
+                value ? Number(value) : undefined,
+                currentFilter?.[1]
+              ])
+            }}
+            className="w-24"
+          />
+          <span className="text-sm text-gray-500">to</span>
+          <Input
+            placeholder="Max stock"
+            type="number"
+            value={(table.getColumn("stock")?.getFilterValue() as [number, number])?.[1] ?? ""}
+            onChange={(event) => {
+              const value = event.target.value
+              const currentFilter = table.getColumn("stock")?.getFilterValue() as [number, number] | undefined
+              table.getColumn("stock")?.setFilterValue([
+                currentFilter?.[0],
+                value ? Number(value) : undefined
+              ])
+            }}
+            className="w-24"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Min price"
+            type="number"
+            value={(table.getColumn("discountedPrice")?.getFilterValue() as [number, number])?.[0] ?? ""}
+            onChange={(event) => {
+              const value = event.target.value
+              const currentFilter = table.getColumn("discountedPrice")?.getFilterValue() as [number, number] | undefined
+              table.getColumn("discountedPrice")?.setFilterValue([
+                value ? Number(value) : undefined,
+                currentFilter?.[1]
+              ])
+            }}
+            className="w-24"
+          />
+          <span className="text-sm text-gray-500">to</span>
+          <Input
+            placeholder="Max price"
+            type="number"
+            value={(table.getColumn("discountedPrice")?.getFilterValue() as [number, number])?.[1] ?? ""}
+            onChange={(event) => {
+              const value = event.target.value
+              const currentFilter = table.getColumn("discountedPrice")?.getFilterValue() as [number, number] | undefined
+              table.getColumn("discountedPrice")?.setFilterValue([
+                currentFilter?.[0],
+                value ? Number(value) : undefined
+              ])
+            }}
+            className="w-24"
+          />
+        </div>
+      </div>
+
       {/* Table */}
-      <div className="rounded-md border">
-        <Table className="w-fit table-fixed">
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="w-full min-w-max">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="px-4 py-3 text-left whitespace-nowrap">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -153,9 +277,10 @@ export function DataTable<Tdata, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-gray-50"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-4 py-3 whitespace-nowrap">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -187,6 +312,12 @@ export function DataTable<Tdata, TValue>({
           >
             Previous
           </Button>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </span>
+          </div>
           <Button
             variant="outline"
             size="sm"

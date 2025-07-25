@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.10.1
- * Query Engine version: 9b628578b3b7cae625e8c927178f15a170e74a9c
+ * Prisma Client JS version: 6.12.0
+ * Query Engine version: 8047c96bbd92db98a2abc7c9323ce77c02c89dbc
  */
 Prisma.prismaVersion = {
-  client: "6.10.1",
-  engine: "9b628578b3b7cae625e8c927178f15a170e74a9c"
+  client: "6.12.0",
+  engine: "8047c96bbd92db98a2abc7c9323ce77c02c89dbc"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -120,11 +120,21 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.BrandScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  discountRate: 'discountRate',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   pname: 'pname',
-  brand: 'brand',
-  price: 'price',
+  brandId: 'brandId',
+  originalPrice: 'originalPrice',
+  discountedPrice: 'discountedPrice',
   Shown: 'Shown',
   irul: 'irul',
   iurl1: 'iurl1',
@@ -135,6 +145,26 @@ exports.Prisma.ProductScalarFieldEnum = {
   stock: 'stock',
   color: 'color',
   isYarn: 'isYarn'
+};
+
+exports.Prisma.YarnAccessoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  brandId: 'brandId',
+  originalPrice: 'originalPrice',
+  discountedPrice: 'discountedPrice',
+  isActive: 'isActive',
+  imageUrl: 'imageUrl',
+  imageUrl1: 'imageUrl1',
+  description: 'description',
+  category: 'category',
+  subcategory: 'subcategory',
+  stock: 'stock',
+  dimensions: 'dimensions',
+  material: 'material',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -152,13 +182,15 @@ exports.Prisma.OrderScalarFieldEnum = {
   userId: 'userId',
   paymentid: 'paymentid',
   paid: 'paid',
-  complete: 'complete'
+  complete: 'complete',
+  delivered: 'delivered'
 };
 
 exports.Prisma.OrderItemScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
   productId: 'productId',
+  yarnAccessoryId: 'yarnAccessoryId',
   quantity: 'quantity'
 };
 
@@ -172,9 +204,16 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
 
 exports.Prisma.ModelName = {
+  Brand: 'Brand',
   Product: 'Product',
+  YarnAccessory: 'YarnAccessory',
   User: 'User',
   Order: 'Order',
   OrderItem: 'OrderItem'

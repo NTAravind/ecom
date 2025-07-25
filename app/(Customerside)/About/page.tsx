@@ -5,7 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Package, Users, Heart, Star, ArrowRight, Truck, Calendar, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
-
+import a1 from '@/public/assets/a1.webp'
+import Image from 'next/image';
+import a2 from '@/public/assets/a2.webp'
+import w from '@/public/assets/w.jpeg'
 export default function AboutPage() {
   const stats = [
     { icon: Calendar, number: '15+', label: 'Years of Excellence' },
@@ -43,21 +46,15 @@ export default function AboutPage() {
                   </Link>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600">
-                  Our Story
-                </Button>
+               
               </div>
             </div>
             
             {/* Image Placeholder */}
             <Card className="bg-white/10 border-white/20">
               <CardContent className="p-8">
-                <div className="bg-white/10 rounded-lg h-64 flex items-center justify-center">
-                  <div className="text-center text-white/70">
-                    <Package className="h-16 w-16 mx-auto mb-2" />
-                    <p>Yarn Collection Image</p>
-                  </div>
-                </div>
+              
+                  <Image src={a1} height={1024} width={1024} alt = "image" />
               </CardContent>
             </Card>
           </div>
@@ -115,10 +112,7 @@ export default function AboutPage() {
           <Card className="bg-purple-50/50 border-purple-200">
             <CardContent className="p-6">
               <div className="bg-purple-100 rounded-lg h-48 flex items-center justify-center">
-                <div className="text-center text-purple-600">
-                  <Truck className="h-12 w-12 mx-auto mb-2" />
-                  <p className="text-sm">Warehouse Image</p>
-                </div>
+             <Image src={a2} height={1024} width={1024} alt = "image" />
               </div>
             </CardContent>
           </Card>
@@ -126,25 +120,11 @@ export default function AboutPage() {
 
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="bg-indigo-50/50 border-indigo-200 md:order-2">
-            <CardContent className="p-6">
-              <div className="bg-indigo-100 rounded-lg h-48 flex items-center justify-center">
-                <div className="text-center text-indigo-600">
-                  <Users className="h-12 w-12 mx-auto mb-2" />
-                  <p className="text-sm">Online Store Image</p>
-                </div>
-              </div>
-            </CardContent>
+           <Image src={w} height={1024} width={1024} alt = "image" />
           </Card>
 
           <Card className="border-indigo-200 md:order-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 w-10 h-10 rounded-full flex items-center justify-center">
-                  <Truck className="h-5 w-5 text-white" />
-                </div>
-                Now Online: Buy Yarn, Build Dreams
-              </CardTitle>
-            </CardHeader>
+             <Image src={a1} height={1024} width={1024} alt = "image" />
             <CardContent>
               <p className="text-gray-600 leading-relaxed mb-4">
                 Today, Patel Yarn Store Online is a one-stop destination for crochet yarn, knitting accessories, 

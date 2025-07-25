@@ -1,9 +1,11 @@
 import Header from "@/app/components/Header";
 import { ProductForm } from "../_components/ProductForm";
+import prisma from "@/lib/prisma";
 
-export default function NewProductPage() {
+export default  async function NewProductPage() {
+  const Brands = await prisma.brand.findMany({})
   return (<><div className="mx-10">
     <Header>Add New Product</Header>
-    <ProductForm /></div>
+    <ProductForm product={null} brands={Brands} /></div>
   </>)
 }

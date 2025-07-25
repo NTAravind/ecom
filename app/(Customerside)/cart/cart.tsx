@@ -11,11 +11,27 @@ import { Loader2 } from "lucide-react"
 export default function Cart() {
   const router = useRouter()
   const { cartItems, ClearBasket, getTotalPrice, getBasketCount } = ProductCart()
-  const [loaded, setLoaded] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
+  // Ensure client-side hydration is complete
   useEffect(() => {
-    setLoaded(true) 
-  }, []) // Add empty dependency array
+    setIsClient(true)
+    // Add a small delay to ensure store is fully hydrated
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 100)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Force re-render when cart items change
+  useEffect(() => {
+    if (isClient) {
+      console.log('Cart items updated:', cartItems)
+      console.log('Cart count:', getBasketCount())
+    }
+  }, [cartItems, getBasketCount, isClient])
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
@@ -25,10 +41,10 @@ export default function Cart() {
     router.push("/checkout") 
   }
 
-  // Loading state
-  if (!loaded) {
+  // Show loading during hydration
+  if (!isClient || isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[200px]">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     ) 
@@ -42,8 +58,9 @@ export default function Cart() {
           <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
           <p className="text-gray-600">Add some items to get started!</p>
         </div>
+        
         <Button
-          onClick={() => router.push("/products")} // Assuming you have a products page
+          onClick={() => router.push("/products")}
           variant="outline"
           className="w-full sm:w-auto h-12 px-6"
         >
@@ -58,8 +75,11 @@ export default function Cart() {
     <div className="container mx-auto px-4 py-6 max-w-4xl scroll-smooth">
       {/* Cart Items */}
       <div className="space-y-4 mb-6">
-        {cartItems.map((item) => (
-          <CartCard prop={item}  key={item.item.id} />
+        {cartItems.map((item, index) => (
+          <CartCard 
+            prop={item} 
+            key={`${item.item.id}-${index}-${item.qty}`} // More unique key
+          />
         ))}
       </div>
 

@@ -26,13 +26,11 @@ export interface ProductCarouselProps {
 
 const DRAG_BUFFER = 50;
 const VELOCITY_THRESHOLD = 500;
-const GAP = 16;
-// Fix: Use 'as const' to ensure literal type instead of string
 const SPRING_OPTIONS = { type: "spring" as const, stiffness: 300, damping: 30 };
 
 export default function ProductCarousel({
   images,
-  baseWidth = 500,
+  baseWidth = 800,
   autoplay = false,
   autoplayDelay = 3000,
   pauseOnHover = true,
@@ -41,9 +39,7 @@ export default function ProductCarousel({
   showDots = true,
   className = "",
 }: ProductCarouselProps): JSX.Element {
-  const containerPadding = 16;
-  const itemWidth = baseWidth - containerPadding * 2;
-  const trackItemOffset = itemWidth + GAP;
+  const itemWidth = baseWidth;
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -70,6 +66,22 @@ export default function ProductCarousel({
     }
   }, [images.length]);
 
+  // Prevent right-click context menu and drag events
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
+  const handleSelectStart = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
   // Hover handling
   useEffect(() => {
     if (pauseOnHover && containerRef.current) {
@@ -87,7 +99,7 @@ export default function ProductCarousel({
     }
   }, [pauseOnHover]);
 
-  // Autoplay functionality - Fixed: Added goToNext to dependency array
+  // Autoplay functionality
   useEffect(() => {
     if (autoplay && images.length > 1 && (!pauseOnHover || !isHovered) && !isDragging) {
       autoplayTimerRef.current = setInterval(goToNext, autoplayDelay);
@@ -124,12 +136,12 @@ export default function ProductCarousel({
     }
   }, [goToNext, goToPrevious]);
 
-  // Drag handling
-  const handleDragStart = () => {
+  // Drag handling for carousel navigation
+  const handleCarouselDragStart = () => {
     setIsDragging(true);
   };
 
-  const handleDragEnd = (
+  const handleCarouselDragEnd = (
     _: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ): void => {
@@ -153,18 +165,48 @@ export default function ProductCarousel({
   if (images.length <= 1) {
     return (
       <div 
-        className={`relative border rounded-lg shadow-md overflow-hidden ${className}`}
+        className={`relative border shadow-md overflow-hidden bg-gray-50 ${className}`}
         style={{ width: `${baseWidth}px`, height: `${baseWidth}px` }}
+        onContextMenu={handleContextMenu}
       >
-        <Image
-          src={images[0]?.url || "/placeholder.png"}
-          alt={images[0]?.alt || "Product Image"}
-          fill
-          className="object-contain p-4"
-          unoptimized
-          priority
-          style={{ objectFit: 'contain' }}
-        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative flex items-center justify-center w-full h-full">
+            <Image
+              src={images[0]?.url || "/placeholder.png"}
+              alt={images[0]?.alt || "Product Image"}
+              width={900}
+              height={900}
+              className="object-contain select-none"
+              unoptimized
+              priority
+              draggable={false}
+              onDragStart={handleDragStart}
+              style={{ 
+                objectFit: 'contain',
+                userSelect: 'none',
+                pointerEvents: 'none',
+                maxWidth: `${itemWidth - 32}px`,
+                maxHeight: `${itemWidth - 32}px`,
+                width: 'auto',
+                height: 'auto'
+              }}
+            />
+          </div>
+        </div>
+        
+        {/* Watermark */}
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div 
+            className="text-white/20 font-bold text-4xl transform rotate-12 select-none"
+            style={{
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              userSelect: 'none',
+              pointerEvents: 'none'
+            }}
+          >
+            Patel Yarn House
+          </div>
+        </div>
       </div>
     );
   }
@@ -172,7 +214,7 @@ export default function ProductCarousel({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+      className={`relative overflow-hidden border rounded-none shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 ${className}`}
       style={{
         width: `${baseWidth}px`,
         height: `${baseWidth}px`,
@@ -180,6 +222,7 @@ export default function ProductCarousel({
       tabIndex={0}
       role="region"
       aria-label="Product image carousel"
+      onContextMenu={handleContextMenu}
     >
       {/* Main carousel container */}
       <motion.div
@@ -187,8 +230,8 @@ export default function ProductCarousel({
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
+        onDragStart={handleCarouselDragStart}
+        onDragEnd={handleCarouselDragEnd}
         style={{ x }}
         animate={{ 
           x: -currentIndex * itemWidth,
@@ -198,22 +241,52 @@ export default function ProductCarousel({
         {images.map((image, index) => (
           <motion.div
             key={`${image.id}-${index}`}
-            className="relative shrink-0 bg-white"
+            className="relative shrink-0 flex items-center justify-center"
             style={{
-              width: itemWidth,
+              width: `${itemWidth}px`,
               height: "100%",
+              minWidth: `${itemWidth}px`,
             }}
           >
-            <Image
-              src={image.url}
-              alt={image.alt}
-              fill
-              className="object-contain select-none p-4"
-              unoptimized
-              priority={index === 0}
-              draggable={false}
-              style={{ objectFit: 'contain' }}
-            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative flex items-center justify-center">
+                <Image
+                  src={image.url}
+                  alt={image.alt}
+                  width={1000}
+                  height={1000}
+                  className="object-contain select-none"
+                  unoptimized
+                  priority={index === currentIndex}
+                  loading={index === currentIndex ? "eager" : "lazy"}
+                  draggable={false}
+                  onDragStart={handleDragStart}
+                  style={{ 
+                    objectFit: 'contain',
+                    userSelect: 'none',
+                    pointerEvents: 'none',
+                    maxWidth: `${itemWidth - 32}px`,
+                    maxHeight: `${itemWidth - 32}px`,
+                    width: 'auto',
+                    height: 'auto'
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Watermark for each image */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+              <div 
+                className="text-white/20 font-bold text-4xl transform rotate-12 select-none"
+                style={{
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                  userSelect: 'none',
+                  pointerEvents: 'none'
+                }}
+              >
+                Patel Yarn House
+              </div>
+            </div>
           </motion.div>
         ))}
       </motion.div>
@@ -223,7 +296,7 @@ export default function ProductCarousel({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
             aria-label="Previous image"
             type="button"
           >
@@ -232,7 +305,7 @@ export default function ProductCarousel({
           
           <button
             onClick={goToNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
             aria-label="Next image"
             type="button"
           >
@@ -243,8 +316,8 @@ export default function ProductCarousel({
 
       {/* Dots Indicator */}
       {showDots && images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-          <div className="flex space-x-2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-2">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="flex space-x-2 bg-black/30 backdrop-blur-sm rounded-full px-3 py-2">
             {images.map((_, index) => (
               <button
                 key={index}
@@ -263,7 +336,7 @@ export default function ProductCarousel({
       )}
 
       {/* Image counter */}
-      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-sm px-2 py-1 rounded-md">
+      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-sm px-2 py-1 rounded-md select-none z-10">
         {currentIndex + 1} / {images.length}
       </div>
 
@@ -274,7 +347,7 @@ export default function ProductCarousel({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/10 pointer-events-none"
+            className="absolute inset-0 bg-black/5 pointer-events-none z-5"
           />
         )}
       </AnimatePresence>
@@ -292,7 +365,7 @@ const productImages: ProductImage[] = [
 
 <ProductCarousel
   images={productImages}
-  baseWidth={600}
+  baseWidth={864}
   autoplay={true}
   autoplayDelay={4000}
   pauseOnHover={true}

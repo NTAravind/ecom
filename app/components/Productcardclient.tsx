@@ -88,7 +88,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
   // Default add to cart button
   return (
     <Button
-      className="w-full font-semibold text-white rounded-lg h-11 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 transition-colors"
+      className="w-full font-semibold text-white rounded-sm h-11 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 transition-colors"
       size="lg"
       onClick={handleAddToCart}
       disabled={isAdding}

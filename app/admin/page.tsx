@@ -32,7 +32,7 @@ async function getSalesData() {
   ])
 
   return {
-    totalRevenue: totalSales._sum.pricepaid || 0, // Already in rupees
+    totalRevenue: totalSales._sum.pricepaid || 0,
     totalOrders: totalSales._count,
     paidOrders,
     pendingOrders,
@@ -119,12 +119,14 @@ async function getTopProducts() {
     topProductsRaw.map(async (item) => {
       const product = await prisma.product.findUnique({
         where: { id: item.productId },
-        select: { pname: true, brand: true, price: true }
+        include: {
+          brand: true
+        }
       })
       return {
         name: product?.pname || 'Unknown',
-        brand: product?.brand || 'Unknown',
-        price: product?.price || 0, // Already in rupees
+        brand: product?.brand?.name || 'Unknown',
+        price: product?.discountedPrice || 0,
         totalSold: item._sum.quantity || 0
       }
     })
@@ -139,12 +141,8 @@ async function getLowStockProducts() {
       Shown: true,
       stock: { lte: 10 }
     },
-    select: {
-      pname: true,
-      brand: true,
-      stock: true,
-      category: true,
-      price: true
+    include: {
+      brand: true
     },
     orderBy: { stock: 'asc' },
     take: 8
@@ -169,7 +167,7 @@ export default async function AdminDashboard() {
   ])
 
   return (
-    <div className="min-h-screen h-screen   w-full">
+    <div className="min-h-screen h-screen w-full">
       <div className="h-full flex flex-col p-2 sm:p-3 lg:p-4 xl:p-6 gap-3 lg:gap-4 xl:gap-6 w-full">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
@@ -415,10 +413,10 @@ export default async function AdminDashboard() {
                         <div className="space-y-1">
                           <p className="font-semibold">{product.pname}</p>
                           <p className="text-slate-600 dark:text-slate-400 text-sm">
-                            {product.brand} • {product.category}
+                            {product.brand.name} • {product.category}
                           </p>
                           <p className="text-xs text-slate-500">
-                            {fcurrency(product.price)}
+                            {fcurrency(product.discountedPrice)}
                           </p>
                         </div>
                         <Badge variant="destructive" className="text-xs px-2 py-1">

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -14,33 +8,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Product {
-  id       String  @id @default(uuid())
-  pname    String
-  brand    String
-  price    Int
-  Shown    Boolean @default(true)
-  irul     String
-  iurl1    String
-  desc     String
-  y_weight String
-  weight_g Int
-  category String
-  stock    Int
-  color    String
-  isYarn   Boolean @default(true)
+// New Brand model for centralized brand management with discounts
+model Brand {
+  id              String          @id @default(uuid())
+  name            String          @unique
+  discountRate    Float           @default(0) // Percentage discount (0-100)
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  products        Product[]
+  yarnAccessories YarnAccessory[]
+}
 
-  orderItems OrderItem[]
+model Product {
+  id              String      @id @default(uuid())
+  pname           String
+  brandId         String // Foreign key to Brand
+  brand           Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  originalPrice   Int // Renamed from 'price' to be more explicit
+  discountedPrice Int // Calculated discounted price
+  Shown           Boolean     @default(true)
+  irul            String
+  iurl1           String
+  desc            String
+  y_weight        String
+  weight_g        Int
+  category        String
+  stock           Int
+  color           String
+  isYarn          Boolean     @default(true)
+  orderItems      OrderItem[]
+}
+
+// New model for other yarn-related products (accessories, tools, etc.)
+model YarnAccessory {
+  id              String      @id @default(uuid())
+  name            String
+  brandId         String // Foreign key to Brand
+  brand           Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  originalPrice   Int
+  discountedPrice Int // Calculated discounted price
+  isActive        Boolean     @default(true)
+  imageUrl        String
+  imageUrl1       String? // Optional second image
+  description     String
+  category        String // e.g., "needles", "hooks", "accessories", "tools"
+  subcategory     String? // e.g., "circular needles", "stitch markers"
+  stock           Int
+  dimensions      String? // For needles: size, for accessories: dimensions
+  material        String? // Wood, metal, plastic, etc.
+  color           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItems      OrderItem[]
 }
 
 model User {
-  id      String @id @default(uuid())
+  id      String  @id @default(uuid())
   name    String
-  phone   String @unique
+  phone   String  @unique
   Address String
   pincode String
-
-  orders Order[]
+  orders  Order[]
 }
 
 model Order {
@@ -53,14 +82,19 @@ model Order {
   paid       Boolean     @default(false)
   orderItems OrderItem[]
   complete   Boolean     @default(false)
+  delivered  Boolean     @default(false) // New delivery boolean field
 }
 
 model OrderItem {
-  id        String @id @default(uuid())
-  orderId   String
-  productId String
-  quantity  Int
+  id              String  @id @default(uuid())
+  orderId         String
+  productId       String? // Made optional since we now have two product types
+  yarnAccessoryId String? // New field for yarn accessories
+  quantity        Int
 
-  order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  order         Order          @relation(fields: [orderId], references: [id])
+  product       Product?       @relation(fields: [productId], references: [id])
+  yarnAccessory YarnAccessory? @relation(fields: [yarnAccessoryId], references: [id])
+
+  // Ensure that either productId or yarnAccessoryId is set, but not both
 }

@@ -75,6 +75,12 @@ export default async function OrderDetailPage({
                 <span className="font-mono text-sm">{order.paymentid}</span>
               </div>
             )}
+             <div className="flex justify-between items-center">
+    <span className="text-sm font-medium">Mode of Delivery</span>
+    <span className="font-semibold">
+      {order.delivered ? "Delivery" : "In-store Checkout"}
+    </span>
+  </div>
           </CardContent>
         </Card>
 
@@ -104,6 +110,7 @@ export default async function OrderDetailPage({
                 </div>
               </div>
             </div>
+            
           </CardContent>
         </Card>
       </div>
@@ -141,7 +148,7 @@ export default async function OrderDetailPage({
                   {/* Product Details */}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-lg">{item.product.pname}</h3>
-                    <p className="text-sm text-muted-foreground">Brand: {item.product.brand}</p>
+                    <p className="text-sm text-muted-foreground">Brand: {item.product.Brand}</p>
                     <p className="text-sm text-muted-foreground">Category: {item.product.category}</p>
                     <div className="flex items-center gap-4 mt-2">
                       <div className="flex items-center gap-2">
@@ -157,7 +164,7 @@ export default async function OrderDetailPage({
 
                   {/* Quantity and Price */}
                   <div className="text-right">
-                    <div className="text-lg font-semibold">₹{item.product.price.toLocaleString()}</div>
+                    <div className="text-lg font-semibold">₹{item.product.discountedPrice.toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">Qty: {item.quantity}</div>
                     <div className="text-sm font-medium">
                       Total: ₹{(item.product.price * item.quantity).toLocaleString()}

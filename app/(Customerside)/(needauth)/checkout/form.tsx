@@ -5,6 +5,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import DeliveryModeSelector from "./del";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { createUser, updateUser } from "./action";
 import { use, useEffect, useState } from "react";
 import { useActionState } from "react";
@@ -12,7 +23,7 @@ import ProductCart from "@/app/store/store";
 import { fcurrency } from "@/utils/utils";
 import { Minus, Plus, ServerIcon, X } from "lucide-react";
 import { Edit3, User as UserIcon, MapPin, Phone, ShoppingBag, CreditCard, Truck } from "lucide-react";
-import { set } from "zod/v4";
+import { number, set } from "zod/v4";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 
@@ -27,10 +38,26 @@ interface UserData {
   phone: string;
 }
 
+interface AlertState {
+  isOpen: boolean;
+  title: string;
+  description: string;
+  type: 'success' | 'error' | 'warning';
+  onConfirm?: () => void;
+  showCancel?: boolean;
+}
+
 export default function CheckoutContent({ user }: { user: UserData }) {
   const [isEditing, setIsEditing] = useState(!user.us);
   const [currentUser, setCurrentUser] = useState<UserData>(user);
+  const [deliveryMode, setDeliveryMode] = useState(true);
   const [isclient, setIsClient] = useState(false);
+  const [alertState, setAlertState] = useState<AlertState>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'success'
+  });
   
   useEffect(() => {
     setIsClient(true);
@@ -44,6 +71,17 @@ export default function CheckoutContent({ user }: { user: UserData }) {
   if (isclient === false) {
     return (<></>);
   }
+
+  const showAlert = (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel: boolean = false) => {
+    setAlertState({
+      isOpen: true,
+      title,
+      description,
+      type,
+      onConfirm,
+      showCancel
+    });
+  };
 
   const handleFormSuccess = (updatedUser: User) => {
     setCurrentUser({ ...currentUser, us: updatedUser });
@@ -65,7 +103,9 @@ export default function CheckoutContent({ user }: { user: UserData }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <UserIcon className="h-5 w-5 text-blue-600" />
-                    <CardTitle className="text-xl">Delivery Information</CardTitle>
+                    <CardTitle className="text-xl">
+                      {deliveryMode ? "Delivery Information" : "Pickup Information"}
+                    </CardTitle>
                   </div>
                   {currentUser.us && (
                     <Button 
@@ -81,27 +121,57 @@ export default function CheckoutContent({ user }: { user: UserData }) {
                 </div>
               </CardHeader>
               <CardContent className="p-6">
+                <DeliveryModeSelector value={deliveryMode} onChange={setDeliveryMode} />
+
+                {/* Hidden input to submit deliveryMode */}
+                <input type="hidden" name="delivered" value={deliveryMode.toString()} />
+                
                 {isEditing ? (
-                  <CheckoutForm user={currentUser} onSuccess={handleFormSuccess} />
+                  <CheckoutForm user={currentUser} onSuccess={handleFormSuccess} delivery={deliveryMode}/>
                 ) : (
-                  <UserDetails user={currentUser} />
+                  <UserDetails user={currentUser} deliveryMode={deliveryMode} />
                 )}
               </CardContent>
             </Card>
           </div>
 
           <div className="lg:col-span-1">
-            <OrderSummary user={currentUser} />
+            <OrderSummary user={currentUser} showAlert={showAlert} del={deliveryMode}/>
           </div>
         </div>
       </div>
+
+      <AlertDialog open={alertState.isOpen} onOpenChange={(open) => setAlertState(prev => ({ ...prev, isOpen: open }))}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alertState.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {alertState.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {alertState.showCancel && (
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            )}
+            <AlertDialogAction onClick={() => {
+              if (alertState.onConfirm) {
+                alertState.onConfirm();
+              }
+              setAlertState(prev => ({ ...prev, isOpen: false }));
+            }}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
-function CheckoutForm({ user, onSuccess }: { 
+function CheckoutForm({ user, onSuccess, delivery }: { 
   user: UserData; 
   onSuccess: (updatedUser: User) => void; 
+  delivery: boolean;
 }) {
   const [state, action, isPending] = useActionState(
     user.us ? updateUser : createUser,
@@ -135,31 +205,33 @@ function CheckoutForm({ user, onSuccess }: {
 
         <div>
           <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-            Delivery Address
+            {delivery ? "Delivery Address" : "Address (Optional)"}
           </Label>
           <Input
             type="text"
             id="address"
             name="address"
             defaultValue={user.us?.Address || ""}
-            className="mt-1"
-            placeholder="Enter your complete address"
-            required
+            className={`mt-1 ${!delivery ? 'bg-gray-50' : ''}`}
+            placeholder={delivery ? "Enter your complete address" : "Address for reference"}
+            required={delivery}
+            disabled={!delivery}
           />
         </div>
 
         <div>
           <Label htmlFor="pincode" className="text-sm font-medium text-gray-700">
-            Pincode
+            {delivery ? "Pincode" : "Pincode (Optional)"}
           </Label>
           <Input 
             type="number" 
             name="pincode" 
             id="pincode"
             defaultValue={user.us?.pincode || ""}
-            className="mt-1"
-            placeholder="Enter your pincode"
-            required
+            className={`mt-1 ${!delivery ? 'bg-gray-50' : ''}`}
+            placeholder={delivery ? "Enter your pincode" : "Pincode for reference"}
+            required={delivery}
+            disabled={!delivery}
           />
         </div>
 
@@ -177,7 +249,7 @@ function CheckoutForm({ user, onSuccess }: {
           />
         </div>
       </div>
-
+ 
       <div className="flex items-center gap-3">
         <Button 
           type="submit" 
@@ -211,7 +283,7 @@ function CheckoutForm({ user, onSuccess }: {
   );
 }
 
-function UserDetails({ user }: { user: UserData }) {
+function UserDetails({ user, deliveryMode }: { user: UserData; deliveryMode: boolean }) {
   if (!user.us) return null;
 
   return (
@@ -224,14 +296,16 @@ function UserDetails({ user }: { user: UserData }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-        <MapPin className="h-5 w-5 text-gray-600" />
-        <div>
-          <p className="text-sm text-gray-600">Delivery Address</p>
-          <p className="font-medium text-gray-900">{user.us.Address}</p>
-          <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
+      {deliveryMode && (
+        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+          <MapPin className="h-5 w-5 text-gray-600" />
+          <div>
+            <p className="text-sm text-gray-600">Delivery Address</p>
+            <p className="font-medium text-gray-900">{user.us.Address}</p>
+            <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
         <Phone className="h-5 w-5 text-gray-600" />
@@ -240,11 +314,21 @@ function UserDetails({ user }: { user: UserData }) {
           <p className="font-medium text-gray-900">{user.phone}</p>
         </div>
       </div>
+
+      {!deliveryMode && (
+        <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <ShoppingBag className="h-5 w-5 text-blue-600" />
+          <div>
+            <p className="text-sm font-medium text-blue-800">Pickup Mode Selected</p>
+            <p className="text-xs text-blue-700">You can collect your order from our store</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function OrderSummary({user}:{user: UserData}) {
+function OrderSummary({user, showAlert, del}:{user: UserData, showAlert: (title: string, description: string, type?: 'success' | 'error' | 'warning', onConfirm?: () => void, showCancel?: boolean) => void, del: boolean}) {
   const { cartItems, SetItemQuantity, RemoveProduct, getBasketCount, getTotalPrice} = ProductCart();
   const itemCount = getBasketCount();
   
@@ -280,8 +364,8 @@ function OrderSummary({user}:{user: UserData}) {
             </div>
 
             <div className="border-t border-gray-100 pt-4">
-              <PriceBreakdown user={user} />
-              <PurchaseButton user={user} />
+              <PriceBreakdown user={user} deliveryMode={del} />
+              <PurchaseButton user={user} showAlert={showAlert} del={del} />
             </div>
           </>
         )}
@@ -290,34 +374,24 @@ function OrderSummary({user}:{user: UserData}) {
   );
 }
 
-function PriceBreakdown({user}:{user: UserData}) {
+function PriceBreakdown({user, deliveryMode}:{user: UserData; deliveryMode: boolean}) {
   const {getTotalPrice} = ProductCart();
-  const [deliveryCharge, setDeliveryCharge] = useState<number | null>(null);
+  const [deliveryCharge, setDeliveryCharge] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
+  // Calculate delivery charge based on delivery mode
   useEffect(() => {
-    if (!user.us?.pincode) {
-      setDeliveryCharge(null);
-      return;
+    if (!deliveryMode) {
+      setDeliveryCharge(0);
+    } else {
+      // Set delivery charge for delivery mode
+      setDeliveryCharge(60);
     }
-
-    const fetchDeliveryCharge = async () => {
-      try {
-         const charge = 60;
-        setDeliveryCharge(charge);
-      } catch (err) {
-        console.log(err);
-        setDeliveryCharge(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDeliveryCharge();
-  }, [user.us?.pincode]);
+  }, [deliveryMode, user.us?.pincode]);
 
   const subtotal = getTotalPrice();
-  const total = deliveryCharge !== null ? subtotal + deliveryCharge : subtotal;
+  const total = subtotal + deliveryCharge + 4;
+  const isBulkOrder = subtotal > 10000;
 
   return (
     <div className="space-y-3 mb-6">
@@ -329,15 +403,14 @@ function PriceBreakdown({user}:{user: UserData}) {
       <div className="flex justify-between text-sm">
         <span className="text-gray-600 flex items-center gap-1">
           <Truck className="h-4 w-4" />
-          Delivery Charge:
+          {deliveryMode ? "Delivery Charge:" : "Pickup (No Delivery):"}
         </span>
         <span className="font-medium">
-          {loading ? "Calculating..." : 
-           deliveryCharge !== null ? fcurrency(deliveryCharge) : 
-           user.us?.pincode ? "Error" : "Enter pincode"}
+          {deliveryMode ? fcurrency(deliveryCharge) : "Free"}
         </span>
       </div>
-        <div className="flex justify-between text-sm">
+
+      <div className="flex justify-between text-sm">
         <span className="text-gray-600 flex items-center gap-1">
          <ServerIcon className="h-4 w-4" />
           Taxes: 
@@ -347,10 +420,25 @@ function PriceBreakdown({user}:{user: UserData}) {
         </span>
       </div>
       
+      {/* Bulk Order Warning */}
+      {isBulkOrder && (
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 my-3">
+          <div className="flex items-center gap-2">
+            <ShoppingBag className="h-4 w-4 text-orange-600" />
+            <span className="text-sm font-medium text-orange-800">Bulk Order Detected</span>
+          </div>
+          <p className="text-xs text-orange-700 mt-1">
+            Orders above ₹10,000 require bulk order processing
+          </p>
+        </div>
+      )}
+      
       <div className="border-t border-gray-200 pt-3">
         <div className="flex justify-between text-lg font-semibold">
           <span>Total:</span>
-          <span className="text-blue-600">{fcurrency(total)}</span>
+          <span className={`${isBulkOrder ? 'text-orange-600' : 'text-blue-600'}`}>
+            {fcurrency(total)}
+          </span>
         </div>
       </div>
     </div>
@@ -425,10 +513,10 @@ function ProductCard({ item, onUpdateQuantity, onRemove }: {
           
           <div className="text-right">
             <p className="text-xs text-gray-500">
-              {fcurrency(item.item.price)} × {item.qty}
+              {fcurrency(item.item.discountedPrice)} × {item.qty}
             </p>
             <p className="text-sm font-semibold text-gray-900">
-              {fcurrency(item.item.price * item.qty)}
+              {fcurrency(item.item.discountedPrice * item.qty)}
             </p>
           </div>
         </div>
@@ -437,50 +525,79 @@ function ProductCard({ item, onUpdateQuantity, onRemove }: {
   );
 }
 
-function PurchaseButton({ user}: { user: UserData }) {
+function PurchaseButton({ user, showAlert, del}: { user: UserData, showAlert: (title: string, description: string, type?: 'success' | 'error' | 'warning', onConfirm?: () => void, showCancel?: boolean) => void, del: boolean}) {
   const [isPending, setPending] = useState(false);
-  const {cartItems, getTotalPrice, RemoveProduct,ClearBasket} = ProductCart();
+  const {cartItems, getTotalPrice, RemoveProduct, ClearBasket} = ProductCart();
   const [deliveryCharge, setDeliveryCharge] = useState<number>(0);
   const router = useRouter();
 
-  // Get delivery charge when pincode changes
+  // Get delivery charge when delivery mode or pincode changes
   useEffect(() => {
-    if (!user.us?.pincode) return;
-    
-    const fetchDeliveryCharge = async () => {
-      try {
-        const response = await fetch('/api/price', {
-          method: "POST",
-          body: JSON.stringify({pincode: user.us?.pincode}),
-          headers: {"Content-Type": "application/json"}
-        });
-        const {charge} = await response.json();
-        setDeliveryCharge(charge);
-      } catch (err) {
-        console.log(err);
+    if (!del) {
+      setDeliveryCharge(0);
+    } else {
+      if (!user.us?.pincode) {
         setDeliveryCharge(0);
+        return;
       }
-    };
-
-    fetchDeliveryCharge();
-  }, [user.us?.pincode]);
+      const flatcharge = 60;
+      setDeliveryCharge(flatcharge);
+    }
+  }, [del, user.us?.pincode]);
 
   const handlePayment = async () => {
-    if (!user.us?.pincode) {
-      alert("Please add your delivery address with pincode first");
+    // For delivery mode, check if address is provided
+    if (del && !user.us?.pincode) {
+      showAlert(
+        "Missing Delivery Address",
+        "Please add your delivery address with pincode first to proceed with the order.",
+        "warning"
+      );
+      return;
+    }
+
+    // For pickup mode, ensure user details are provided
+    if (!del && !user.us?.name) {
+      showAlert(
+        "Missing User Details",
+        "Please add your contact details to proceed with the pickup order.",
+        "warning"
+      );
+      return;
+    }
+
+    const subtotal = getTotalPrice();
+    const totalAmount = subtotal + deliveryCharge + 4;
+
+    // Check if order value exceeds ₹10,000
+    if (subtotal > 10000) {
+      showAlert(
+        "Bulk Order Required",
+        `Your order value is ${fcurrency(subtotal)}, which exceeds our ₹10,000 online checkout limit. Please contact us directly to place this bulk order. You can reach us via WhatsApp, phone, or visit our store for personalized assistance with large orders.`,
+        "warning",
+        undefined,
+        false
+      );
       return;
     }
 
     setPending(true);
 
     try {
+      // Transform cartItems to only include productId and qty
+      const orderItems = cartItems.map(cartItem => ({
+        productId: cartItem.item.id,
+        qty: cartItem.qty
+      }));
+
       // Create order with correct data
       const res = await fetch("/api/razorpay/order", {
         method: "POST", 
         body: JSON.stringify({
           phoneno: user.phone, 
-          cartitems: cartItems,
-          pincode: user.us.pincode
+          cartitems: orderItems,
+          pincode: user.us?.pincode || null,
+          delivery: del,
         }),  
         headers: {"Content-Type": "application/json"}
       });
@@ -491,14 +608,12 @@ function PurchaseButton({ user}: { user: UserData }) {
         throw new Error("Failed to create order");
       }
 
-      const totalAmount = getTotalPrice() + deliveryCharge;
-
       const options = {
         key: 'rzp_test_LRGtLburKVlajK',
         amount: totalAmount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Roshan Fancy Store",
-        description: "Order Payment",
+        description: del ? "Delivery Order Payment" : "Pickup Order Payment",
         handler: async function(response: any) {
           try {
             const verify = await fetch("/api/razorpay/verify", {
@@ -510,7 +625,7 @@ function PurchaseButton({ user}: { user: UserData }) {
             const verifyData = await verify.json();
             console.log(verifyData)
             if (verifyData.success) {
-              // Process delivery after successful payment
+              // Process delivery/pickup after successful payment
               const deliveryRes = await fetch('/api/delivery/', {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -520,22 +635,41 @@ function PurchaseButton({ user}: { user: UserData }) {
                   pricepaid: totalAmount,
                   paymentid: response.razorpay_payment_id,
                   order_id : data.orderId,
+                  delivery: del
                 })
               });
               
               if (deliveryRes.ok) {
-                alert("Order placed successfully!");
-                ClearBasket();
-                router.push('/orders/');
+                showAlert(
+                  "Order Placed Successfully!",
+                  `Your ${del ? 'delivery' : 'pickup'} order has been placed successfully and you will receive a confirmation shortly.`,
+                  "success",
+                  () => {
+                    ClearBasket();
+                    router.push('/orders/');
+                  }
+                );
               } else {
-                alert("Payment successful but order processing failed. Please contact support.");
+                showAlert(
+                  "Order Processing Issue",
+                  "Payment successful but order processing failed. Please contact support for assistance.",
+                  "error"
+                );
               }
             } else {
-              alert("Payment verification failed");
+              showAlert(
+                "Payment Verification Failed",
+                "Payment verification failed. Please try again or contact support if the issue persists.",
+                "error"
+              );
             }
           } catch (verifyErr) {
             console.error("Verification error:", verifyErr);
-            alert("Payment verification failed. Please contact support if money was deducted.");
+            showAlert(
+              "Payment Verification Error",
+              "Payment verification failed. Please contact support if money was deducted from your account.",
+              "error"
+            );
           }
         },
         order_id: data.orderId,
@@ -550,14 +684,40 @@ function PurchaseButton({ user}: { user: UserData }) {
       
     } catch (err) {
       console.error("Payment failed:", err);
-      alert("Failed to initiate payment. Please try again.");
+      showAlert(
+        "Payment Failed",
+        "Failed to initiate payment. Please check your internet connection and try again.",
+        "error"
+      );
     } finally {
       setPending(false);
     }
   };
 
-  const totalAmount = getTotalPrice() + deliveryCharge;
-  const canProceed = user.us?.pincode && cartItems.length > 0;
+  const subtotal = getTotalPrice();
+  const totalAmount = subtotal + deliveryCharge + 4;
+  
+  // Determine if user can proceed based on delivery mode
+  const canProceed = del 
+    ? (user.us?.pincode && cartItems.length > 0) // For delivery: need pincode
+    : (user.us?.name && cartItems.length > 0);   // For pickup: need name
+    
+  const isBulkOrder = subtotal > 10000;
+
+  const getButtonText = () => {
+    if (isPending) return "Processing Payment...";
+    if (isBulkOrder) return "Contact for Bulk Order";
+    if (del && !user.us?.pincode) return "Add Delivery Address";
+    if (!del && !user.us?.name) return "Add Contact Details";
+    return `Pay ${fcurrency(totalAmount)}`;
+  };
+
+  const getHelpText = () => {
+    if (del && !user.us?.pincode) return "Please add your delivery address to proceed";
+    if (!del && !user.us?.name) return "Please add your contact details to proceed";
+    if (isBulkOrder) return "Order value above ₹10,000 requires bulk order processing";
+    return null;
+  };
 
   return (
     <>
@@ -565,17 +725,21 @@ function PurchaseButton({ user}: { user: UserData }) {
       <div className="flex flex-col items-center justify-center">
         <Button 
           onClick={handlePayment} 
-          disabled={isPending || !canProceed}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
+          disabled={isPending || !canProceed || isBulkOrder}
+          className={`w-full font-semibold py-3 ${
+            isBulkOrder 
+              ? "bg-orange-600 hover:bg-orange-700 text-white" 
+              : "bg-blue-600 hover:bg-blue-700 text-white"
+          }`}
         >
-          {isPending ? "Processing Payment..." : 
-           !user.us?.pincode ? "Add Delivery Address" :
-           `Pay ${fcurrency(totalAmount)}`}
+          {getButtonText()}
         </Button>
         
-        {!user.us?.pincode && (
-          <p className="text-sm text-gray-500 mt-2">
-            Please add your delivery address to proceed
+        {getHelpText() && (
+          <p className={`text-sm mt-2 text-center ${
+            isBulkOrder ? 'text-orange-600' : 'text-gray-500'
+          }`}>
+            {getHelpText()}
           </p>
         )}
       </div>

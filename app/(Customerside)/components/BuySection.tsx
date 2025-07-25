@@ -182,7 +182,7 @@ export default function BuySection({ prop }: { prop: Product }) {
               <div className="flex-1 text-center sm:text-left">
                 <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 sm:px-4 sm:py-2">
                   <p className="text-sm font-medium text-green-800">
-                    Total: <span className="text-lg sm:text-xl font-bold text-green-600">₹{(prop.price * quantity).toLocaleString()}</span>
+                    Total: <span className="text-lg sm:text-xl font-bold text-green-600">₹{(prop.discountedPrice * quantity).toLocaleString()}</span>
                   </p>
                 </div>
               </div>

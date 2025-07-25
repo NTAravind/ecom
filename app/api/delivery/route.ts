@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
    
-    const { userId, cartItems, pricepaid ,paymentid,order_id} = body;
+    const { userId, cartItems, pricepaid ,paymentid,order_id,delivery} = body;
   
     if (!userId || !Array.isArray(cartItems) || cartItems.length === 0) {
       return NextResponse.json({ success: false, error: "Invalid request" }, { status: 400 });
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       data: {
         id: order_id,
         pricepaid,
+        delivered:delivery,
         user: { connect: { id: userId } },
         orderItems: {
           create: cartItems.map((cartItem: any) => ({

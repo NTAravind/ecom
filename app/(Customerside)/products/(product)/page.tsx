@@ -21,13 +21,16 @@ interface SearchParams {
   page?: string;
 }
 
-const PRODUCTS_PER_PAGE = 1;
+const PRODUCTS_PER_PAGE = 20;
 
 // Cache popular products separately
 const GetPopularProducts = unstable_cache(
   async () => {
     const data = await prisma.product.findMany({
       where: { Shown: true },
+      include: {
+        brand: true, // Include brand details
+      },
       orderBy: {
         orderItems: {
           _count: "desc"
@@ -67,7 +70,10 @@ const GetPaginatedProducts = unstable_cache(
     }
     
     if (brands && brands.length > 0) {
-      whereClause.brand = { in: brands };
+      whereClause.brand = { 
+        name: { in: brands },
+        isActive: true // Only include active brands
+      };
     }
     
     if (search && search.trim()) {
@@ -76,7 +82,11 @@ const GetPaginatedProducts = unstable_cache(
         { pname: { contains: searchTerm, mode: 'insensitive' } },
         { category: { contains: searchTerm, mode: 'insensitive' } },
         { y_weight: { contains: searchTerm, mode: 'insensitive' } },
-        { brand: { contains: searchTerm, mode: 'insensitive' } },
+        { brand: { 
+            name: { contains: searchTerm, mode: 'insensitive' },
+            isActive: true 
+          } 
+        },
         { desc: { contains: searchTerm, mode: 'insensitive' } }
       ];
     }
@@ -89,6 +99,9 @@ const GetPaginatedProducts = unstable_cache(
     // Get paginated products
     const products = await prisma.product.findMany({
       where: whereClause,
+      include: {
+        brand: true, // Include brand details with discount rates
+      },
       skip: (page - 1) * PRODUCTS_PER_PAGE,
       take: PRODUCTS_PER_PAGE,
       orderBy: { id: 'desc' } // Consistent ordering
@@ -112,7 +125,12 @@ const GetPaginatedProducts = unstable_cache(
 const GetAllProductsCount = unstable_cache(
   async () => {
     const count = await prisma.product.count({
-      where: { Shown: true }
+      where: { 
+        Shown: true,
+        brand: {
+          isActive: true // Only count products from active brands
+        }
+      }
     });
     return count;
   },
@@ -127,7 +145,15 @@ const GetAllProductsCount = unstable_cache(
 const GetAllProductsPaginated = unstable_cache(
   async (page: number) => {
     const products = await prisma.product.findMany({
-      where: { Shown: true },
+      where: { 
+        Shown: true,
+        brand: {
+          isActive: true // Only include products from active brands
+        }
+      },
+      include: {
+        brand: true, // Include brand details
+      },
       skip: (page - 1) * PRODUCTS_PER_PAGE,
       take: PRODUCTS_PER_PAGE,
       orderBy: { id: 'desc' }
@@ -138,6 +164,27 @@ const GetAllProductsPaginated = unstable_cache(
   {
     revalidate: 3600, // 1 hour
     tags: ['products', 'all-products-paginated']
+  }
+);
+
+// Get active brands for filtering
+const GetActiveBrands = unstable_cache(
+  async () => {
+    const brands = await prisma.brand.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        discountRate: true
+      },
+      orderBy: { name: 'asc' }
+    });
+    return brands;
+  },
+  ['active-brands'],
+  {
+    revalidate: 86400, // 24 hours
+    tags: ['brands', 'active-brands']
   }
 );
 
@@ -194,9 +241,9 @@ function ProductsPagination({
   };
 
   return (
-    <div className="mt-8 flex justify-center">
+    <div className="mt-12 flex justify-center">
       <Pagination>
-        <PaginationContent>
+        <PaginationContent className="bg-white/80 backdrop-blur-sm rounded-none border-black border-2 p-2 shadow-sm px-2">
           {currentPage > 1 && (
             <PaginationItem>
               <PaginationPrevious href={createPageUrl(currentPage - 1)} />
@@ -232,13 +279,13 @@ function ProductsPagination({
 function FilteredProductsLoading() {
   return (
     <div>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
-          <div key={i} className="bg-gray-200 animate-pulse rounded-lg aspect-[3/4] w-full"></div>
+          <div key={i} className="bg-white/60 animate-pulse rounded-2xl aspect-[3/4] w-full backdrop-blur-sm border border-gray-200/30"></div>
         ))}
       </div>
-      <div className="mt-8 flex justify-center">
-        <div className="h-10 w-64 bg-gray-200 animate-pulse rounded"></div>
+      <div className="mt-12 flex justify-center">
+        <div className="h-12 w-80 bg-white/60 animate-pulse rounded-xl backdrop-blur-sm"></div>
       </div>
     </div>
   );
@@ -324,14 +371,14 @@ async function FilteredProducts({
 
   return (
     <div>
-      <div className="mb-4 sm:mb-6 px-1">
-        <h1 className="text-xl sm:text-2xl font-bold mb-2">{getResultsTitle()}</h1>
-        <p className="text-sm sm:text-base text-gray-600">{getResultsDescription()}</p>
+      <div className="mb-8 px-1">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-gray-800">{getResultsTitle()}</h1>
+        <p className="text-sm sm:text-base text-gray-600/80">{getResultsDescription()}</p>
       </div>
 
       {products.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4 sm:gap-6">
             {products.map((product) => (
               <ProductCard product={product} key={product.id} />
             ))}
@@ -344,19 +391,21 @@ async function FilteredProducts({
           />
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-[40vh] text-center py-8 sm:py-12 px-4">
-          <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No products found</h3>
-          <p className="text-sm sm:text-base text-gray-500 mb-4">
-            {search && search.trim() 
-              ? `No products match your search for "${search}"`
-              : "Try adjusting your filters to see more results."
-            }
-          </p>
-          {search && search.trim() && (
-            <p className="text-xs sm:text-sm text-gray-400">
-              Try searching with different keywords or check your spelling.
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center py-12 px-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 shadow-sm max-w-md">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">No products found</h3>
+            <p className="text-gray-600 mb-4">
+              {search && search.trim() 
+                ? `No products match your search for "${search}"`
+                : "Try adjusting your filters to see more results."
+              }
             </p>
-          )}
+            {search && search.trim() && (
+              <p className="text-sm text-gray-500">
+                Try searching with different keywords or check your spelling.
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -387,25 +436,28 @@ export default async function ProductsPage({
     (search && search.trim().length > 0);
 
   return (
-    <div className="min-h-screen bg-purple-200">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100 ">
       {/* Main Container */}
-      <div className="max-w-7xl mx-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4">
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
-          {/* Sidebar */}
-          <aside className="lg:w-64 flex-shrink-0">
+      <div className="px-1 sm:px-0 lg:px-2 py-6 lg:mx-1">
+        <div className="flex flex-col lg:flex-row gap-0">
+          {/* Sidebar - FIXED: Removed the wrapper div that was causing z-index issues */}
+          <aside className="lg:w-64 xl:w-72 flex-shrink-0">
             <CollapsibleSideMenu />
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0">
-            <div className="space-y-4 sm:space-y-6">
+          <main className="flex-1 ">
+            <div className="space-y-8">
               {/* Popular Products Section - Only show when no filters and page 1 */}
               {!hasFilters && validPage === 1 && (
-                <section className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
-                  <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 px-1">
-                    Most Popular Products
-                  </h1>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                <section>
+                  <div className="mb-6 ">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 px-1">
+                      Most Popular Products
+                    </h1>
+                    <div className="h-1 w-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 ml-1"></div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4 sm:gap-6">
                     {popularProductData.map((product) => (
                       <ProductCard product={product} key={product.id} />
                     ))}
@@ -414,7 +466,7 @@ export default async function ProductsPage({
               )}
 
               {/* Paginated Products Section */}
-              <section className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+              <section >
                 <Suspense fallback={<FilteredProductsLoading />}>
                   <FilteredProducts 
                     categories={categories} 

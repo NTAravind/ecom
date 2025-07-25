@@ -1,141 +1,171 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { Facebook, Instagram, Mail, MapPin, Phone, Twitter } from 'lucide-react';
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white overflow-hidden">
-      {/* Amethyst Haze Background Effects */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-500"></div>
+    <footer className="bg-gradient-to-br from-purple-900 to-purple-800 text-white relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-purple-700 rounded-full mix-blend-multiply opacity-20 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-800 rounded-full mix-blend-multiply opacity-20 blur-3xl"></div>
       </div>
       
-      {/* Sparkle Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full animate-ping"></div>
-        <div className="absolute top-20 right-20 w-1 h-1 bg-purple-300 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-1.5 h-1.5 bg-pink-300 rounded-full animate-ping delay-700"></div>
-        <div className="absolute bottom-10 right-10 w-1 h-1 bg-white rounded-full animate-pulse delay-300"></div>
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          
-          {/* Brand Section */}
-          <div className="space-y-4">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-200 to-pink-200 bg-clip-text text-transparent">
-              Patel Yarn House
-            </h3>
-            <p className="text-purple-200 leading-relaxed">
-              Your trusted destination for premium quality yarns and textile materials. 
-              Crafting dreams with every thread.
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="col-span-1 md:col-span-1">
+            <div className="text-xl font-medium mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+              Patel<span className="font-light">Yarn House</span>
+            </div>
+            <p className="text-purple-200 text-sm">
+              Your trusted destination for premium quality yarns and textile materials. Crafting dreams with every thread.
             </p>
-            <div className="flex space-x-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
-                <Heart className="w-4 h-4 text-white" />
+            <div className="mt-6 flex space-x-4">
+              <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200 hover:scale-110 transform">
+                <Instagram size={20} className="hover:drop-shadow-glow" />
+              </Link>
+              <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200 hover:scale-110 transform">
+                <Facebook size={20} className="hover:drop-shadow-glow" />
+              </Link>
+              <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200 hover:scale-110 transform">
+                <Twitter size={20} className="hover:drop-shadow-glow" />
+              </Link>
+            </div>
+            
+            <div className="mt-6 space-y-3">
+              <div className="flex items-start space-x-3 text-sm text-purple-200">
+                <MapPin size={16} className="mt-1 flex-shrink-0" />
+                <div>
+                  <p>#24, Patel Yarn House</p>
+                  <p>Raja Market, Avenue Road</p>
+                  <p>Bangalore - 560001</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-purple-200">
+                <Phone size={16} />
+                <span>+91 87920 66951</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-purple-200">
+                <Mail size={16} />
+                <span>info@patelyarnhouse.com</span>
               </div>
             </div>
           </div>
-
-          {/* Contact Information */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-purple-200">Contact Us</h4>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3 group">
-                <div className="w-8 h-8 bg-purple-700/50 rounded-lg flex items-center justify-center group-hover:bg-purple-600/50 transition-colors">
-                  <Phone className="w-4 h-4 text-purple-200" />
-                </div>
-                <Link href="tel:8792066951" className="text-purple-100 hover:text-white transition-colors">
-                  +91 87920 66951
+          
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Quick Links</h3>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <Link href="/" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Home
                 </Link>
-              </div>
-              <div className="flex items-center space-x-3 group">
-                <div className="w-8 h-8 bg-purple-700/50 rounded-lg flex items-center justify-center group-hover:bg-purple-600/50 transition-colors">
-                  <Mail className="w-4 h-4 text-purple-200" />
-                </div>
-                <Link href="mailto:info@patelyarnhouse.com" className="text-purple-100 hover:text-white transition-colors">
-                  info@patelyarnhouse.com
+              </li>
+              <li>
+                <Link href="/about" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  About
                 </Link>
-              </div>
-              <div className="flex items-center space-x-3 group">
-                <div className="w-8 h-8 bg-purple-700/50 rounded-lg flex items-center justify-center group-hover:bg-purple-600/50 transition-colors">
-                  <MapPin className="w-4 h-4 text-purple-200" />
-                </div>
-                <div className="text-purple-100">
-                  <div>#24, Patel Yarn House</div>
-                  <div>Raja Market, Avenue Road</div>
-                  <div>Bangalore - 560001</div>
-                </div>
-              </div>
-            </div>
+              </li>
+              <li>
+                <Link href="/products" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Contact
+                </Link>
+              </li>
+            </ul>
           </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-purple-200">Quick Links</h4>
-            <div className="space-y-2">
-              <Link href="/about" className="block text-purple-100 hover:text-white hover:pl-2 transition-all duration-300">
-                About Us
-              </Link>
-              <Link href="/products" className="block text-purple-100 hover:text-white hover:pl-2 transition-all duration-300">
-                Our Products
-              </Link>
-              <Link href="/services" className="block text-purple-100 hover:text-white hover:pl-2 transition-all duration-300">
-                Services
-              </Link>
-              <Link href="/contact" className="block text-purple-100 hover:text-white hover:pl-2 transition-all duration-300">
-                Contact
-              </Link>
-            </div>
+          
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Help</h3>
+            <ul className="mt-4 space-y-2">
+              <li>
+                {/* External link, so we keep the <a> tag */}
+                <a href="https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" target="_blank" rel="noopener noreferrer" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Refund Policy
+                </a>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                 {/* External link, so we keep the <a> tag */}
+                <a href="https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" target="_blank" rel="noopener noreferrer" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Delivery Policy
+                </a>
+              </li>
+              <li>
+                <Link href="#" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Track Order
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Customer Service</h3>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <Link href="#" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Shipping Information
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Size Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-purple-200 hover:text-white text-sm flex items-center group">
+                  <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 group-hover:w-2 transition-all duration-200"></span>
+                  Wholesale Inquiries
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
-
-        {/* Divider */}
-        <div className="border-t border-purple-600/30 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            
-            {/* Copyright */}
-            <div className="text-purple-200 text-sm">
-              © 2025 Patel Yarn House. All rights reserved.
-            </div>
-
-            {/* Policy Links */}
-            <div className="flex space-x-6 text-sm">
-                 <Link
-                href="https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" 
-                className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
-              >
-          Refund  Policy
-              </Link>
-              <Link
-                href="/privacy-policy" 
-                className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="" 
-                className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
-              >
-                Terms & Conditions
-              </Link>
-              <Link
-                href="/https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" 
-                className="text-purple-200 hover:text-white transition-colors hover:underline decoration-purple-400"
-              >
-               Delivery policy
-              </Link>
-            </div>
+        
+        <div className="mt-12 pt-8 border-t border-purple-800/50 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-purple-300">© 2025 Patel Yarn House. All rights reserved.</p>
+          <div className="mt-4 md:mt-0 flex space-x-6">
+            <Link href="/privacy-policy" className="text-xs text-purple-300 hover:text-white transition-colors duration-200">Privacy Policy</Link>
+            <Link href="#" className="text-xs text-purple-300 hover:text-white transition-colors duration-200">Terms of Service</Link>
+            {/* External link, so we keep the <a> tag */}
+            <a href="https://merchant.razorpay.com/policy/QhsSsCifwRHC1O/refund" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-300 hover:text-white transition-colors duration-200">Refund Policy</a>
           </div>
         </div>
       </div>
-
-      {/* Bottom Glow Effect */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent"></div>
     </footer>
   );
-};
-
-export default Footer;
+}

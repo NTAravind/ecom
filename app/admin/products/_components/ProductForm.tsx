@@ -4,14 +4,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { useActionState, useState, useRef } from "react"
+import { useActionState, useState, useRef, useEffect } from "react"
 import { addProduct, updateproduct } from "../../_actions/products"
-import { Product } from "@/app/generated/prisma"
+import { Product, Brand } from "@/app/generated/prisma"
 import Image from "next/image"
-import { Upload, X, Loader2 } from "lucide-react"
+import { Upload, X, Loader2, Info } from "lucide-react"
 
-export function ProductForm({ product }: { product?: Product | null }) {
-  const [price, setPrice] = useState<number | undefined>(product?.price)
+export function ProductForm({ 
+  product, 
+  brands 
+}: { 
+  product?: Product | null
+  brands: Brand[]
+}) {
+  const [originalPrice, setOriginalPrice] = useState<number | undefined>(product?.originalPrice)
+  const [selectedBrandId, setSelectedBrandId] = useState<string>(product?.brandId || "")
+  const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(product?.discountedPrice)
+  
   const [state, action, isPending] = useActionState(
     product == null ? addProduct : updateproduct.bind(null, product.id), 
     { message: " " }
@@ -22,6 +31,19 @@ export function ProductForm({ product }: { product?: Product | null }) {
   const [imageUrl2, setImageUrl2] = useState(product?.iurl1 || "")
   const [uploading1, setUploading1] = useState(false)
   const [uploading2, setUploading2] = useState(false)
+
+  // Get selected brand details
+  const selectedBrand = brands.find(brand => brand.id === selectedBrandId)
+  const discountRate = selectedBrand?.discountRate || 0
+
+  // Calculate discounted price when original price or brand changes
+  useEffect(() => {
+    if (originalPrice && selectedBrand) {
+      const discount = (originalPrice * discountRate) / 100
+      const calculated = originalPrice - discount
+      setDiscountedPrice(Math.round(calculated))
+    }
+  }, [originalPrice, discountRate, selectedBrand])
 
   const fcurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -98,6 +120,9 @@ export function ProductForm({ product }: { product?: Product | null }) {
     uploadToGitHub(file, imageNumber)
   }
 
+  // Filter active brands
+  const activeBrands = brands.filter(brand => brand.isActive)
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">
@@ -121,21 +146,35 @@ export function ProductForm({ product }: { product?: Product | null }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="brand">Brand</Label>
-               <Select name="brand" required defaultValue={product?.brand || ""}>
+              <Label htmlFor="brandId">Brand</Label>
+              <Select 
+                name="brandId" 
+                required 
+                value={selectedBrandId}
+                onValueChange={setSelectedBrandId}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Brand" />
                 </SelectTrigger>
                 <SelectContent>
-                 <SelectItem value="Gulmarg">Gulmarg</SelectItem>
-<SelectItem value="Oswal">Oswal</SelectItem>
-<SelectItem value="Ganga Delight">Ganga Delight</SelectItem>
-<SelectItem value="Ganga SuperStitch">Ganga SuperStitch</SelectItem>
-<SelectItem value="Ganga Desire">Ganga Desire</SelectItem>
-<SelectItem value="Patel Blanket yarn">Patel Blanket yarn</SelectItem>
-<SelectItem value="Patel Cotton">Patel Cotton</SelectItem>
+                  {activeBrands.map((brand) => (
+                    <SelectItem key={brand.id} value={brand.id}>
+                      {brand.name}
+                      {brand.discountRate > 0 && (
+                        <span className="ml-2 text-green-600 text-sm">
+                          ({brand.discountRate}% off)
+                        </span>
+                      )}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              {selectedBrand && selectedBrand.discountRate > 0 && (
+                <div className="text-sm text-green-600 flex items-center">
+                  <Info className="w-4 h-4 mr-1" />
+                  {selectedBrand.discountRate}% brand discount will be applied
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -371,25 +410,69 @@ export function ProductForm({ product }: { product?: Product | null }) {
           </div>
         </div>
 
-        {/* Price and Stock */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="price">Price (₹)</Label>
-            <Input
-              type="number"
-              id="price"
-              name="price"
-              required
-              min="1"
-              value={price ?? ""}
-              onChange={(e) => setPrice(Number(e.target.value) || 0)}
-              placeholder="e.g., 299"
-            />
-            <div className="text-sm text-muted-foreground font-medium">
-              {fcurrency(price || 0)}
+        {/* Pricing Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Pricing</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="originalPrice">Original Price (₹)</Label>
+              <Input
+                type="number"
+                id="originalPrice"
+                name="originalPrice"
+                required
+                min="1"
+                value={originalPrice ?? ""}
+                onChange={(e) => setOriginalPrice(Number(e.target.value) || 0)}
+                placeholder="e.g., 299"
+              />
+              <div className="text-sm text-muted-foreground">
+                {fcurrency(originalPrice || 0)}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="discountedPrice">Final Price (₹)</Label>
+              <Input
+                type="number"
+                id="discountedPrice"
+                name="discountedPrice"
+                required
+                min="1"
+                value={discountedPrice ?? ""}
+                onChange={(e) => setDiscountedPrice(Number(e.target.value) || 0)}
+                placeholder="Final selling price"
+              />
+              <div className="text-sm text-muted-foreground">
+                {fcurrency(discountedPrice || 0)}
+                {originalPrice && discountedPrice && originalPrice > discountedPrice && (
+                  <span className="text-green-600 ml-2">
+                    (Save {fcurrency(originalPrice - discountedPrice)})
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
+          {/* Pricing Info */}
+          {selectedBrand && discountRate > 0 && originalPrice && (
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="text-sm text-blue-800">
+                <strong>Pricing Breakdown:</strong>
+                <div className="mt-2 space-y-1">
+                  <div>Original Price: {fcurrency(originalPrice)}</div>
+                  <div>Brand Discount ({discountRate}%): -{fcurrency((originalPrice * discountRate) / 100)}</div>
+                  <div className="border-t pt-1 font-medium">
+                    Suggested Final Price: {fcurrency(originalPrice - (originalPrice * discountRate) / 100)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Stock and Visibility */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="stock">Stock Quantity</Label>
             <Input 
@@ -401,6 +484,19 @@ export function ProductForm({ product }: { product?: Product | null }) {
               defaultValue={product?.stock?.toString() || ""} 
               placeholder="e.g., 50"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="shown">Product Visibility</Label>
+            <Select name="shown" required defaultValue={product?.Shown?.toString() || "true"}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select visibility" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="true">Show on website</SelectItem>
+                <SelectItem value="false">Hide from website</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

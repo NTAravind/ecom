@@ -7,7 +7,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import { useState, useEffect, useCallback, useRef } from "react"
-import { Menu, X, Search, ChevronDown, ChevronLeft, ChevronRight, ShoppingBag, ArrowRight } from "lucide-react"
+import { Menu, X, Search, ChevronDown, ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, Package } from "lucide-react"
 import ProductCart from "../store/store";
 import CartSidebar from "../components/SideBar"
 import { ModernSearchSystem } from "./../(Customerside)/components/searchBar"
@@ -29,7 +29,7 @@ const shopCategories = [
     subcategories: [
       { name: "Ganga Delight Yarn", href: "/products?categories=cotton&brands=Ganga+Delight" },
       { name: "Ganga Summer Bloom", href: "/products?categories=cotton&brands=Ganga%20Summer%20Bloom" },
-      { name: "4 Ply Cotton", href: "/products?categories=cotton&brand=4ply" },
+      { name: "Ply Cotton", href: "/products?categories=cotton&brands=ply+Cotton" },
     ]
   },
   {
@@ -37,7 +37,7 @@ const shopCategories = [
     href: "/products?categories=polyster",
     subcategories: [
       { name: "Chenille/Velvet", href: "/products?categories=polyster&brands=Oswal&weights=super-bulky" },
-      { name: "Ganga Blanket Yarn", href: "/products?categories=polyster&brand=Ganga" },
+      { name: "Ganga Blanket Yarn", href: "/products?categories=polyster&brands=Ganga" },
       { name: "Super Stitch", href: "/products?&brands=Ganga%20SuperStitch" },
     ]
   },
@@ -51,6 +51,9 @@ const shopCategories = [
     href: "/products?brands=Ganga+SuperStitch",
     subcategories: []
   },
+  {name:"Plush",
+    href:"/products?categories=polyster&brands=Plush"
+  }
 ]
 
 export function NavBar() {
@@ -72,8 +75,36 @@ export function NavBar() {
 
   // Use useEffect to update qty when basket count changes
   useEffect(() => {
-    setQty(getBasketCount())
+    const updateQty = () => {
+      const count = getBasketCount()
+      setQty(count)
+    }
+    
+    updateQty()
     setIsClient(true)
+    
+    // Set up an interval to check for cart updates
+    const interval = setInterval(updateQty, 100)
+    
+    return () => clearInterval(interval)
+  }, [getBasketCount])
+
+  // Additional effect to listen for storage events or custom cart events
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      setQty(getBasketCount())
+    }
+
+    // Listen for custom cart update events
+    window.addEventListener('cartUpdated', handleCartUpdate)
+    
+    // Listen for storage changes (if cart uses localStorage)
+    window.addEventListener('storage', handleCartUpdate)
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+      window.removeEventListener('storage', handleCartUpdate)
+    }
   }, [getBasketCount])
 
   // Scroll effect
@@ -261,15 +292,10 @@ export function NavBar() {
             <Link href="/" className="flex-shrink-0">
               <Image src={logo} alt="Patel Yarn Logo" width={120} height={80} className="rounded-full" />
             </Link>
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Removed Home link */}
             <div className="flex">
               <NavigationMenu>
                 <NavigationMenuList className="flex items-center space-x-2">
-                  <NavigationMenuItem>
-                    <Link href="/" className={navLinkClass("/")}>
-                      Home
-                    </Link>
-                  </NavigationMenuItem>
                   {/* Desktop Shop Dropdown - Fixed positioning */}
                   <NavigationMenuItem>
                     <div className="relative group">
@@ -367,6 +393,11 @@ export function NavBar() {
                     </div>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
+                    <Link href="/orders" className={navLinkClass("/orders")}>
+                      Orders
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
                     <Link href="/About" className={navLinkClass("/About")}>
                       About
                     </Link>
@@ -407,12 +438,15 @@ export function NavBar() {
                 <ModernSearchSystem onSearch={handleSearch} isMobileIcon={true} />
               )}
               {/* Cart */}
-              <div className="flex items-center space-x-1">
+              <div className="relative flex items-center">
                 <CartSidebar />
-                {qty > 0 && (
-                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-white bg-purple-500 rounded-full">
-                    {qty}
+                {qty > 0 ? (
+                  <span className="absolute -top-2 -right-2 inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-white bg-purple-500 rounded-full shadow-sm">
+                    {qty > 99 ? '99+' : qty}
                   </span>
+                ) : (
+                  // Purple dot indicator when cart has items (fallback)
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full opacity-0"></span>
                 )}
               </div>
             </div>
@@ -429,12 +463,17 @@ export function NavBar() {
 
           {/* Right: Cart (desktop only) */}
           <div className="hidden lg:flex items-center space-x-2 ml-auto">
-            <CartSidebar />
-            {qty > 0 && (
-              <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-white bg-purple-500 rounded-full">
-                {qty}
-              </span>
-            )}
+            <div className="relative flex items-center">
+              <CartSidebar />
+              {qty > 0 ? (
+                <span className="absolute -top-2 -right-2 inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-white bg-purple-500 rounded-full shadow-sm">
+                  {qty > 99 ? '99+' : qty}
+                </span>
+              ) : (
+                // Purple dot indicator when cart has items (fallback)
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full opacity-0"></span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -448,46 +487,60 @@ export function NavBar() {
               <div className="relative min-h-full">
                 {/* Main Menu Panel */}
                 <div className={`absolute inset-0 transition-all duration-300 ease-in-out ${activeMobileSubmenu ? 'transform -translate-x-full opacity-0' : 'transform translate-x-0 opacity-100'} ${isTransitioning ? 'pointer-events-none' : ''}`}>
-                  <div className="p-4 space-y-2">
-                    {/* Navigation Links */}
-                    <div className="space-y-1 mb-6">
-                      <Link
-                        href="/"
-                        className="block px-4 py-4 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-lg text-lg"
-                        onClick={resetMobileMenu}
-                      >
-                        Home
-                      </Link>
+                  <div className="p-4">
+                    {/* Navigation Links - Fixed spacing and added separators */}
+                    <div className="space-y-0 mb-6">
                       <Link
                         href="/products"
-                        className="block px-4 py-4 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-lg text-lg"
+                        className="flex items-center px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors rounded-lg font-medium"
                         onClick={resetMobileMenu}
                       >
-                        Products
+                        <ShoppingBag className="w-5 h-5 mr-3 text-gray-400" />
+                        <span>Products</span>
                       </Link>
+                      
+                      <div className="h-px bg-gray-200 mx-4 my-2"></div>
+                      
+                      <Link
+                        href="/orders"
+                        className="flex items-center px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors rounded-lg font-medium"
+                        onClick={resetMobileMenu}
+                      >
+                        <Package className="w-5 h-5 mr-3 text-gray-400" />
+                        <span>Orders</span>
+                      </Link>
+                      
+                      <div className="h-px bg-gray-200 mx-4 my-2"></div>
+                      
                       <Link
                         href="/About"
-                        className="block px-4 py-4 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-lg text-lg"
+                        className="flex items-center px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors rounded-lg font-medium"
                         onClick={resetMobileMenu}
                       >
-                        About
+                        <span className="w-5 h-5 mr-3 flex items-center justify-center text-gray-400 font-bold text-sm">i</span>
+                        <span>About</span>
                       </Link>
                     </div>
+
+                    <div className="h-px bg-gray-300 mx-2 mb-4"></div>
 
                     {/* Shop Categories */}
                     <div>
                       <button
                         onClick={toggleShopDropdown}
-                        className={`flex items-center justify-between w-full px-4 py-4 text-gray-700 hover:bg-gray-50 active:bg-gray-100 rounded-lg font-medium transition-all duration-200 text-lg ${isShopOpen ? 'bg-purple-50 text-purple-600 border border-purple-200' : ''}`}
+                        className={`flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-purple-50 active:bg-purple-100 rounded-lg font-medium transition-all duration-200 ${isShopOpen ? 'bg-purple-50 text-purple-600 border border-purple-200' : ''}`}
                         aria-expanded={isShopOpen}
                       >
-                        <span>Shop</span>
+                        <div className="flex items-center">
+                          <ShoppingBag className="w-5 h-5 mr-3 text-gray-400" />
+                          <span>Shop Categories</span>
+                        </div>
                         <ChevronDown className={`w-5 h-5 transition-all duration-300 ${isShopOpen ? 'rotate-180 text-purple-600' : ''}`} />
                       </button>
 
                       {/* Shop Categories */}
-                      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isShopOpen ? 'max-h-screen opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
-                        <div className="ml-2 space-y-2 border-l-2 border-purple-200 bg-purple-25 rounded-r-lg p-3">
+                      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isShopOpen ? 'max-h-screen opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                        <div className="ml-2 space-y-1 border-l-2 border-purple-200 bg-purple-25 rounded-r-lg p-2">
                           {shopCategories.map((category, index) => (
                             <div
                               key={category.name}
@@ -497,11 +550,11 @@ export function NavBar() {
                               {category.subcategories && category.subcategories.length > 0 ? (
                                 <button
                                   onClick={() => handleMobileSubmenuOpen(category.name)}
-                                  className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:text-purple-600 font-medium transition-all duration-200 rounded-lg hover:bg-purple-50 active:bg-purple-100 group"
+                                  className="flex items-center justify-between w-full px-3 py-2 text-gray-700 hover:text-purple-600 font-medium transition-all duration-200 rounded-md hover:bg-purple-50 active:bg-purple-100 group"
                                 >
-                                  <span>{category.name}</span>
+                                  <span className="text-sm">{category.name}</span>
                                   <div className="flex items-center space-x-2">
-                                    <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full group-hover:text-purple-500 group-hover:bg-purple-100">
+                                    <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full group-hover:text-purple-500 group-hover:bg-purple-100">
                                       {category.subcategories.length}
                                     </span>
                                     <ArrowRight className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-all duration-200" />
@@ -510,23 +563,26 @@ export function NavBar() {
                               ) : (
                                 <Link
                                   href={category.href}
-                                  className="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-purple-600 font-medium transition-all duration-200 rounded-lg hover:bg-purple-50 active:bg-purple-100 group"
+                                  className="flex items-center justify-between px-3 py-2 text-gray-700 hover:text-purple-600 font-medium transition-all duration-200 rounded-md hover:bg-purple-50 active:bg-purple-100 group"
                                   onClick={resetMobileMenu}
                                 >
-                                  <span>{category.name}</span>
+                                  <span className="text-sm">{category.name}</span>
                                   <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-70 transition-all duration-200" />
                                 </Link>
                               )}
+                              {index < shopCategories.length - 1 && (
+                                <div className="h-px bg-purple-100 mx-2 my-1"></div>
+                              )}
                             </div>
                           ))}
-                          <div className={`border-t border-purple-200 mt-4 pt-4 transform transition-all duration-300 ${isShopOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`} style={{ transitionDelay: `${shopCategories.length * 30}ms` }}>
+                          <div className={`border-t border-purple-200 mt-3 pt-3 transform transition-all duration-300 ${isShopOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`} style={{ transitionDelay: `${shopCategories.length * 30}ms` }}>
                             <Link
                               href="/products"
-                              className="flex items-center justify-center space-x-2 bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 active:bg-purple-800 transition-all duration-200 font-medium shadow-sm"
+                              className="flex items-center justify-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 active:bg-purple-800 transition-all duration-200 font-medium shadow-sm"
                               onClick={resetMobileMenu}
                             >
-                              <ShoppingBag className="w-5 h-5" />
-                              <span>View All Products</span>
+                              <ShoppingBag className="w-4 h-4" />
+                              <span className="text-sm">View All Products</span>
                             </Link>
                           </div>
                         </div>
@@ -541,34 +597,38 @@ export function NavBar() {
                     const activeCategory = shopCategories.find(c => c.name === activeMobileSubmenu);
                     if (!activeCategory) return null;
                     return (
-                      <div className="p-4 space-y-2">
+                      <div className="p-4">
                         {/* Back Button */}
                         <button
                           onClick={handleMobileSubmenuBack}
-                          className="flex items-center space-x-3 px-4 py-4 text-gray-700 hover:text-purple-600 font-medium w-full rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 border-b border-gray-100 mb-4"
+                          className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:text-purple-600 font-medium w-full rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 border-b border-gray-100 mb-4"
                         >
-                          <ChevronLeft className="w-6 h-6" />
-                          <span className="text-lg">Back to Shop</span>
+                          <ChevronLeft className="w-5 h-5" />
+                          <span>Back to Shop</span>
                         </button>
 
                         {/* Category Header */}
-                        <div className="px-4 py-4 bg-purple-50 rounded-lg border border-purple-200 mb-4">
-                          <h4 className="font-bold text-purple-600 text-lg">{activeCategory.name}</h4>
+                        <div className="px-4 py-3 bg-purple-50 rounded-lg border border-purple-200 mb-4">
+                          <h4 className="font-bold text-purple-600">{activeCategory.name}</h4>
                           <p className="text-sm text-purple-500 mt-1">{activeCategory.subcategories?.length} subcategories available</p>
                         </div>
 
                         {/* Subcategories */}
-                        <div className="space-y-2">
+                        <div className="space-y-1">
                           {activeCategory.subcategories?.map((sub, index) => (
-                            <Link
-                              key={sub.name}
-                              href={sub.href}
-                              className="flex items-center justify-between px-4 py-4 text-gray-600 hover:text-purple-600 transition-all duration-200 rounded-lg hover:bg-purple-50 active:bg-purple-100 font-medium group border border-transparent hover:border-purple-200"
-                              onClick={resetMobileMenu}
-                            >
-                              <span>{sub.name}</span>
-                              <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-70 transition-all duration-200" />
-                            </Link>
+                            <div key={sub.name}>
+                              <Link
+                                href={sub.href}
+                                className="flex items-center justify-between px-4 py-3 text-gray-600 hover:text-purple-600 transition-all duration-200 rounded-lg hover:bg-purple-50 active:bg-purple-100 font-medium group border border-transparent hover:border-purple-200"
+                                onClick={resetMobileMenu}
+                              >
+                                <span className="text-sm">{sub.name}</span>
+                                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-70 transition-all duration-200" />
+                              </Link>
+                              {index < activeCategory.subcategories!.length - 1 && (
+                                <div className="h-px bg-purple-100 mx-4"></div>
+                              )}
+                            </div>
                           ))}
                         </div>
 
@@ -576,7 +636,7 @@ export function NavBar() {
                         <div className="border-t border-gray-200 mt-6 pt-4">
                           <Link
                             href={activeCategory.href}
-                            className="block text-center bg-purple-100 text-purple-600 px-4 py-4 rounded-lg hover:bg-purple-200 active:bg-purple-300 transition-all duration-200 font-medium border border-purple-200"
+                            className="block text-center bg-purple-100 text-purple-600 px-4 py-3 rounded-lg hover:bg-purple-200 active:bg-purple-300 transition-all duration-200 font-medium border border-purple-200"
                             onClick={resetMobileMenu}
                           >
                             View All {activeCategory.name}

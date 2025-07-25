@@ -1,29 +1,20 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent} from '@/components/ui/card';
-import Image, { StaticImageData } from 'next/image';
-import { Truck, Shield, Award } from 'lucide-react';
-import w1 from '@/public/assets/w3.jpg'
-import { BulkOrderSection, ProductScroll } from './components/psec';
-import prisma from '@/lib/prisma';
-import { unstable_cache } from 'next/cache';
-import { ProductCard } from '../components/ProductCard';
+import prisma from "@/lib/prisma"
+import Hero, { NewArrivals, CategoriesScroll } from "../components/hero"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { MessageSquare, DollarSign, Shield } from 'lucide-react'
+import { unstable_cache } from "next/cache";
+import { ProductCard } from "../components/ProductCard";
+import { Button } from "@/components/ui/button";
 
-
-const data = [
-  {id:1,name:'wool',imgurl:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu7JIaGyEYXdlNqD36IRIQ3aFRi5sDpywsSg&s'},
-  {id:2,name:'cotton',imgurl:'https://5.imimg.com/data5/SELLER/Default/2021/6/EQ/HB/UB/7334780/2-40s-combed-mercerized-cotton-yarn-500x500-500x500.jpg'},
-  {id:3,name:'Bamboo',imgurl:'https://www.ganxxet.com/cdn/shop/files/BAMBOO-SAND_400x.jpg?v=1717760134'},
-  {id:4,name:'Mohair',imgurl:'https://static.fibre2fashion.com/MemberResources/LeadResources/9/2023/3/Seller/23210545/Images/23210545_0_%E8%8A%B1%E5%BC%8F1.png?tr=w-260,h-260,cm-pad_resize,bg-F3F3F3'},
-  {id:5,name:'Polyster',imgurl:'https://2.wlimg.com/product_images/bc-full/2022/11/10878802/100-40d-white-black-polyester-spandex-covered-yarn-1668751320-6630389.jpeg'},
-  {id:6,name:'Acrylic',imgurl:'https://m.media-amazon.com/images/I/61Ek8QW6tFL.jpg'},
-  {id:7, name:'wool blend',imgurl:'https://knittinghappiness.com/cdn/shop/products/DSR036_1000x1000.jpg?v=1667904098'}
-];
-
-// Cache function for popular products with monthly revalidation
-const getPopularProducts = unstable_cache(
+// Cache popular products (24 hours)
+const GetPopularProducts = unstable_cache(
   async () => {
     const data = await prisma.product.findMany({
       where: { Shown: true },
+      include: {
+        brand: true,
+      },
       orderBy: {
         orderItems: {
           _count: "desc"
@@ -35,278 +26,368 @@ const getPopularProducts = unstable_cache(
   },
   ['popular-products'],
   {
-    revalidate: 2592000, // 30 days in seconds (30 * 24 * 60 * 60)
+    revalidate: 86400, // 24 hours
     tags: ['products', 'popular-products']
   }
 );
 
-export default async function Home(){
-  return (
-    <>
-      {/* CSS animations with scroll-based triggers */}
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
+// Cache new arrivals (6 hours)
+const GetNewArrivals = unstable_cache(
+  async () => {
+    const data = await prisma.product.findMany({
+      orderBy: {
+      id:'desc'
+      },
+      include: { brand: true },
+      take: 8,
+      where: { Shown: true }
+    });
+    return data;
+  },
+  ['new-arrivals'],
+  {
+    revalidate: 21600, // 6 hours
+    tags: ['products', 'new-arrivals']
+  }
+);
+
+// Cache categories (12 hours - categories don't change often)
+const GetAllCategories = unstable_cache(
+  async () => {
+    console.log("Fetching categories from database...");
+    
+    const categories = [
+      "acrylic",
+      "acrylic-blend", 
+      "bamboo-blend",
+      "cotton",
+      "cotton-blend",
+      "mohair-wool-blend",
+      "polyester",
+      "wool",
+      "wool-blend"
+    ];
+
+    try {
+      const categoryData = await Promise.all(
+        categories.map(async (category) => {
+          try {
+            const sampleProduct = await prisma.product.findFirst({
+              where: {
+                category: category,
+                Shown: true,
+                stock: {
+                  gt: 0
+                }
+              },
+              select: {
+                irul: true,
+                pname: true
+              }
+            });
+
+            if (!sampleProduct) {
+              console.log(`No products found for category: ${category}`);
+              return null;
+            }
+
+            return {
+              category,
+              displayName: getCategoryDisplayName(category),
+              image: sampleProduct.irul,
+              sampleProductName: sampleProduct.pname
+            };
+          } catch (categoryError) {
+            console.error(`Error fetching category ${category}:`, categoryError);
+            return null;
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes fadeInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        @keyframes fadeInRight {
-          from {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        
-        /* CSS-only scroll animations using view-timeline */
-        @supports (animation-timeline: view()) {
-          .animate-on-scroll {
-            animation: fadeInUp 0.8s ease-out both;
-            animation-timeline: view();
-            animation-range: entry 0% entry 50%;
-          }
-          .animate-on-scroll-left {
-            animation: fadeInLeft 0.8s ease-out both;
-            animation-timeline: view();
-            animation-range: entry 0% entry 50%;
-          }
-          .animate-on-scroll-right {
-            animation: fadeInRight 0.8s ease-out both;
-            animation-timeline: view();
-            animation-range: entry 0% entry 50%;
-          }
-          .animate-fade-in {
-            animation: fadeIn 1s ease-out both;
-          }
-        }
-        
-        /* Fallback for browsers without view-timeline support */
-        @supports not (animation-timeline: view()) {
-          .animate-on-scroll,
-          .animate-on-scroll-left,
-          .animate-on-scroll-right,
-          .animate-fade-in {
-            opacity: 1;
-            transform: none;
-          }
-        }
-      `}</style>
-      <main className='mx-4 md:mx-5'>
-        <div className="animate-fade-in">
-          <HeroSection />
-        </div>
-        <div className="animate-on-scroll" style={{animationDelay: '0.2s'}}>
-          <Discover/>
-        </div>
-        <div className="animate-on-scroll" style={{animationDelay: '0.3s'}}>
-          <ProductScroll/>
-        </div>
-        <div className="animate-on-scroll" style={{animationDelay: '0.4s'}}>
-          <BulkBenefits/>
-        </div>
-        <div className="animate-on-scroll" style={{animationDelay: '0.5s'}}>
-          <PopularProducts/>
-        </div>
-        <div className="animate-on-scroll" style={{animationDelay: '0.6s'}}>
-          <WhyChooseUs/>
-        </div>
-        <div className="animate-on-scroll" style={{animationDelay: '0.7s'}}>
-          <BulkOrderSection/>
-        </div>
-      </main>
-    </>
-  );
+        })
+      );
+
+      const validCategories = categoryData.filter(Boolean);
+      console.log(`Found ${validCategories.length} valid categories`);
+      return validCategories;
+
+    } catch (error) {
+      console.error("Error in GetAllCategories:", error);
+      // Return empty array instead of throwing to prevent page crash
+      return [];
+    }
+  },
+  ['categories-list'],
+  {
+    revalidate: 43200, // 12 hours
+    tags: ['categories', 'products']
+  }
+);
+
+function getCategoryDisplayName(category: string): string {
+  const displayNames: Record<string, string> = {
+    "acrylic": "Acrylic - 100%",
+    "acrylic-blend": "Acrylic Blend",
+    "bamboo-blend": "Bamboo Blend",
+    "cotton": "Cotton - 100%",
+    "cotton-blend": "Cotton Blend",
+    "mohair-wool-blend": "Mohair Wool Blend",
+    "polyester": "Polyester - 100%",
+    "wool": "Wool - 100%",
+    "wool-blend": "Wool Blend"
+  };
+
+  return displayNames[category] || category;
 }
 
-function HeroSection() {
+function Mh({ children }: any) {
   return (
-    <section className="bg-purple-400 p-4 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
-          {/* Left Content */}
-          <div className="flex-1 space-y-4 md:space-y-6 text-center lg:text-left animate-on-scroll-left" style={{animationDelay: '0.1s'}}>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-black leading-tight">
-              Discover Premium<br />
-              Yarns for Your<br />
-              Business
-            </h1>
-            <p className="text-base md:text-lg text-gray-800 max-w-md mx-auto lg:mx-0">
-              At Patel Yarn House, we offer a diverse selection of high-quality yarns perfect for wholesale buyers. Elevate your projects with our premium materials.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button className="bg-black text-white hover:bg-gray-800 px-6 md:px-8 py-4 md:py-6 text-sm md:text-base transform hover:scale-105 transition-transform duration-300">
-                Shop Now
-              </Button>
-              <Button variant="outline" className="border-black text-black hover:bg-black hover:text-white px-6 md:px-8 py-4 md:py-6 text-sm md:text-base transform hover:scale-105 transition-transform duration-300">
-                Explore More
-              </Button>
+    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
+      {children}
+    </h1>
+  )
+}
+
+// Add revalidation metadata for the entire page
+export const revalidate = 3600; // Revalidate page every hour
+export const dynamic = 'force-static'; // Force static generation
+
+export default async function Home() {
+  try {
+    console.log("Starting Home page data fetch...");
+    
+    // Fetch all data in parallel for better performance
+    const [newArrivalsData, categoriesData, popularProductsData] = await Promise.all([
+      GetNewArrivals().catch(error => {
+        console.error("Error fetching new arrivals:", error);
+        return [];
+      }),
+      GetAllCategories().catch(error => {
+        console.error("Error fetching categories:", error);
+        return [];
+      }),
+      GetPopularProducts().catch(error => {
+        console.error("Error fetching popular products:", error);
+        return [];
+      })
+    ]);
+
+    console.log("Data fetched successfully:", {
+      newArrivals: newArrivalsData.length,
+      categories: categoriesData.length,
+      popularProducts: popularProductsData.length
+    });
+
+    return (
+      <>
+        <Hero />
+        <div className="space-y-8 sm:space-y-12 lg:space-y-16">
+          <NewArri products={newArrivalsData} />
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 lg:space-y-16">
+            <Disc />
+            <CategoriesList categories={categoriesData} />
+            <BulkBenefits />
+            <GetPopular products={popularProductsData} />
+            <Map />
+          </div>
+        </div>
+      </>
+    )
+  } catch (error) {
+    console.error("Error in Home component:", error);
+    
+    // Fallback UI in case of complete failure
+    return (
+      <>
+        <Hero />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Loading...</h2>
+            <p>We are preparing your content. Please refresh if this takes too long.</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+}
+
+// Updated NewArri to accept props instead of fetching data
+function NewArri({ products }: { products: any[] }) {
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <NewArrivals products={products} />
+    </div>
+  )
+}
+
+// Static discount section (no caching needed)
+function Disc() {
+  return (
+    <section className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <Card className="rounded-none p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-8">
+            <div className="text-center sm:text-left">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">10%</h1>
+              <h1 className="font-extrabold text-4xl sm:text-5xl lg:text-6xl">OFF</h1>
+            </div>
+            <div className="text-center sm:text-right">
+              <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">ON ALL</h1>
+              <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl">BRANDS</h1>
             </div>
           </div>
-          {/* Right Image Container */}
-          <div className="flex-1 relative w-full max-w-md lg:max-w-none animate-on-scroll-right" style={{animationDelay: '0.3s'}}>
-            <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-shadow duration-500">
-              <CardContent className="p-4 md:p-6 lg:p-8">
-                <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                  <div className="relative overflow-hidden rounded-lg bg-gray-100 w-full h-full">
-                    <Image
-                      src={w1}
-                      alt="Premium Yarn"
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                </div>
-                {/* Price Tag */}
-                <div className="absolute top-2 md:top-4 right-2 md:right-4 bg-[#8a79ab] text-white px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium animate-pulse">
-                  Premium Quality
-                </div>
-                {/* Info Badge */}
-                <div className="absolute bottom-4 md:bottom-8 left-4 md:left-8 bg-blue-600 text-white p-3 md:p-4 rounded-lg shadow-lg max-w-xs transform hover:scale-105 transition-transform duration-300">
-                  <div className="text-xs md:text-sm font-medium">More than 44</div>
-                  <div className="text-xs opacity-90">yarn varieties</div>
-                  <div className="text-xs opacity-90">available in stock</div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        </Card>
+        <Card className="rounded-none p-4 sm:p-6 lg:p-8 text-center text-white bg-primary">
+          <h1 className="text-2xl sm:text-4xl lg:text-6xl font-extrabold leading-tight">
+            FREE DELIVERY
+            <br className="hidden sm:inline" />
+            <span className="sm:hidden"> </span>
+            2000RS ONWARDS
+          </h1>
+        </Card>
       </div>
     </section>
-  );
+  )
 }
 
-function Discover() {
+// Updated CategoriesList to accept props
+function CategoriesList({ categories }: { categories: any[] }) {
   return (
-    <>
-    
-    <section className="p-4 md:p-6 lg:p-8 mx-2 md:mx-5">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          <div className="text-center lg:text-left animate-on-scroll-left">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-gray-900 leading-tight">
-              Discover Our Diverse Yarn Collection Today
-            </h2>
-          </div>
-          <div className="space-y-6 text-center lg:text-left animate-on-scroll-right" style={{animationDelay: '0.2s'}}>
-            <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-              At Patel Yarn House, we offer an extensive selection of yarns to suit every project. Choose from luxurious wool, soft cotton, and versatile acrylic options, each designed to inspire creativity. Whether you&apos;re a seasoned crafter or just starting out, our variety ensures you&apos;ll find the perfect yarn for your needs.
-            </p>
-            <Button className='px-6 md:px-8 py-4 md:py-6 text-sm md:text-base transform hover:scale-105 transition-transform duration-300'>
-              Explore
-            </Button>
-          </div>
-        </div>
+    <section className="w-full">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">
+          SHOP BY CATEGORY
+        </h2>
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600">
+          Find the perfect yarn for your next project, The perfect Category for you
+        </p>
       </div>
+      <CategoriesScroll categories={categories} />
     </section>
-      </>
   );
 }
 
+// Static bulk benefits section
 function BulkBenefits() {
-  const benefits = [
-    { icon: <Truck className="w-6 h-6 md:w-8 md:h-8" />, title: "Free Shipping", description: "Complimentary shipping on bulk orders over ₹3,000" },
-    { icon: <Shield className="w-6 h-6 md:w-8 md:h-8" />, title: "Quality Guarantee", description: "100% satisfaction guarantee on all yarn purchases" },
-    { icon: <Award className="w-6 h-6 md:w-8 md:h-8" />, title: "Premium Materials", description: "Only the finest materials sourced globally" }
-  ];
-
   return (
-    <section className="p-4 md:p-6 lg:p-8 mx-2 md:mx-5">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {benefits.map((benefit, index) => (
-            <Card key={index} className="bg-white border border-gray-200 hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 animate-on-scroll" style={{animationDelay: `${(index + 1) * 100}ms`}}>
-              <CardContent className="p-6 md:p-8 text-center">
-                <div className="text-purple-600 mb-4 flex justify-center transform hover:scale-110 transition-transform duration-300">{benefit.icon}</div>
-                <h3 className="text-lg md:text-xl font-bold mb-3 text-gray-900">{benefit.title}</h3>
-                <p className="text-sm md:text-base text-gray-600">{benefit.description}</p>
+    <section className="w-full bg-white">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6 items-stretch">
+        
+        {/* Left Column: Benefits List */}
+        <div className="lg:col-span-2 flex flex-col justify-center gap-4 sm:gap-6 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 lg:gap-4 text-center sm:text-left">
+            <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex-shrink-0">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            </div>
+            <p className="font-medium leading-relaxed text-sm sm:text-base lg:text-lg">
+              Competitive Pricing for<br />Bulk Orders
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 lg:gap-4 text-center sm:text-left">
+            <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex-shrink-0">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            </div>
+            <p className="font-medium leading-relaxed text-sm sm:text-base lg:text-lg">
+              Quality Assurance for<br />All Products
+            </p>
+          </div>
+        </div>
+
+        {/* Middle Column: Title */}
+        <Card className="lg:col-span-3 rounded-none bg-primary">
+          <CardContent className="p-6 sm:p-8 lg:p-12 text-center lg:text-right text-white">
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold leading-tight">
+              BULK<br />BENEFITS
+            </h2>
+          </CardContent>
+        </Card>
+
+        {/* Right Column: WhatsApp Link */}
+        <div className="lg:col-span-1 flex justify-center">
+          <Link href={'https://wa.link/stc3xk'} className="w-full">
+            <Card className="bg-primary text-white w-full rounded-none h-full min-h-[120px] sm:min-h-[150px] lg:min-h-full">
+              <CardContent className="p-0 flex items-center justify-center w-full h-full">
+                <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
               </CardContent>
             </Card>
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Updated GetPopular to accept props
+function GetPopular({ products }: { products: any[] }) {
+  return (
+    <section className="w-full">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">
+          BEST SELLERS
+        </h2>
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-6 sm:mb-8">
+          Browse our premium yarn collection
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+          {products.map((product) => (
+            <ProductCard product={product} key={product.id} />
           ))}
         </div>
       </div>
     </section>
-  
-  );
+  )
 }
 
-async function PopularProducts() {
-  const data = await getPopularProducts();
-
+// Static map section
+ function Map() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="text-center mb-8 animate-on-scroll">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-          Popular Products
-        </h2>
-        <p className="text-base md:text-lg text-gray-600">Our Top Products That Have Been Purchased In this Month</p>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4 ">
-        {data.map((item, index) => (
-          <div key={item.id} className="animate-on-scroll transform hover:scale-105 transition-transform duration-300" style={{animationDelay: `${(index + 1) * 100}ms`}}>
-            <ProductCard product={item} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+    <section className="w-full mb-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center">
+        
+        {/* Map Card */}
+        <Card className="w-full">
+          <CardContent className="p-0">
+            <div className="relative w-full aspect-square sm:aspect-video lg:aspect-square overflow-hidden">
+              {/* Embedded Map */}
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.061482618031!2d77.57618537418816!3d12.967917614960797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae17b2a0074205%3A0x70b19767320c085c!2sRoshan%20fancy%20store!5e0!3m2!1sen!2sin!4v1753385080088!5m2!1sen!2sin" 
+                width="100%" 
+                height="100%"
+                className="absolute inset-0 pointer-events-none"
+                loading="lazy"
+                title="Store Location"
+              />
+              {/* Clickable Overlay */}
+              <a
+                href="https://maps.app.goo.gl/aJienJi5AnayPu3m9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute inset-0 z-10"
+              >
+                <span className="sr-only">Open in Google Maps</span>
+              </a>
+            </div>
+          </CardContent>
+        </Card>
 
-function WhyChooseUs() {
-  return (
-    <section className="bg-white p-4 md:p-6 lg:p-8 mx-2 md:mx-5">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1 animate-on-scroll-left">
-            <div className="aspect-square bg-gray-200 rounded-2xl flex items-center justify-center hover:bg-gray-300 transition-colors duration-500">
-              <div className="text-center text-gray-500">
-                <div className="text-6xl md:text-7xl lg:text-8xl mb-4 transform hover:scale-110 transition-transform duration-500">🏭</div>
-                <p className="text-lg md:text-xl font-medium">Our Office</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-6 lg:space-y-8 order-1 lg:order-2 text-center lg:text-left animate-on-scroll-right" style={{animationDelay: '0.2s'}}>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-              Why Choose Patel Yarn House for Your Needs
-            </h2>
-            <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-              With years of experience in the yarn industry, we understand what businesses need. Our commitment to quality, competitive pricing, and exceptional service makes us the preferred choice for bulk yarn purchases.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-              <div className="text-center lg:text-left animate-on-scroll transform hover:scale-105 transition-transform duration-300" style={{animationDelay: '0.4s'}}>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Expertise</h3>
-                <p className="text-sm md:text-base text-gray-600">Over 25 years in the textile industry</p>
-              </div>
-              <div className="text-center lg:text-left animate-on-scroll transform hover:scale-105 transition-transform duration-300" style={{animationDelay: '0.5s'}}>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Value</h3>
-                <p className="text-sm md:text-base text-gray-600">Competitive wholesale pricing guaranteed</p>
-              </div>
-            </div>
-          </div>
+        {/* Content */}
+        <div className="border-l-4 border-primary pl-4 sm:pl-6 lg:pl-8 space-y-4 sm:space-y-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight">
+            Visit <span className="text-primary">Us</span> at Patel Yarn House
+          </h1>
+          <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-gray-700">
+            From cotton and acrylic to specialty blends, we offer all types of yarns to suit your every need.
+            Whether you are a hobbyist or a wholesaler, our shelves are stocked with vibrant colors and textures.
+            Experience warm hospitality and expert guidance to help you find the perfect yarn.
+            We welcome bulk orders and ensure the best deals for businesses and creators alike!
+          </p>
+
+          <Button asChild size="lg" className="sm:mx-auto">
+            <a 
+              href="https://maps.app.goo.gl/aJienJi5AnayPu3m9" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Take Us There
+            </a>
+          </Button>
         </div>
       </div>
     </section>

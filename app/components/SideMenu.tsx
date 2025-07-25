@@ -3,6 +3,7 @@
 import { useState, useTransition, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Menu, X, Filter } from "lucide-react";
+import { Label } from "recharts";
 
 const categories = [
   { value: "acrylic", label: "Acrylic - 100%" },
@@ -31,8 +32,10 @@ const brands = [
   { value: "Ganga Delight", label: "Ganga Delight" },
   { value: "Ganga SuperStitch", label: "Ganga SuperStitch" },
   { value: "Ganga Desire", label: "Ganga Desire" },
-  { value: "Blanket yarn", label: "Blanket yarn" },
-  { value: "Cotton", label: "Cotton" }
+  {value:"Hobby", label:"Hobby India"},
+  {value:"Ganga Blanket", label:"Ganga Blanket Velvety"},
+  {value:"Plush",label:"plush"},
+  { value: "Ply Cotton", label: "Cotton" }
 ];
 
 // Loading component for the sidebar
