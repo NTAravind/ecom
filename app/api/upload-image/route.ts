@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Authorization': `Bearer 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`,
           'Content-Type': 'application/json',
           'Accept': 'application/vnd.github.v3+json',
         },
