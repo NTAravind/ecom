@@ -18,11 +18,11 @@ export async function POST(request: NextRequest) {
 
     // Create file in GitHub repository
     const githubResponse = await fetch(
-      `https://api.github.com/repos/NTAravind/Yarn-images/contents/images/${filename} `,
+      `https://api.github.com/repos/NTAravind/Yarn-images/contents/images/${filename}`,
       {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer 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`,
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
           'Content-Type': 'application/json',
           'Accept': 'application/vnd.github.v3+json',
         },
