@@ -13,13 +13,12 @@ import { Metadata } from 'next'
 import { Suspense } from 'react'
 import dynamic from "next/dynamic"
 const ProductCarousel = dynamic(()=>import("../../components/ProductCourelel"))
+
 // Types for better type safety
 type StaticProductData = {
   id: string
   pname: string
   brandId: string
-  originalPrice: number
-  discountedPrice: number
   Shown: boolean
   irul: string
   iurl1: string
@@ -34,27 +33,20 @@ type StaticProductData = {
     name: string
     discountRate: number
     isActive: boolean
+    createdAt: Date
+    updatedAt: Date
   }
 }
 
-// Generate static params for all products at build time
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    where: {
-      Shown: true,
-      brand: {
-        isActive: true
-      }
-    },
-    select: { id: true }
-  })
-
-  return products.map((product) => ({
-    id: product.id,
-  }))
+type DynamicProductData = {
+  originalPrice: number
+  discountedPrice: number
+  stock: number
 }
 
-// Static product data (excluding stock)
+type FullProductData = StaticProductData & DynamicProductData
+
+// Get static product data (cached for 24 hours - excludes price and stock)
 async function getStaticProductData(id: string): Promise<StaticProductData | null> {
   const data = await prisma.product.findUnique({
     where: { id },
@@ -62,8 +54,6 @@ async function getStaticProductData(id: string): Promise<StaticProductData | nul
       id: true,
       pname: true,
       brandId: true,
-      originalPrice: true,
-      discountedPrice: true,
       Shown: true,
       irul: true,
       iurl1: true,
@@ -73,13 +63,15 @@ async function getStaticProductData(id: string): Promise<StaticProductData | nul
       category: true,
       color: true,
       isYarn: true,
-      // Exclude stock from static data
+      // Exclude price and stock from cached data
       brand: {
         select: {
           id: true,
           name: true,
           discountRate: true,
-          isActive: true
+          isActive: true,
+          createdAt: true,
+          updatedAt: true
         }
       }
     }
@@ -88,12 +80,12 @@ async function getStaticProductData(id: string): Promise<StaticProductData | nul
   return data
 }
 
-// Static similar products data (excluding stock)
+// Get static similar products data (cached for 24 hours - excludes price and stock)
 async function getStaticSimilarProducts(category: string, currentProductId: string) {
   const simprods = await prisma.product.findMany({
     where: { 
       category: category,
-      id: { not: currentProductId }, // Exclude current product
+      id: { not: currentProductId },
       Shown: true,
       brand: {
         isActive: true
@@ -103,8 +95,6 @@ async function getStaticSimilarProducts(category: string, currentProductId: stri
       id: true,
       pname: true,
       brandId: true,
-      originalPrice: true,
-      discountedPrice: true,
       Shown: true,
       irul: true,
       iurl1: true,
@@ -114,12 +104,15 @@ async function getStaticSimilarProducts(category: string, currentProductId: stri
       category: true,
       color: true,
       isYarn: true,
+      // Exclude price and stock from cached data
       brand: {
         select: {
           id: true,
           name: true,
           discountRate: true,
-          isActive: true
+          isActive: true,
+          createdAt: true,
+          updatedAt: true
         }
       }
     },
@@ -129,24 +122,91 @@ async function getStaticSimilarProducts(category: string, currentProductId: stri
   return simprods
 }
 
-// Get only stock data dynamically
-async function getStock(productId: string): Promise<number> {
+// Get dynamic data (price and stock) - always fresh
+async function getDynamicProductData(productId: string): Promise<DynamicProductData> {
   try {
     const product = await prisma.product.findUnique({
       where: { id: productId },
-      select: { stock: true }
+      select: { 
+        originalPrice: true,
+        discountedPrice: true,
+        stock: true 
+      }
     })
     
-    return product?.stock || 0
+    return {
+      originalPrice: product?.originalPrice || 0,
+      discountedPrice: product?.discountedPrice || 0,
+      stock: product?.stock || 0
+    }
   } catch (error) {
-    console.error('Error fetching stock:', error)
-    return 0
+    console.error('Error fetching dynamic product data:', error)
+    return {
+      originalPrice: 0,
+      discountedPrice: 0,
+      stock: 0
+    }
   }
 }
 
-// Dynamic stock component
+// Get dynamic data for multiple products (price and stock) - always fresh
+async function getDynamicProductsData(productIds: string[]): Promise<Record<string, DynamicProductData>> {
+  try {
+    const products = await prisma.product.findMany({
+      where: { 
+        id: { in: productIds }
+      },
+      select: { 
+        id: true,
+        originalPrice: true,
+        discountedPrice: true,
+        stock: true 
+      }
+    })
+    
+    const dynamicData: Record<string, DynamicProductData> = {}
+    products.forEach(product => {
+      dynamicData[product.id] = {
+        originalPrice: product.originalPrice,
+        discountedPrice: product.discountedPrice,
+        stock: product.stock
+      }
+    })
+    
+    return dynamicData
+  } catch (error) {
+    console.error('Error fetching dynamic products data:', error)
+    return {}
+  }
+}
+
+// Dynamic price section component
+async function PriceSection({ productId, brandDiscountRate }: { productId: string, brandDiscountRate: number }) {
+  const { originalPrice, discountedPrice } = await getDynamicProductData(productId)
+  
+  const hasDiscount = brandDiscountRate > 0
+  const discountPercentage = Math.round(brandDiscountRate)
+
+  return (
+    <div className="space-y-2">
+      {hasDiscount ? (
+        <div className="flex items-center gap-3">
+          <div className="text-2xl text-green-600 font-semibold">₹{discountedPrice}</div>
+          <div className="text-lg text-muted-foreground line-through">₹{originalPrice}</div>
+          <Badge variant="destructive" className="text-sm font-semibold">
+            -{discountPercentage}% OFF
+          </Badge>
+        </div>
+      ) : (
+        <div className="text-2xl text-green-600 font-semibold">₹{originalPrice}</div>
+      )}
+    </div>
+  )
+}
+
+// Dynamic stock info component
 async function StockInfo({ productId }: { productId: string }) {
-  const stock = await getStock(productId)
+  const { stock } = await getDynamicProductData(productId)
   
   return (
     <div className="flex items-center gap-2 text-sm">
@@ -158,7 +218,7 @@ async function StockInfo({ productId }: { productId: string }) {
 
 // Dynamic stock badge component
 async function StockBadge({ productId, isShown }: { productId: string, isShown: boolean }) {
-  const stock = await getStock(productId)
+  const { stock } = await getDynamicProductData(productId)
   
   return (
     <div className="flex items-center gap-3">
@@ -173,25 +233,27 @@ async function StockBadge({ productId, isShown }: { productId: string, isShown: 
 
 // Dynamic buy section wrapper
 async function DynamicBuySection({ productData }: { productData: StaticProductData }) {
-  const stock = await getStock(productData.id)
-  const productWithStock = { ...productData, stock }
+  const dynamicData = await getDynamicProductData(productData.id)
+  const fullProductData = { ...productData, ...dynamicData }
   
-  return <BuySection prop={productWithStock} />
+  return <BuySection prop={fullProductData} />
 }
 
-// Dynamic similar products with stock
-async function DynamicSimilarProducts({ products }: { products: any[] }) {
-  // Fetch stock for all similar products in parallel
-  const productsWithStock = await Promise.all(
-    products.map(async (product) => {
-      const stock = await getStock(product.id)
-      return { ...product, stock }
-    })
-  )
+// Dynamic similar products with stock and prices
+async function DynamicSimilarProducts({ products }: { products: StaticProductData[] }) {
+  // Get dynamic data for all similar products
+  const productIds = products.map(p => p.id)
+  const dynamicData = await getDynamicProductsData(productIds)
+  
+  // Combine static and dynamic data
+  const productsWithDynamicData = products.map(product => ({
+    ...product,
+    ...dynamicData[product.id]
+  }))
   
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
-      {productsWithStock.map((product) => (
+      {productsWithDynamicData.map((product) => (
         <ProductCard product={product} key={product.id} />
       ))}
     </div>
@@ -201,7 +263,7 @@ async function DynamicSimilarProducts({ products }: { products: any[] }) {
 export default async function ProductPage({ params }: { params: Promise<{id:string}>}) {
   const { id } = await params
   
-  // Get static product data (built at build time)
+  // Get static product data (cached for 24 hours)
   const data = await getStaticProductData(id)
   
   if (!data) {
@@ -210,7 +272,7 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
 
   const color = getColorName(data.color)
   
-  // Get static similar products data (built at build time)
+  // Get static similar products data (cached for 24 hours)
   const simprods = await getStaticSimilarProducts(data.category, data.id)
 
   // Prepare images for carousel
@@ -227,10 +289,6 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
       id: 2,
     }] : []),
   ].filter(img => img.url && img.url !== "/placeholder.png")
-
-  // Calculate discount display
-  const hasDiscount = data.brand.discountRate > 0
-  const discountPercentage = Math.round(data.brand.discountRate)
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
@@ -249,20 +307,14 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
         <div className="space-y-6">
           <h1 className="text-3xl font-bold">{data.brand.name}, {data.pname}, {color} {data.y_weight} - {data.category}</h1>
           
-          {/* Price section with discount */}
-          <div className="space-y-2">
-            {hasDiscount ? (
-              <div className="flex items-center gap-3">
-                <div className="text-2xl text-green-600 font-semibold">₹{data.discountedPrice}</div>
-                <div className="text-lg text-muted-foreground line-through">₹{data.originalPrice}</div>
-                <Badge variant="destructive" className="text-sm font-semibold">
-                  -{discountPercentage}% OFF
-                </Badge>
-              </div>
-            ) : (
-              <div className="text-2xl text-green-600 font-semibold">₹{data.originalPrice}</div>
-            )}
-          </div>
+          {/* Dynamic price section with loading fallback */}
+          <Suspense fallback={
+            <div className="space-y-2">
+              <div className="bg-gray-200 h-8 w-32 rounded animate-pulse"></div>
+            </div>
+          }>
+            <PriceSection productId={data.id} brandDiscountRate={data.brand.discountRate} />
+          </Suspense>
           
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
@@ -352,5 +404,6 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
   )
 }
 
-// Revalidate every 30 seconds for stock updates
-export const revalidate = 1000
+// Cache static data for 24 hours (86400 seconds)
+// Price and stock data will always be fresh
+export const revalidate = 86400
