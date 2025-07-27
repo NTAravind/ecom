@@ -4,12 +4,6 @@ import Razorpay from "razorpay";
 import { auth } from "@/auth";
 import { GetProductPrice } from "@/lib/actions";
 
-// Razorpay config
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
-
 export async function POST(req: NextRequest) {
   const aut = await auth();
   if (!aut?.user) {
@@ -17,6 +11,25 @@ export async function POST(req: NextRequest) {
   }
   
   try {
+    // Validate Razorpay credentials first
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error("❌ Razorpay credentials are missing");
+      return NextResponse.json(
+        { error: "Payment service configuration error" },
+        { status: 500 }
+      );
+    }
+
+    // Log credentials for debugging (remove in production)
+    console.log("🔑 Razorpay Key ID:", process.env.RAZORPAY_KEY_ID?.substring(0, 10) + "...");
+    console.log("🔑 Key Secret exists:", !!process.env.RAZORPAY_KEY_SECRET);
+
+    // Initialize Razorpay with explicit credentials
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID.trim(),
+      key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
+    });
+
     const body = await req.json();
     const { phoneno, cartitems, pincode, delivery } = body;
 
@@ -59,37 +72,54 @@ export async function POST(req: NextRequest) {
     // Calculate delivery charge based on delivery mode
     let deliveryCharge = 0;
     if (delivery) {
-      if(amount>=2000){deliveryCharge=0}
-      // For delivery orders, apply delivery charge
-      deliveryCharge = 60; // Fixed delivery charge
-      
-      // You can add more complex logic here based on pincode if needed
-      // For example:
-      // deliveryCharge = await calculateDeliveryCharge(pincode);
+      if(amount >= 2000) {
+        deliveryCharge = 0;
+      } else {
+        deliveryCharge = 60; // Fixed delivery charge
+      }
     }
-    // For pickup orders, delivery charge remains 0
 
     // Add taxes (if any)
     const taxes = 4;
     
     // Calculate final total
     const totalAmount = amount + deliveryCharge + taxes;
-    if (totalAmount > 10000){  return NextResponse.json(
-      { error: "Please prefer bulk order" },
-      { status: 501 }
-    );}
-    // Create Razorpay order
-    const order = await razorpay.orders.create({
-      amount: totalAmount * 100, // Razorpay expects amount in paise
+    
+    if (totalAmount > 10000) {
+      return NextResponse.json(
+        { error: "Please prefer bulk order" },
+        { status: 501 }
+      );
+    }
+
+    // Validate amount before creating order
+    if (totalAmount <= 0) {
+      return NextResponse.json(
+        { error: "Invalid order amount" },
+        { status: 400 }
+      );
+    }
+
+    console.log("💰 Creating order with amount:", totalAmount);
+
+    // Create Razorpay order with additional error handling
+    const orderOptions = {
+      amount: Math.round(totalAmount * 100), // Ensure integer value in paise
       currency: "INR",
-      receipt: "receipt_" + phoneno + "_" + Date.now(),
+      receipt: `receipt_${phoneno}_${Date.now()}`,
       notes: {
         phone: phoneno,
         delivery_mode: delivery ? "delivery" : "pickup",
         pincode: pincode || "N/A",
-        item_count: cartitems.length
+        item_count: cartitems.length.toString()
       }
-    });
+    };
+
+    console.log("📝 Order options:", orderOptions);
+
+    const order = await razorpay.orders.create(orderOptions);
+
+    console.log("✅ Order created successfully:", order.id);
 
     return NextResponse.json(
       { 
@@ -105,8 +135,26 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
     
-  } catch (err) {
+  } catch (err: any) {
     console.error("❌ Order creation failed:", err);
+    
+    // More detailed error logging
+    if (err.statusCode === 401) {
+      console.error("🔐 Authentication failed - Check your Razorpay credentials");
+      return NextResponse.json(
+        { error: "Payment service authentication failed. Please check configuration." },
+        { status: 500 }
+      );
+    }
+    
+    if (err.statusCode === 400) {
+      console.error("📋 Bad request - Check order parameters");
+      return NextResponse.json(
+        { error: "Invalid order parameters" },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Something went wrong while creating order" },
       { status: 500 }

@@ -289,7 +289,7 @@ export function BrandsScroll({ brands }: BrandsScrollProps) {
         {brands.map((brand) => (
           <Link
             key={brand.id}
-            href={`/products?brand=${brand.id}`}
+            href={`/products?brand=${brand.name}`}
             className="flex-shrink-0"
           >
             <Card className="w-48 transition-all duration-200 hover:shadow-lg hover:scale-105 cursor-pointer rounded-none">
