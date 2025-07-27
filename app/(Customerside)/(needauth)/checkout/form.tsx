@@ -651,9 +651,9 @@ function PurchaseButton({ user, showAlert, del}: { user: UserData, showAlert: (t
   
   // Updated delivery charge calculation - free if above ₹2000
   const deliveryCharge = useMemo(() => {
-    if (!del || !user.us?.pincode) return 0;
+    if (!del) return 0; // Remove pincode check for pickup mode
     return subtotal > 2000 ? 0 : 60;  // Free delivery if cart value > ₹2000
-  }, [del, user.us?.pincode, subtotal]);
+  }, [del, subtotal]); // Remove user.us?.pincode dependency
 
   // Load Razorpay script only when needed
   useEffect(() => {
@@ -719,21 +719,21 @@ Please process this bulk order. Thank you!`;
   }, [generateOrderText]);
 
   const handlePayment = useCallback(async () => {
-    // For delivery mode, check if address is provided
-    if (del && !user.us?.pincode) {
+    // For delivery mode, check if address AND pincode are provided
+    if (del && (!user.us?.Address || !user.us?.pincode)) {
       showAlert(
-        "Missing Delivery Address",
-        "Please add your delivery address with pincode first to proceed with the order.",
+        "Missing Delivery Information",
+        "Please add your complete delivery address with pincode to proceed with the order.",
         "warning"
       );
       return;
     }
 
-    // For pickup mode, ensure user details are provided
+    // For pickup mode, ensure user name is provided
     if (!del && !user.us?.name) {
       showAlert(
-        "Missing User Details",
-        "Please add your contact details to proceed with the pickup order.",
+        "Missing Contact Details",
+        "Please add your name to proceed with the pickup order.",
         "warning"
       );
       return;
@@ -872,29 +872,50 @@ Please process this bulk order. Thank you!`;
 
   const totalAmount = subtotal + deliveryCharge + 4;
   
-  // Determine if user can proceed based on delivery mode
+  // Fix the canProceed logic
   const canProceed = useMemo(() => {
-    return del 
-      ? (user.us?.pincode && cartItems.length > 0) // For delivery: need pincode
-      : (user.us?.name && cartItems.length > 0);   // For pickup: need name
-  }, [del, user.us?.pincode, user.us?.name, cartItems.length]);
+    if (cartItems.length === 0) return false;
+    
+    if (del) {
+      // For delivery: need both address and pincode
+      return !!(user.us?.Address && user.us?.pincode);
+    } else {
+      // For pickup: only need name
+      return !!(user.us?.name);
+    }
+  }, [del, user.us?.Address, user.us?.pincode, user.us?.name, cartItems.length]);
     
   const isBulkOrder = subtotal > 10000;
 
   const getButtonText = useCallback(() => {
     if (isPending) return "Processing Payment...";
     if (isBulkOrder) return "Contact for Bulk Order";
-    if (del && !user.us?.pincode) return "Add Delivery Address";
-    if (!del && !user.us?.name) return "Add Contact Details";
+    
+    if (del) {
+      if (!user.us?.Address || !user.us?.pincode) {
+        return "Add Delivery Address";
+      }
+    } else {
+      if (!user.us?.name) {
+        return "Add Contact Details";
+      }
+    }
+    
     return `Pay ${fcurrency(totalAmount)}`;
-  }, [isPending, isBulkOrder, del, user.us?.pincode, user.us?.name, totalAmount]);
+  }, [isPending, isBulkOrder, del, user.us?.Address, user.us?.pincode, user.us?.name, totalAmount]);
 
   const getHelpText = useCallback(() => {
-    if (del && !user.us?.pincode) return "Please add your delivery address to proceed";
-    if (!del && !user.us?.name) return "Please add your contact details to proceed";
-    if (isBulkOrder) return "Order value above ₹10,000 requires bulk order processing";
+    if (del && (!user.us?.Address || !user.us?.pincode)) {
+      return "Please add your complete delivery address with pincode to proceed";
+    }
+    if (!del && !user.us?.name) {
+      return "Please add your contact details to proceed";
+    }
+    if (isBulkOrder) {
+      return "Order value above ₹10,000 requires bulk order processing";
+    }
     return null;
-  }, [del, user.us?.pincode, user.us?.name, isBulkOrder]);
+  }, [del, user.us?.Address, user.us?.pincode, user.us?.name, isBulkOrder]);
 
   return (
     <>
