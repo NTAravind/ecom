@@ -20,7 +20,8 @@ const shopCategories = [
     href: "/products?categories=acrylic",
     subcategories: [
       { name: "Ganga Desire", href: "/products?categories=acrylic&brands=Ganga%20Desire" },
-      { name: "Acrylic Hobby India", href: "/products?categories=acrylic&brands=Ganga%20Hobby" },
+      { name: "Acrylic Hobby India", href: "/products?categories=acrylic&brands=Hobby" },
+      {name: "Ganga Spectrum",href:"/products?categories=acrylic&brands=Ganga%20Spectrum"},
     ]
   },
   {
@@ -29,21 +30,22 @@ const shopCategories = [
     subcategories: [
       { name: "Ganga Delight Yarn", href: "/products?categories=cotton&brands=Ganga+Delight" },
       { name: "Ganga Summer Bloom", href: "/products?categories=cotton&brands=Ganga%20Summer%20Bloom" },
-      { name: "Ply Cotton", href: "/products?categories=cotton&brands=ply+Cotton" },
+      { name: "4Ply Cotton", href: "/products?categories=cotton&brands=ply+Cotton" },
     ]
   },
   {
     name: "polyester Yarn",
     href: "/products?categories=polyster",
     subcategories: [
-      { name: "Chenille/Velvet", href: "/products?categories=polyster&brands=Oswal&weights=super-bulky" },
+      { name: "Chenille/Velvet", href: "/products?brands=Gulmarg+Oswal" },
       { name: "Ganga Blanket Yarn", href: "/products?categories=polyster&brands=Ganga" },
       { name: "Super Stitch", href: "/products?&brands=Ganga%20SuperStitch" },
+      {name:"plush",href:"/products?categories=polyester&brands=Plush"},
     ]
   },
   {
     name: "Blanket Yarn",
-    href: "/products?categories=polyster&weights=super-bulky",
+    href: "/products?weights=bulky",
     subcategories: []
   },
   {
@@ -51,9 +53,7 @@ const shopCategories = [
     href: "/products?brands=Ganga+SuperStitch",
     subcategories: []
   },
-  {name:"Plush",
-    href:"/products?categories=polyster&brands=Plush"
-  }
+
 ]
 
 export function NavBar() {

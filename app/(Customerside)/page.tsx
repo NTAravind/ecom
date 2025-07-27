@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma"
-import Hero, { NewArrivals, CategoriesScroll } from "../components/hero"
+import Hero, { NewArrivals, BrandsScroll } from "../components/hero"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { MessageSquare, DollarSign, Shield } from 'lucide-react'
@@ -51,30 +51,50 @@ const GetNewArrivals = unstable_cache(
   }
 );
 
-// Cache categories (12 hours - categories don't change often)
-const GetAllCategories = unstable_cache(
+// Cache brands (12 hours - brands don't change often)
+const GetAllBrands = unstable_cache(
   async () => {
-    console.log("Fetching categories from database...");
+    console.log("Fetching brands from database...");
     
-    const categories = [
-      "acrylic",
-      "acrylic-blend", 
-      "bamboo-blend",
-      "cotton",
-      "cotton-blend",
-      "mohair-wool-blend",
-      "polyester",
-      "wool",
-      "wool-blend"
-    ];
-
     try {
-      const categoryData = await Promise.all(
-        categories.map(async (category) => {
+      const brands = await prisma.brand.findMany({
+        where: {
+          isActive: true,
+          products: {
+            some: {
+              Shown: true,
+              stock: {
+                gt: 0
+              }
+            }
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              products: {
+                where: {
+                  Shown: true,
+                  stock: {
+                    gt: 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        orderBy: {
+          name: 'asc'
+        }
+      });
+
+      // Get a sample product image for each brand
+      const brandsWithImages = await Promise.all(
+        brands.map(async (brand) => {
           try {
             const sampleProduct = await prisma.product.findFirst({
               where: {
-                category: category,
+                brandId: brand.id,
                 Shown: true,
                 stock: {
                   gt: 0
@@ -86,56 +106,43 @@ const GetAllCategories = unstable_cache(
               }
             });
 
-            if (!sampleProduct) {
-              console.log(`No products found for category: ${category}`);
-              return null;
-            }
-
             return {
-              category,
-              displayName: getCategoryDisplayName(category),
-              image: sampleProduct.irul,
-              sampleProductName: sampleProduct.pname
+              id: brand.id,
+              name: brand.name,
+              discountRate: brand.discountRate,
+              productCount: brand._count.products,
+              image: sampleProduct?.irul || '/placeholder-yarn.jpg', // fallback image
+              sampleProductName: sampleProduct?.pname || 'Sample Product'
             };
-          } catch (categoryError) {
-            console.error(`Error fetching category ${category}:`, categoryError);
-            return null;
+          } catch (brandError) {
+            console.error(`Error fetching sample product for brand ${brand.name}:`, brandError);
+            return {
+              id: brand.id,
+              name: brand.name,
+              discountRate: brand.discountRate,
+              productCount: brand._count.products,
+              image: '/placeholder-yarn.jpg',
+              sampleProductName: 'Sample Product'
+            };
           }
         })
       );
 
-      const validCategories = categoryData.filter(Boolean);
-      console.log(`Found ${validCategories.length} valid categories`);
-      return validCategories;
+      console.log(`Found ${brandsWithImages.length} active brands`);
+      return brandsWithImages;
 
     } catch (error) {
-      console.error("Error in GetAllCategories:", error);
+      console.error("Error in GetAllBrands:", error);
       // Return empty array instead of throwing to prevent page crash
       return [];
     }
   },
-  ['categories-list'],
+  ['brands-list'],
   {
     revalidate: 43200, // 12 hours
-    tags: ['categories', 'products']
+    tags: ['brands', 'products']
   }
 );
-
-function getCategoryDisplayName(category: string): string {
-  const displayNames: Record<string, string> = {
-    "acrylic": "Acrylic - 100%",
-    "acrylic-blend": "Acrylic Blend",
-    "bamboo-blend": "Bamboo Blend",
-    "cotton": "Cotton - 100%",
-    "cotton-blend": "Cotton Blend",
-    "mohair-wool-blend": "Mohair Wool Blend",
-    "polyester": "Polyester - 100%",
-    "wool": "Wool - 100%",
-    "wool-blend": "Wool Blend"
-  };
-
-  return displayNames[category] || category;
-}
 
 function Mh({ children }: any) {
   return (
@@ -154,13 +161,13 @@ export default async function Home() {
     console.log("Starting Home page data fetch...");
     
     // Fetch all data in parallel for better performance
-    const [newArrivalsData, categoriesData, popularProductsData] = await Promise.all([
+    const [newArrivalsData, brandsData, popularProductsData] = await Promise.all([
       GetNewArrivals().catch(error => {
         console.error("Error fetching new arrivals:", error);
         return [];
       }),
-      GetAllCategories().catch(error => {
-        console.error("Error fetching categories:", error);
+      GetAllBrands().catch(error => {
+        console.error("Error fetching brands:", error);
         return [];
       }),
       GetPopularProducts().catch(error => {
@@ -171,7 +178,7 @@ export default async function Home() {
 
     console.log("Data fetched successfully:", {
       newArrivals: newArrivalsData.length,
-      categories: categoriesData.length,
+      brands: brandsData.length,
       popularProducts: popularProductsData.length
     });
 
@@ -182,7 +189,7 @@ export default async function Home() {
           <NewArri products={newArrivalsData} />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 lg:space-y-16">
             <Disc />
-            <CategoriesList categories={categoriesData} />
+            <BrandsList brands={brandsData} />
             <BulkBenefits />
             <GetPopular products={popularProductsData} />
             <Map />
@@ -247,19 +254,19 @@ function Disc() {
   )
 }
 
-// Updated CategoriesList to accept props
-function CategoriesList({ categories }: { categories: any[] }) {
+// Updated BrandsList to replace CategoriesList
+function BrandsList({ brands }: { brands: any[] }) {
   return (
     <section className="w-full">
       <div className="text-center mb-8 sm:mb-12">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">
-          SHOP BY CATEGORY
+          SHOP BY BRAND
         </h2>
         <p className="text-lg sm:text-xl lg:text-2xl text-gray-600">
-          Find the perfect yarn for your next project, The perfect Category for you
+          Discover premium yarns from trusted brands, The perfect brand for your project
         </p>
       </div>
-      <CategoriesScroll categories={categories} />
+      <BrandsScroll brands={brands} />
     </section>
   );
 }

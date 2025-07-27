@@ -37,7 +37,7 @@ export default function Hero() {
           <Link href={'/products'}>
           <button className="mt-6 sm:mt-8 px-6 sm:px-8 py-2 sm:py-3 bg-purple-600 hover:bg-purple-800 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg text-sm sm:text-base">
             Shop Now
-          </button></Link>
+          </button></Link> 
         </div>
       </div>
     </div>
@@ -190,18 +190,23 @@ export function NewArrivals({ products = [] }) {
     </div>
   )
 }
-interface Category {
-  category: string;
-  displayName: string;
+
+// Updated interface for brands
+interface Brand {
+  id: string;
+  name: string;
+  discountRate: number;
+  productCount: number;
   image: string;
   sampleProductName: string;
 }
 
-interface CategoriesScrollProps {
-  categories: Category[];
+interface BrandsScrollProps {
+  brands: Brand[];
 }
 
-export function CategoriesScroll({ categories }: CategoriesScrollProps) {
+// Updated component name and functionality for brands
+export function BrandsScroll({ brands }: BrandsScrollProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -223,7 +228,7 @@ export function CategoriesScroll({ categories }: CategoriesScrollProps) {
       container.addEventListener("scroll", checkScrollButtons);
       return () => container.removeEventListener("scroll", checkScrollButtons);
     }
-  }, [categories]);
+  }, [brands]);
 
   const scroll = (direction: "left" | "right") => {
     const container = scrollContainerRef.current;
@@ -241,10 +246,10 @@ export function CategoriesScroll({ categories }: CategoriesScrollProps) {
     });
   };
 
-  if (categories.length === 0) {
+  if (brands.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No categories available</p>
+        <p className="text-muted-foreground">No brands available</p>
       </div>
     );
   }
@@ -281,26 +286,36 @@ export function CategoriesScroll({ categories }: CategoriesScrollProps) {
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {categories.map((category) => (
+        {brands.map((brand) => (
           <Link
-            key={category.category}
-            href={`/products?categories=${category.category}`}
+            key={brand.id}
+            href={`/products?brand=${brand.id}`}
             className="flex-shrink-0"
           >
             <Card className="w-48 transition-all duration-200 hover:shadow-lg hover:scale-105 cursor-pointer rounded-none">
               <CardContent className="p-4">
                 <div className="aspect-square relative mb-3 overflow-hidden rounded-md">
                   <Image
-                    src={category.image}
-                    alt={category.sampleProductName}
+                    src={brand.image}
+                    alt={brand.sampleProductName}
                     fill
                     className="object-cover transition-transform duration-200 hover:scale-110"
                     sizes="350px"
                   />
                 </div>
-                <h3 className="font-medium text-center text-lg leading-tight ">
-                  {category.displayName}
-                </h3>
+                <div className="space-y-2">
+                  <h3 className="font-medium text-center text-lg line-clamp-1 leading-tight">
+                    {brand.name}
+                  </h3>
+                  <div className="flex justify-between items-center text-sm text-gray-600">
+                    <span>{brand.productCount} products</span>
+                    {brand.discountRate > 0 && (
+                      <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                        {brand.discountRate}% OFF
+                      </span>
+                    )}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </Link>
@@ -309,3 +324,6 @@ export function CategoriesScroll({ categories }: CategoriesScrollProps) {
     </div> 
   );
 }
+
+// Keep the old CategoriesScroll as an alias for backward compatibility if needed
+export const CategoriesScroll = BrandsScroll;

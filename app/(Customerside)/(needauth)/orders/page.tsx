@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import OrderCard from "../../components/ordercard";
+import Link from 'next/link'; // Import the Link component from Next.js
 
 export default async function Orders() {
   const session = await auth();
@@ -49,11 +50,21 @@ export default async function Orders() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Your Orders
-        </h1>
-        <p className="text-gray-600">Welcome back, {user.name}</p>
+      {/* Updated header to include the refund button */}
+      <div className="flex justify-between items-start mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Your Orders
+          </h1>
+          <p className="text-gray-600">Welcome back, {user.name}</p>
+        </div>
+        {/* ADDED: Link component styled as a button for refunds */}
+        <Link 
+          href="/refund" 
+          className="inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
+        >
+          Request a Refund
+        </Link>
       </div>
 
       {orders.length === 0 ? (

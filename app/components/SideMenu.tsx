@@ -32,10 +32,12 @@ const brands = [
   { value: "Ganga Delight", label: "Ganga Delight" },
   { value: "Ganga SuperStitch", label: "Ganga SuperStitch" },
   { value: "Ganga Desire", label: "Ganga Desire" },
+  {value:"Ganga Spectrum",label:"Ganga Spectrum"},
+  {value:"Ganga Summer Bloom" , label:"Ganga SummerBloom"},
   {value:"Hobby", label:"Hobby India"},
   {value:"Ganga Blanket", label:"Ganga Blanket Velvety"},
   {value:"Plush",label:"plush"},
-  { value: "Ply Cotton", label: "Cotton" }
+  { value: "Ply Cotton", label: "4Ply Cotton" }
 ];
 
 // Loading component for the sidebar
@@ -48,7 +50,7 @@ function SideMenuSkeleton() {
       </div>
       
       {/* Desktop Sidebar Skeleton */}
-      <div className="hidden lg:block bg-white border rounded-lg shadow-sm">
+      <div className="hidden lg:block bg-white border rounded-sm shadow-sm">
         <div className="p-3 border-b bg-gray-50 rounded-t-lg">
           <div className="h-6 bg-gray-200 animate-pulse rounded w-20"></div>
         </div>
@@ -172,7 +174,7 @@ function SideMenuContent() {
         w-80 lg:w-64
         bg-white
         border-r lg:border
-        lg:rounded-lg
+        lg:rounded-sm
         shadow-lg lg:shadow-sm
         z-50 lg:z-auto
         transform lg:transform-none

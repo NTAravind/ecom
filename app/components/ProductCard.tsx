@@ -70,7 +70,7 @@ const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
             <p className="text-xs text-slate-500">{product.y_weight}</p>
           )}
           <Link href={`/products/${product.id}`}>
-            <h3 className="font-semibold text-slate-800 leading-tight line-clamp-2 hover:text-violet-800 transition-colors">
+            <h3 className="font-semibold text-slate-800 leading-tight line-clamp-1 hover:text-violet-800 transition-colors">
               {product.pname}
             </h3>
           </Link>

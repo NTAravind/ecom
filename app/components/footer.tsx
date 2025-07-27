@@ -37,7 +37,7 @@ export default function Footer() {
                 <div>
                   <p>#24, Patel Yarn House</p>
                   <p>Raja Market, Avenue Road</p>
-                  <p>Bangalore - 560001</p>
+                  <p>Bangalore - 560002</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3 text-sm text-purple-200">
