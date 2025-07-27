@@ -36,7 +36,7 @@ export default function NotFound() {
           Yarn Not Found
         </h2>
         <p className="text-gray-600 text-lg mb-6">
-          Looks like this thread got tangled! The page you're looking for doesn't exist in our yarn collection.
+          Looks like this thread got tangled! The page you are looking for does not exist in our yarn collection.
         </p>
       </div>
 

@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { RefreshCw, Home, AlertTriangle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Error({
   error,
@@ -21,9 +22,9 @@ export default function Error({
       <div className="text-center mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
           <span>PATEL</span>
-          <span className="mx-2 text-purple-600">•</span>
+          <span className="mx-2 text-purple-600"></span>
           <span className="text-purple-600">YARN</span>
-          <span className="mx-2 text-purple-600">•</span>
+          <span className="mx-2 text-purple-600"></span>
           <span>HOUSE</span>
         </h1>
       </div>
@@ -46,7 +47,7 @@ export default function Error({
           Something Got Tangled
         </h2>
         <p className="text-gray-600 text-lg mb-6">
-          Our yarn seems to have gotten in a knot! Don't worry, we're working to untangle this issue.
+          Our yarn seems to have gotten in a knot! Do not worry, we are working to untangle this issue.
         </p>
         {error.digest && (
           <p className="text-sm text-gray-500 mb-4">
@@ -62,10 +63,10 @@ export default function Error({
           Try Again
         </Button>
         <Button asChild variant="outline" size="lg">
-          <a href="/">
+          <Link href="/">
             <Home className="w-4 h-4 mr-2" />
             Back to Home
-          </a>
+          </Link>
         </Button>
       </div>
     </div>
