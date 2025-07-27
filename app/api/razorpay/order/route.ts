@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     // Validate Razorpay credentials first
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      console.error("❌ Razorpay credentials are missing");
+  
       return NextResponse.json(
         { error: "Payment service configuration error" },
         { status: 500 }
@@ -21,8 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Log credentials for debugging (remove in production)
-    console.log("🔑 Razorpay Key ID:", process.env.RAZORPAY_KEY_ID?.substring(0, 10) + "...");
-    console.log("🔑 Key Secret exists:", !!process.env.RAZORPAY_KEY_SECRET);
+
 
     // Initialize Razorpay with explicit credentials
     const razorpay = new Razorpay({
