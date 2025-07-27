@@ -45,7 +45,7 @@ export default function NotFound() {
         <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700">
           <Link href="/">
             <Home className="w-4 h-4 mr-2" />
-            Back to Home !
+            Back to Home 
           </Link>
         </Button>
         <Button asChild variant="outline" size="lg">
