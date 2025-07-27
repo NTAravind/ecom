@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
     // Calculate delivery charge based on delivery mode
     let deliveryCharge = 0;
     if (delivery) {
+      if(amount>=2000){deliveryCharge=0}
       // For delivery orders, apply delivery charge
       deliveryCharge = 60; // Fixed delivery charge
       

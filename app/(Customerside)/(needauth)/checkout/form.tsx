@@ -441,14 +441,17 @@ const OrderSummary = memo(function OrderSummary({user, showAlert, del}:{user: Us
 const PriceBreakdown = memo(function PriceBreakdown({user, deliveryMode}:{user: UserData; deliveryMode: boolean}) {
   const {getTotalPrice} = ProductCart();
   
-  // Memoize delivery charge calculation
-  const deliveryCharge = useMemo(() => {
-    return deliveryMode ? 60 : 0;
-  }, [deliveryMode]);
-
   const subtotal = getTotalPrice();
+  
+  // Updated delivery charge calculation - free if above ₹2000
+  const deliveryCharge = useMemo(() => {
+    if (!deliveryMode) return 0;
+    return subtotal > 2000 ? 0 : 60;  // Free delivery if cart value > ₹2000
+  }, [deliveryMode, subtotal]);
+
   const total = subtotal + deliveryCharge + 4;
   const isBulkOrder = subtotal > 10000;
+  const isFreeDelivery = deliveryMode && subtotal > 2000;
 
   return (
     <div className="space-y-3 mb-6">
@@ -462,10 +465,41 @@ const PriceBreakdown = memo(function PriceBreakdown({user, deliveryMode}:{user: 
           <Truck className="h-4 w-4" />
           {deliveryMode ? "Delivery Charge:" : "Pickup (No Delivery):"}
         </span>
-        <span className="font-medium">
-          {deliveryMode ? fcurrency(deliveryCharge) : "Free"}
+        <span className={`font-medium ${isFreeDelivery ? 'text-green-600' : ''}`}>
+          {deliveryMode 
+            ? (isFreeDelivery ? "Free" : fcurrency(deliveryCharge))
+            : "Free"
+          }
         </span>
       </div>
+
+      {/* Free Delivery Message */}
+      {isFreeDelivery && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3 my-3">
+          <div className="flex items-center gap-2">
+            <Truck className="h-4 w-4 text-green-600" />
+            <span className="text-sm font-medium text-green-800">Free Delivery Applied!</span>
+          </div>
+          <p className="text-xs text-green-700 mt-1">
+            Your order qualifies for free delivery (cart value above ₹2,000)
+          </p>
+        </div>
+      )}
+
+      {/* Show delivery threshold for orders below ₹2000 */}
+      {deliveryMode && !isFreeDelivery && subtotal < 2000 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 my-3">
+          <div className="flex items-center gap-2">
+            <Truck className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-800">
+              Add {fcurrency(2000 - subtotal)} for free delivery
+            </span>
+          </div>
+          <p className="text-xs text-blue-700 mt-1">
+            Get free delivery on orders above ₹2,000
+          </p>
+        </div>
+      )}
 
       <div className="flex justify-between text-sm">
         <span className="text-gray-600 flex items-center gap-1">
@@ -613,10 +647,13 @@ function PurchaseButton({ user, showAlert, del}: { user: UserData, showAlert: (t
   const {cartItems, getTotalPrice, RemoveProduct, ClearBasket} = ProductCart();
   const router = useRouter();
 
-  // Memoize delivery charge calculation
+  const subtotal = getTotalPrice();
+  
+  // Updated delivery charge calculation - free if above ₹2000
   const deliveryCharge = useMemo(() => {
-    return del && user.us?.pincode ? 60 : 0;
-  }, [del, user.us?.pincode]);
+    if (!del || !user.us?.pincode) return 0;
+    return subtotal > 2000 ? 0 : 60;  // Free delivery if cart value > ₹2000
+  }, [del, user.us?.pincode, subtotal]);
 
   // Load Razorpay script only when needed
   useEffect(() => {
@@ -635,7 +672,6 @@ function PurchaseButton({ user, showAlert, del}: { user: UserData, showAlert: (t
       `${item.item.pname} - Qty: ${item.qty} - Price: ${fcurrency(item.item.discountedPrice * item.qty)}`
     ).join('\n');
     
-    const subtotal = getTotalPrice();
     const totalAmount = subtotal + deliveryCharge + 4;
     
     return `🛒 *Bulk Order Request*
@@ -645,7 +681,7 @@ ${orderItems}
 
 💰 *Order Summary:*
 Subtotal: ${fcurrency(subtotal)}
-${del ? `Delivery Charge: ${fcurrency(deliveryCharge)}` : 'Pickup (No Delivery): Free'}
+${del ? `Delivery Charge: ${deliveryCharge === 0 && subtotal > 2000 ? 'Free (₹2000+ order)' : fcurrency(deliveryCharge)}` : 'Pickup (No Delivery): Free'}
 Taxes: ${fcurrency(4)}
 *Total: ${fcurrency(totalAmount)}*
 
@@ -656,7 +692,7 @@ ${del ? `Address: ${user.us?.Address || 'Not provided'}
 Pincode: ${user.us?.pincode || 'Not provided'}` : 'Order Type: Pickup'}
 
 Please process this bulk order. Thank you!`;
-  }, [cartItems, getTotalPrice, deliveryCharge, del, user]);
+  }, [cartItems, subtotal, deliveryCharge, del, user]);
 
   const copyOrderDetails = useCallback(async () => {
     try {
@@ -703,7 +739,6 @@ Please process this bulk order. Thank you!`;
       return;
     }
 
-    const subtotal = getTotalPrice();
     const totalAmount = subtotal + deliveryCharge + 4;
 
     // Check if order value exceeds ₹10,000
@@ -750,7 +785,7 @@ Please process this bulk order. Thank you!`;
       }
 
       const options = {
-        key: 'rzp_test_LRGtLburKVlajK',
+        key: 'rzp_live_yOT8umWv5TqFpR',
         amount: totalAmount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Roshan Fancy Store",
@@ -833,9 +868,8 @@ Please process this bulk order. Thank you!`;
     } finally {
       setPending(false);
     }
-  }, [del, user, getTotalPrice, deliveryCharge, cartItems, scriptLoaded, showAlert, ClearBasket, router]);
+  }, [del, user, subtotal, deliveryCharge, cartItems, scriptLoaded, showAlert, ClearBasket, router]);
 
-  const subtotal = getTotalPrice();
   const totalAmount = subtotal + deliveryCharge + 4;
   
   // Determine if user can proceed based on delivery mode
@@ -929,7 +963,9 @@ Please process this bulk order. Thank you!`;
                 </div>
                 <div className="flex justify-between">
                   <span>{del ? 'Delivery Charge:' : 'Pickup (No Delivery):'}</span>
-                  <span className="font-medium">{del ? fcurrency(deliveryCharge) : 'Free'}</span>
+                  <span className={`font-medium ${deliveryCharge === 0 && del && subtotal > 2000 ? 'text-green-600' : ''}`}>
+                    {del ? (deliveryCharge === 0 && subtotal > 2000 ? 'Free (₹2000+ order)' : fcurrency(deliveryCharge)) : 'Free'}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Taxes:</span>
