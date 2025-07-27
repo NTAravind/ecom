@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Check, RotateCcw, AlertCircle } from "lucide-react"
@@ -30,13 +31,13 @@ export default function OTPButton({
   const isValidPhone = (phoneNumber: string): boolean => {
     // Remove all non-numeric characters
     const cleaned = phoneNumber.replace(/\D/g, '')
-    // Check if it's a valid 10-digit US phone number
-    return cleaned.length === 10
+    // Check if it's a valid 10-digit Indian phone number starting with 6-9
+    return cleaned.length === 10 && /^[6-9]/.test(cleaned)
   }
 
   const sendOTP = async (): Promise<void> => {
     if (!phone.trim() || !isValidPhone(phone)) {
-      setError('Please enter a valid phone number')
+      setError('Please enter a valid Indian mobile number (starting with 6-9)')
       return
     }
 
@@ -119,7 +120,7 @@ export default function OTPButton({
           <div className="text-sm text-green-700 dark:text-green-300">
             <p className="font-medium">Verification code sent!</p>
             <p className="text-green-600 dark:text-green-400 mt-1">
-              Check your messages for a 6-digit code
+              Check your WhatsApp for a 6-digit code
             </p>
           </div>
         </div>
@@ -128,7 +129,7 @@ export default function OTPButton({
       {/* Helper Text */}
       {!success && !error && !loading && (
         <p className="text-xs text-muted-foreground text-center">
-          {"We'll send you a 6-digit verification code"}
+          {"We'll send you a 6-digit verification code via WhatsApp"}
         </p>
       )}
     </div>
