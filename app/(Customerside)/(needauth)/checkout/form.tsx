@@ -760,13 +760,13 @@ Please process this bulk order. Thank you!`;
     setPending(true);
 
     try {
-      // Transform cartItems to only include productId and qty
+      // Transform cartItems to only include productId and qty for order creation
       const orderItems = cartItems.map(cartItem => ({
         productId: cartItem.item.id,
         qty: cartItem.qty
       }));
 
-      // Create order with correct data
+      // Create order with Razorpay (Step 1)
       const res = await fetch("/api/razorpay/order", {
         method: "POST", 
         body: JSON.stringify({
@@ -781,8 +781,10 @@ Please process this bulk order. Thank you!`;
       const data = await res.json();
       
       if (!data.orderId) {
-        throw new Error("Failed to create order");
+        throw new Error(data.error || "Failed to create order");
       }
+
+      console.log('Order created:', data.orderId);
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORKEY,
@@ -792,59 +794,50 @@ Please process this bulk order. Thank you!`;
         description: del ? "Delivery Order Payment" : "Pickup Order Payment",
         handler: async function(response: any) {
           try {
-            const verify = await fetch("/api/razorpay/verify", {
+            // Complete the order with payment details (Step 2) - Using the same API endpoint
+            const completeOrderRes = await fetch("/api/razorpay/order", {
               method: "POST",
               headers: {"Content-Type": "application/json"},
-              body: JSON.stringify(response),
+              body: JSON.stringify({
+                // Order completion data
+                userId: user?.us?.id,
+                cartItems,
+                pricepaid: totalAmount,
+                paymentid: response.razorpay_payment_id,
+                order_id: data.orderId,
+                delivery: del,
+                // Payment verification data
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              })
             });
+        
+            const orderResult = await completeOrderRes.json();
+            console.log('Order completion result:', orderResult);
             
-            const verifyData = await verify.json();
-                console.log('order from checkout',data.orderid)
-            console.log(verifyData)
-            if (verifyData.success) {
-              // Process delivery/pickup after successful payment
-              const deliveryRes = await fetch('/api/delivery/', {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                  userId: user?.us?.id,
-                  cartItems,
-                  pricepaid: totalAmount,
-                  paymentid: response.razorpay_payment_id,
-                  order_id : data.orderId,
-                  delivery: del
-                })
-              });
-          
-              if (deliveryRes.ok) {
-                showAlert(
-                  "Order Placed Successfully!",
-                  `Your ${del ? 'delivery' : 'pickup'} order has been placed successfully and you will receive a confirmation shortly.`,
-                  "success",
-                  () => {
-                    ClearBasket();
-                    router.push('/orders/');
-                  }
-                );
-              } else {
-                showAlert(
-                  "Order Processing Issue",
-                  "Payment successful but order processing failed. Please contact support for assistance.",
-                  "error"
-                );
-              }
+            if (orderResult.success) {
+              showAlert(
+                "Order Placed Successfully!",
+                `Your ${del ? 'delivery' : 'pickup'} order has been placed successfully and you will receive a confirmation shortly.`,
+                "success",
+                () => {
+                  ClearBasket();
+                  router.push('/orders/');
+                }
+              );
             } else {
               showAlert(
-                "Payment Verification Failed",
-                "Payment verification failed. Please try again or contact support if the issue persists.",
+                "Order Processing Issue",
+                orderResult.error || "Order processing failed. Please contact support for assistance.",
                 "error"
               );
             }
-          } catch (verifyErr) {
-            console.error("Verification error:", verifyErr);
+          } catch (completeErr) {
+            console.error("Order completion error:", completeErr);
             showAlert(
-              "Payment Verification Error",
-              "Payment verification failed. Please contact support if money was deducted from your account.",
+              "Order Processing Error",
+              "Payment successful but order completion failed. Please contact support if money was deducted from your account.",
               "error"
             );
           }

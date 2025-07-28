@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
 
 // Handle webhook from Razorpay
 // Handle webhook from Razorpay
+// Handle webhook from Razorpay
 async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
   try {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -73,47 +74,22 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
-      console.log("Webhook - Payment captured:", payment.id);
-      console.log("Order ID:", payment.order_id);
       
       try {
-        // First try to update by payment ID (if order was created by frontend first)
-        let updatedOrder = null;
+        // Update order by payment ID only
+        const updatedOrder = await prisma.order.update({
+          where: { paymentid: payment.id },
+          data: { paid: true }
+        });
         
-        try {
-          updatedOrder = await prisma.order.update({
-            where: { paymentid: payment.id }, // Use payment.id, not payment.payment_id
-            data: { paid: true }
-          });
-          console.log(`Order updated by payment ID: ${payment.id}`);
-        } catch (error) {
-          console.log(`No order found with payment ID: ${payment.id}`);
-          
-          // If no order found by payment ID, try by order ID
-          try {
-            updatedOrder = await prisma.order.update({
-              where: { id: payment.order_id },
-              data: { 
-                paid: true,
-                paymentid: payment.id // Also set the payment ID
-              }
-            });
-            console.log(`Order updated by order ID: ${payment.order_id}`);
-          } catch (orderError) {
-            console.log(`No order found with order ID: ${payment.order_id}`);
-            // Order might not be created yet - this is okay, frontend will handle it
-          }
-        }
-        
-        if (updatedOrder) {
-          console.log("Order successfully marked as paid");
-        } else {
-          console.log("Order not found - will be handled by frontend flow");
-        }
+        console.log(`Order successfully updated by payment ID: ${payment.id}`);
+        console.log(`Order ID: ${updatedOrder.id}`);
         
       } catch (error) {
-        console.error("Error updating order in webhook:", error);
-        // Don't throw error as this might cause Razorpay to retry
+        console.error(`Failed to update order with payment ID: ${payment.id}`, error);
+        
+        // If you want to log this but not fail the webhook response
+        console.log("Order might not exist in database yet - this could be normal if webhook arrives before frontend creates the order");
       }
 
       // Log payment notes for debugging
@@ -136,20 +112,14 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
       console.log("Payment failed:", payment.id);
       console.log("Failure reason:", payment.error_reason);
       
-      // You might want to update order status to failed
+      // Update order status to failed using payment ID
       try {
-        await prisma.order.updateMany({
-          where: {
-            OR: [
-              { id: payment.order_id },
-              { paymentid: payment.id }
-            ]
-          },
-          data: { 
-            paid: false,
-            // You might want to add a 'failed' status field
-          }
+        await prisma.order.update({
+          where: { paymentid: payment.id },
+          data: { paid: false }
         });
+        
+        console.log(`Order marked as failed for payment ID: ${payment.id}`);
       } catch (error) {
         console.error("Error updating failed payment:", error);
       }
