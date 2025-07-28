@@ -27,18 +27,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-
-const AlertDialogLazy = lazy(() => 
-  import("@/components/ui/alert-dialog").then(mod => ({
-    default: ({ children, ...props }: any) => (
-      <AlertDialog {...props}>
-        {children}
-      </AlertDialog>
-    )
-  }))
-);
-
-
 const DELIVERY_CONSTANTS = {
   FREE_DELIVERY_THRESHOLD: 2000,
   DELIVERY_CHARGE: 60,
@@ -48,7 +36,7 @@ const DELIVERY_CONSTANTS = {
 
 const RAZORPAY_CONFIG = {
   script_url: 'https://checkout.razorpay.com/v1/checkout.js',
-  public_key: process.env.RAZORPAY_KEY_PUBLIC, 
+  public_key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, // Fixed: Use NEXT_PUBLIC_ prefix
   currency: 'INR',
   company_name: 'Roshan Fancy Store',
 } as const;
@@ -254,32 +242,30 @@ export default function CheckoutContent({ user }: { user: UserData }) {
         </div>
       </div>
 
-      <Suspense fallback={null}>
-        <AlertDialogLazy 
-          open={alertState.isOpen} 
-          onOpenChange={(open) => setAlertState(prev => ({ ...prev, isOpen: open }))}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{alertState.title}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {alertState.description}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              {alertState.showCancel && (
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-              )}
-              <AlertDialogAction onClick={() => {
-                alertState.onConfirm?.();
-                setAlertState(prev => ({ ...prev, isOpen: false }));
-              }}>
-                OK
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogLazy>
-      </Suspense>
+      <AlertDialog 
+        open={alertState.isOpen} 
+        onOpenChange={(open) => setAlertState(prev => ({ ...prev, isOpen: open }))}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alertState.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {alertState.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {alertState.showCancel && (
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            )}
+            <AlertDialogAction onClick={() => {
+              alertState.onConfirm?.();
+              setAlertState(prev => ({ ...prev, isOpen: false }));
+            }}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -312,6 +298,8 @@ const CheckoutSkeleton = memo(() => (
   </div>
 ));
 
+CheckoutSkeleton.displayName = 'CheckoutSkeleton';
+
 const FormSkeleton = memo(() => (
   <div className="space-y-4 mt-6" role="status" aria-label="Loading form">
     {Array.from({ length: 4 }, (_, i) => (
@@ -323,6 +311,8 @@ const FormSkeleton = memo(() => (
   </div>
 ));
 
+FormSkeleton.displayName = 'FormSkeleton';
+
 const OrderSummarySkeleton = memo(() => (
   <div className="bg-white rounded-lg shadow-sm border p-6" role="status" aria-label="Loading order summary">
     <div className="h-6 bg-gray-200 rounded w-32 mb-4 animate-pulse" />
@@ -333,6 +323,8 @@ const OrderSummarySkeleton = memo(() => (
     </div>
   </div>
 ));
+
+OrderSummarySkeleton.displayName = 'OrderSummarySkeleton';
 
 // Checkout form component
 const CheckoutForm = memo(function CheckoutForm({ 
@@ -628,6 +620,8 @@ const EmptyCartMessage = memo(() => (
     </Link>
   </div>
 ));
+
+EmptyCartMessage.displayName = 'EmptyCartMessage';
 
 // Price breakdown component
 const PriceBreakdown = memo(function PriceBreakdown({
@@ -1252,7 +1246,7 @@ Please process this bulk order. Thank you!`;
   );
 }
 
-// Bulk order details component
+
 const BulkOrderDetails = memo(function BulkOrderDetails({
   cartItems,
   calculations,
