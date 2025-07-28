@@ -799,6 +799,7 @@ Please process this bulk order. Thank you!`;
             });
             
             const verifyData = await verify.json();
+                console.log('order from checkout',data.orderid)
             console.log(verifyData)
             if (verifyData.success) {
               // Process delivery/pickup after successful payment
@@ -810,11 +811,11 @@ Please process this bulk order. Thank you!`;
                   cartItems,
                   pricepaid: totalAmount,
                   paymentid: response.razorpay_payment_id,
-                  order_id : data.orderid,
+                  order_id : data.orderId,
                   delivery: del
                 })
               });
-              console.log('order from checkout',data.orderid)
+          
               if (deliveryRes.ok) {
                 showAlert(
                   "Order Placed Successfully!",

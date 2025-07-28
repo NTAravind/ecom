@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
 }
 
 // Handle webhook from Razorpay
+// Handle webhook from Razorpay
 async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
   try {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -72,21 +73,53 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
-      console.log("webhook verification",payment.id)
-     await prisma.order.update({
-        where:{id:payment.order_id},
-        data:{paid:true}
-      })
+      console.log("Webhook - Payment captured:", payment.id);
+      console.log("Order ID:", payment.order_id);
+      
+      try {
+        // First try to update by payment ID (if order was created by frontend first)
+        let updatedOrder = null;
+        
+        try {
+          updatedOrder = await prisma.order.update({
+            where: { paymentid: payment.id }, // Use payment.id, not payment.payment_id
+            data: { paid: true }
+          });
+          console.log(`Order updated by payment ID: ${payment.id}`);
+        } catch (error) {
+          console.log(`No order found with payment ID: ${payment.id}`);
+          
+          // If no order found by payment ID, try by order ID
+          try {
+            updatedOrder = await prisma.order.update({
+              where: { id: payment.order_id },
+              data: { 
+                paid: true,
+                paymentid: payment.id // Also set the payment ID
+              }
+            });
+            console.log(`Order updated by order ID: ${payment.order_id}`);
+          } catch (orderError) {
+            console.log(`No order found with order ID: ${payment.order_id}`);
+            // Order might not be created yet - this is okay, frontend will handle it
+          }
+        }
+        
+        if (updatedOrder) {
+          console.log("Order successfully marked as paid");
+        } else {
+          console.log("Order not found - will be handled by frontend flow");
+        }
+        
+      } catch (error) {
+        console.error("Error updating order in webhook:", error);
+        // Don't throw error as this might cause Razorpay to retry
+      }
 
-      // Extract cart items if they exist in the payload
-      // Note: Razorpay webhooks don't typically contain custom cart data
-      // You might need to fetch this from your database using the order_id
+      // Log payment notes for debugging
       if (body.payload.payment.entity.notes) {
         console.log("Payment notes:", body.payload.payment.entity.notes);
       }
-      
-      // Here you can update your database with payment status
-      // Example: await updateOrderStatus(payment.order_id, 'paid', payment);
       
       return new Response("Payment processed successfully", { status: 200 });
     }
@@ -94,9 +127,6 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     if (body.event === "payment.authorized") {
       const payment = body.payload.payment.entity;
       console.log("Payment authorized:", payment.id);
-      
-      // Handle authorized payment - you might want to capture it
-      // Example: await handleAuthorizedPayment(payment);
       
       return new Response("Payment authorized", { status: 200 });
     }
@@ -106,8 +136,23 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
       console.log("Payment failed:", payment.id);
       console.log("Failure reason:", payment.error_reason);
       
-      // Handle failed payment
-      // Example: await handleFailedPayment(payment);
+      // You might want to update order status to failed
+      try {
+        await prisma.order.updateMany({
+          where: {
+            OR: [
+              { id: payment.order_id },
+              { paymentid: payment.id }
+            ]
+          },
+          data: { 
+            paid: false,
+            // You might want to add a 'failed' status field
+          }
+        });
+      } catch (error) {
+        console.error("Error updating failed payment:", error);
+      }
       
       return new Response("Payment failure processed", { status: 200 });
     }
@@ -120,7 +165,6 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     return new Response("Webhook processing failed", { status: 500 });
   }
 }
-
 // Handle payment verification from frontend
 async function handlePaymentVerification(body: any) {
   try {
