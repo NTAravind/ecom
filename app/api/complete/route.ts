@@ -6,9 +6,17 @@ export async function POST(request: NextRequest) {
   try {
     const { id, phone } = await request.json()
     console.log('Received request to complete order:', { id, phone })
+    
     if (!id) {
       return NextResponse.json(
         { error: 'Order ID is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!phone) {
+      return NextResponse.json(
+        { error: 'Phone number is required' },
         { status: 400 }
       )
     }
@@ -19,8 +27,8 @@ export async function POST(request: NextRequest) {
       data: { complete: true }
     })
 
-    // Send WhatsApp notification
-    const whatsappResult = await SendWhatsappmsg(updatedOrder.userId, updatedOrder.id)
+    // Send WhatsApp notification - FIXED: using phone parameter instead of userId
+    const whatsappResult = await SendWhatsappmsg(phone, updatedOrder.id)
     
     if (!whatsappResult.success) {
       console.error('WhatsApp notification failed:', whatsappResult.error)
@@ -76,10 +84,20 @@ async function SendWhatsappmsg(phone: string, orderid: string): Promise<{ succes
       throw new Error('WHATSAPPENV environment variable is not set')
     }
 
-    // Validate phone number
+    // Validate and clean phone number
     if (!phone || phone.trim() === '') {
       throw new Error('Phone number is required')
     }
+
+    // Clean phone number - remove any non-digits
+    const cleanPhone = phone.replace(/\D/g, '')
+    
+    // Validate Indian phone number (should be 10 digits after cleaning)
+    if (cleanPhone.length !== 10) {
+      throw new Error(`Invalid phone number format: ${phone}. Expected 10 digits, got ${cleanPhone.length}`)
+    }
+
+    console.log('Sending WhatsApp message to phone:', cleanPhone)
 
     const whatsappResponse = await fetch(
       `https://graph.facebook.com/v22.0/${process.env.WHATSAPPPHONE}/messages`,
@@ -91,7 +109,7 @@ async function SendWhatsappmsg(phone: string, orderid: string): Promise<{ succes
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
-          to: `+91${9019977375}`,
+          to: `+91${cleanPhone}`, // Use cleaned phone number
           type: 'template',
           template: {
             name: 'tracking',
@@ -113,7 +131,8 @@ async function SendWhatsappmsg(phone: string, orderid: string): Promise<{ succes
       console.error('WhatsApp API Error:', {
         status: whatsappResponse.status,
         statusText: whatsappResponse.statusText,
-        body: errorData
+        body: errorData,
+        phone: cleanPhone
       })
       
       return {
@@ -134,7 +153,7 @@ async function SendWhatsappmsg(phone: string, orderid: string): Promise<{ succes
     }
 
     console.log('WhatsApp message sent successfully:', {
-      to: `919019977375`,
+      to: `+91${cleanPhone}`, // FIXED: Use actual recipient phone
       orderId: orderid,
       messageId: responseData.messages?.[0]?.id
     })

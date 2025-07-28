@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 interface MarkToCompleteProps {
   prop: {
     id: string,
-    phone:string
+    phone: string
   }
 }
 
@@ -18,7 +18,7 @@ export default function MarkToComplete({ prop }: MarkToCompleteProps) {
     setIsLoading(true)
     setHasFailed(false)
     try {
-      await markAsComplete(prop.id)
+      await markAsComplete(prop.id, prop.phone)
       setIsCompleted(true)
     } catch (error) {
       console.error('Failed to mark as complete:', error)
@@ -51,28 +51,33 @@ export default function MarkToComplete({ prop }: MarkToCompleteProps) {
         variant={getButtonVariant()}
       >
         {getButtonText()}
+        {/* REMOVED: {prop.phone} - this was displaying phone in button text */}
       </Button>
     </>
   )
 }
 
-async function markAsComplete(id: string) {
+async function markAsComplete(id: string, phone: string) {
   try {
+    // FIXED: Updated endpoint to match your API route structure
     const response = await fetch('/api/complete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ id, phone }),
     })
-    
+        
     if (!response.ok) {
-      throw new Error('Failed to mark order as complete')
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to mark order as complete')
     }
-    
-    // Optionally handle success (e.g., show toast, refresh data)
-    console.log('Order marked as complete')
+        
+    const result = await response.json()
+    console.log('Order marked as complete:', result)
+    return result
   } catch (error) {
     console.error('Error marking order as complete:', error)
+    throw error // Re-throw to be handled by the component
   }
 }
