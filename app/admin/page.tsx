@@ -8,6 +8,7 @@ import prisma from "@/lib/prisma"
 import { fcurrency, fnumber } from "@/utils/utils"
 import { revalidatePath } from "next/cache"
 
+export const dynamic = "force-dynamic";
 // Server Actions
 async function refreshDashboard() {
   "use server"
