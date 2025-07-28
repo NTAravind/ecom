@@ -325,5 +325,5 @@ export function BrandsScroll({ brands }: BrandsScrollProps) {
   );
 }
 
-// Keep the old CategoriesScroll as an alias for backward compatibility if needed
+
 export const CategoriesScroll = BrandsScroll;
