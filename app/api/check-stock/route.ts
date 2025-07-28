@@ -1,19 +1,19 @@
 
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(req: NextRequest) {
   try {
-    const { items } = req.body;
+    const { items } = await req.json();
+    
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({
-        valid: false,
-        errors: [{ productId: '', productName: 'Unknown', requested: 0, available: 0, message: 'Invalid or empty items list' }],
-      });
+      return NextResponse.json(
+        {
+          valid: false,
+          errors: [{ productId: '', productName: 'Unknown', requested: 0, available: 0, message: 'Invalid or empty items list' }],
+        },
+        { status: 400 }
+      );
     }
 
     const errors: Array<{ productId: string; productName: string; requested: number; available: number; message: string }> = [];
@@ -54,15 +54,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (errors.length > 0) {
-      return res.status(400).json({ valid: false, errors });
+      console.warn('Stock validation failed:', errors);
+      return NextResponse.json({ valid: false, errors }, { status: 400 });
     }
 
-    return res.status(200).json({ valid: true, errors: [] });
+    return NextResponse.json({ valid: true, errors: [] });
   } catch (err) {
     console.error('Stock check error:', err);
-    return res.status(500).json({
-      valid: false,
-      errors: [{ productId: '', productName: 'Unknown', requested: 0, available: 0, message: 'Server error during stock check' }],
-    });
+    return NextResponse.json(
+      {
+        valid: false,
+        errors: [{ productId: '', productName: 'Unknown', requested: 0, available: 0, message: 'Server error during stock check' }],
+      },
+      { status: 500 }
+    );
   }
 }
