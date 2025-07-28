@@ -39,8 +39,6 @@ export async function POST(req: NextRequest) {
 }
 
 // Handle webhook from Razorpay
-// Handle webhook from Razorpay
-// Handle webhook from Razorpay
 async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
   try {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -74,28 +72,21 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
-      
-      try {
-        // Update order by payment ID only
-        const updatedOrder = await prisma.order.update({
-          where: { paymentid: payment.id },
-          data: { paid: true }
-        });
-        
-        console.log(`Order successfully updated by payment ID: ${payment.id}`);
-        console.log(`Order ID: ${updatedOrder.id}`);
-        
-      } catch (error) {
-        console.error(`Failed to update order with payment ID: ${payment.id}`, error);
-        
-        // If you want to log this but not fail the webhook response
-        console.log("Order might not exist in database yet - this could be normal if webhook arrives before frontend creates the order");
-      }
+      console.log("webhook verification",payment.id)
+     await prisma.order.update({
+        where:{id:payment.order_id},
+        data:{paid:true}
+      })
 
-      // Log payment notes for debugging
+      // Extract cart items if they exist in the payload
+      // Note: Razorpay webhooks don't typically contain custom cart data
+      // You might need to fetch this from your database using the order_id
       if (body.payload.payment.entity.notes) {
         console.log("Payment notes:", body.payload.payment.entity.notes);
       }
+      
+      // Here you can update your database with payment status
+      // Example: await updateOrderStatus(payment.order_id, 'paid', payment);
       
       return new Response("Payment processed successfully", { status: 200 });
     }
@@ -103,6 +94,9 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     if (body.event === "payment.authorized") {
       const payment = body.payload.payment.entity;
       console.log("Payment authorized:", payment.id);
+      
+      // Handle authorized payment - you might want to capture it
+      // Example: await handleAuthorizedPayment(payment);
       
       return new Response("Payment authorized", { status: 200 });
     }
@@ -112,17 +106,8 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
       console.log("Payment failed:", payment.id);
       console.log("Failure reason:", payment.error_reason);
       
-      // Update order status to failed using payment ID
-      try {
-        await prisma.order.update({
-          where: { paymentid: payment.id },
-          data: { paid: false }
-        });
-        
-        console.log(`Order marked as failed for payment ID: ${payment.id}`);
-      } catch (error) {
-        console.error("Error updating failed payment:", error);
-      }
+      // Handle failed payment
+      // Example: await handleFailedPayment(payment);
       
       return new Response("Payment failure processed", { status: 200 });
     }
@@ -135,6 +120,7 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     return new Response("Webhook processing failed", { status: 500 });
   }
 }
+
 // Handle payment verification from frontend
 async function handlePaymentVerification(body: any) {
   try {
