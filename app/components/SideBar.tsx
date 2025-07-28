@@ -1,11 +1,22 @@
 "use client"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { ShoppingCart } from "lucide-react"
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import Cart from "../(Customerside)/cart/cart"
 
 export default function CartSidebar() {
+  const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    if (pathname === '/checkout') {
+      setOpen(false)
+    }
+  }, [pathname])
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <button className="p-2 rounded-full hover:bg-gray-200">
           <ShoppingCart className="h-6 w-6" />

@@ -112,7 +112,7 @@ async function SendWhatsappmsg(phone: string, orderid: string): Promise<{ succes
           to: `+91${cleanPhone}`, // Use cleaned phone number
           type: 'template',
           template: {
-            name: 'tracking',
+            name: 'trackingorder',
             language: { code: 'en' },
             components: [
               {

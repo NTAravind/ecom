@@ -16,22 +16,27 @@ export async function createUser(prevState: any, formData: FormData): Promise<Ac
     const pincode = formData.get("pincode")?.toString().trim();
     const delivered = formData.get("delivered") === "true"; // Get delivery mode
 
-    // Basic validation - name and phone are always required
-    if (!name || !phone) {
-      return { success: false, message: "Name and phone number are required" };
+    // All fields are now required regardless of delivery mode
+    if (!name || !phone || !address || !pincode) {
+      return { 
+        success: false, 
+        message: "All fields (name, phone, address, and pincode) are required" 
+      };
     }
 
-    // Delivery mode validation - address and pincode required for delivery
-    if (delivered && (!address || !pincode)) {
-      return { success: false, message: "Address and pincode are required for delivery orders" };
+    // Additional validation for pincode (should be numeric and reasonable length)
+    if (!/^\d{4,8}$/.test(pincode)) {
+      return { 
+        success: false, 
+        message: "Please enter a valid pincode (4-8 digits)" 
+      };
     }
 
-    // For pickup mode, address and pincode are optional (use empty strings)
     const userData = {
       name: name,
       phone: phone,
-      Address: delivered ? (address || "") : (address || ""), // Empty string for pickup
-      pincode: delivered ? (pincode || "") : (pincode || "")  // Empty string for pickup
+      Address: address,
+      pincode: pincode
     };
 
     const user = await prisma.user.create({
@@ -40,12 +45,21 @@ export async function createUser(prevState: any, formData: FormData): Promise<Ac
 
     return { 
       success: true, 
-      message: `User created successfully for ${delivered ? 'delivery' : 'pickup'}`, 
+      message: `User details saved successfully for ${delivered ? 'delivery' : 'pickup'} order`, 
       user 
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating user:", error);
-    return { success: false, message: "Failed to create user. Please try again." };
+    
+    // Handle duplicate phone number error
+    if (error.code === 'P2002' && error.meta?.target?.includes('phone')) {
+      return { 
+        success: false, 
+        message: "A user with this phone number already exists. Try updating instead." 
+      };
+    }
+    
+    return { success: false, message: "Failed to save user details. Please try again." };
   }
 }
 
@@ -57,21 +71,26 @@ export async function updateUser(prevState: any, formData: FormData): Promise<Ac
     const pincode = formData.get("pincode")?.toString().trim();
     const delivered = formData.get("delivered") === "true"; // Get delivery mode
 
-    // Basic validation - name and phone are always required
-    if (!name || !phone) {
-      return { success: false, message: "Name and phone number are required" };
+    // All fields are now required regardless of delivery mode
+    if (!name || !phone || !address || !pincode) {
+      return { 
+        success: false, 
+        message: "All fields (name, phone, address, and pincode) are required" 
+      };
     }
 
-    // Delivery mode validation - address and pincode required for delivery
-    if (delivered && (!address || !pincode)) {
-      return { success: false, message: "Address and pincode are required for delivery orders" };
+    // Additional validation for pincode (should be numeric and reasonable length)
+    if (!/^\d{4,8}$/.test(pincode)) {
+      return { 
+        success: false, 
+        message: "Please enter a valid pincode (4-8 digits)" 
+      };
     }
 
-    // For pickup mode, address and pincode are optional (use empty strings)
     const updateData = {
       name: name,
-      Address: delivered ? (address || "") : (address || ""), // Empty string for pickup
-      pincode: delivered ? (pincode || "") : (pincode || "")  // Empty string for pickup
+      Address: address,
+      pincode: pincode
     };
 
     const user = await prisma.user.update({
@@ -81,17 +100,20 @@ export async function updateUser(prevState: any, formData: FormData): Promise<Ac
 
     return { 
       success: true, 
-      message: `User updated successfully for ${delivered ? 'delivery' : 'pickup'}`, 
+      message: `User details updated successfully for ${delivered ? 'delivery' : 'pickup'} order`, 
       user 
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating user:", error);
     
     // Handle case where user doesn't exist
     if (error.code === 'P2025') {
-      return { success: false, message: "User not found. Please create a new account." };
+      return { 
+        success: false, 
+        message: "User not found. Please create a new account." 
+      };
     }
     
-    return { success: false, message: "Failed to update user. Please try again." };
+    return { success: false, message: "Failed to update user details. Please try again." };
   }
 }
