@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-// Lazy load alert dialog for better code splitting
+
 const AlertDialogLazy = lazy(() => 
   import("@/components/ui/alert-dialog").then(mod => ({
     default: ({ children, ...props }: any) => (
