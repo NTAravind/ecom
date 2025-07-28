@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 export async function POST(req: NextRequest) {
   try {
     // Clone the request to read the body multiple times
-    const clonedReq = req;
     const rawBody = await req.text(); // Get raw body for signature verification
     
     let body;
@@ -24,7 +23,7 @@ export async function POST(req: NextRequest) {
     // Check if this is a webhook request (has event field) or payment verification request
     if (body.event) {
       // This is a webhook request - use raw body for signature verification
-      return handleWebhook(clonedReq, body, rawBody);
+      return handleWebhook(req, body, rawBody);
     } else {
       // This is a payment verification request from frontend
       return handlePaymentVerification(body);
@@ -72,31 +71,84 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     
     if (body.event === "payment.captured") {
       const payment = body.payload.payment.entity;
-      console.log("webhook verification",payment.id)
-     await prisma.order.update({
-        where:{id:payment.order_id},
-        data:{paid:true}
-      })
+      console.log("Webhook verification - Payment ID:", payment.id);
+      console.log("Webhook verification - Order ID:", payment.order_id);
+      
+      try {
+        // First check if the order exists
+        const existingOrder = await prisma.order.findUnique({
+          where: { id: payment.order_id },
+          select: { 
+            id: true, 
+            paid: true, 
+            paymentid: true,
+            complete: true 
+          }
+        });
 
-      // Extract cart items if they exist in the payload
-      // Note: Razorpay webhooks don't typically contain custom cart data
-      // You might need to fetch this from your database using the order_id
-      if (body.payload.payment.entity.notes) {
-        console.log("Payment notes:", body.payload.payment.entity.notes);
+        if (!existingOrder) {
+          console.error(`Order not found: ${payment.order_id}`);
+          // Return 200 to prevent Razorpay from retrying, but log the error
+          return new Response("Order not found - may not be created yet", { status: 200 });
+        }
+
+        // Update the order with payment confirmation
+        const updatedOrder = await prisma.order.update({
+          where: { id: payment.order_id },
+          data: { 
+            paid: true,
+            paymentid: payment.id, // Update payment ID if needed
+            complete: true // Mark order as complete when payment is captured
+          }
+        });
+
+        console.log(`✅ Order ${payment.order_id} marked as paid successfully`);
+
+        // Optional: Send confirmation notifications, update inventory, etc.
+        // await sendOrderConfirmation(updatedOrder);
+        
+        return new Response("Payment processed successfully", { status: 200 });
+        
+      } catch (dbError: any) {
+        console.error("Database error while updating order:", dbError);
+        
+        // Check if it's a unique constraint violation on paymentid
+        if (dbError.code === 'P2002' && dbError.meta?.target?.includes('paymentid')) {
+          console.log("Payment ID already exists - payment may have been processed already");
+          return new Response("Payment already processed", { status: 200 });
+        }
+        
+        // For other database errors, return 500 so Razorpay will retry
+        return new Response("Database error processing payment", { status: 500 });
       }
-      
-      // Here you can update your database with payment status
-      // Example: await updateOrderStatus(payment.order_id, 'paid', payment);
-      
-      return new Response("Payment processed successfully", { status: 200 });
     }
     
     if (body.event === "payment.authorized") {
       const payment = body.payload.payment.entity;
       console.log("Payment authorized:", payment.id);
+      console.log("Order ID:", payment.order_id);
       
-      // Handle authorized payment - you might want to capture it
-      // Example: await handleAuthorizedPayment(payment);
+      try {
+        // Check if order exists before updating
+        const existingOrder = await prisma.order.findUnique({
+          where: { id: payment.order_id }
+        });
+
+        if (existingOrder) {
+          await prisma.order.update({
+            where: { id: payment.order_id },
+            data: { 
+              paymentid: payment.id
+              // Don't mark as paid yet - wait for capture
+            }
+          });
+          console.log(`Order ${payment.order_id} updated with authorized payment`);
+        } else {
+          console.log(`Order ${payment.order_id} not found for authorized payment`);
+        }
+      } catch (error) {
+        console.error("Error updating authorized payment:", error);
+      }
       
       return new Response("Payment authorized", { status: 200 });
     }
@@ -104,10 +156,23 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     if (body.event === "payment.failed") {
       const payment = body.payload.payment.entity;
       console.log("Payment failed:", payment.id);
+      console.log("Order ID:", payment.order_id);
       console.log("Failure reason:", payment.error_reason);
       
-      // Handle failed payment
-      // Example: await handleFailedPayment(payment);
+      try {
+        // Check if order exists and update if needed
+        const existingOrder = await prisma.order.findUnique({
+          where: { id: payment.order_id }
+        });
+
+        if (existingOrder && !existingOrder.paid) {
+          // Optionally mark order as failed or take other actions
+          console.log(`Payment failed for order ${payment.order_id}`);
+          // You might want to notify the user or take other actions
+        }
+      } catch (error) {
+        console.error("Error handling failed payment:", error);
+      }
       
       return new Response("Payment failure processed", { status: 200 });
     }
@@ -128,8 +193,6 @@ async function handlePaymentVerification(body: any) {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      // Add any additional data you want to store
-    
     } = body;
     
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -169,8 +232,23 @@ async function handlePaymentVerification(body: any) {
     console.log("Payment verified successfully:", razorpay_payment_id);
     console.log("Order ID:", razorpay_order_id);
     
-    // Here you can update your database with payment confirmation
-    // Example: await confirmPayment(razorpay_order_id, razorpay_payment_id, { cartItems, userDetails });
+    // Check if order exists in database
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: razorpay_order_id },
+        select: { id: true, paid: true }
+      });
+
+      if (!order) {
+        console.log(`Order ${razorpay_order_id} not found in database`);
+        // This might happen if the order hasn't been created yet
+        // The integrated order API should handle this
+      } else {
+        console.log(`Order ${razorpay_order_id} exists, paid status: ${order.paid}`);
+      }
+    } catch (error) {
+      console.error("Error checking order status:", error);
+    }
     
     return NextResponse.json(
       { 
@@ -191,11 +269,10 @@ async function handlePaymentVerification(body: any) {
   }
 }
 
-
-
+// Helper function to get phone number by order ID (if needed)
 async function getPhoneNumberByOrderId(orderId: string): Promise<string> {
   try {
-    const order = (await prisma.order.findUnique as any)({
+    const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: { user: true },
     });

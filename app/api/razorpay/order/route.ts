@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
 
       const order = await razorpay.orders.create(orderOptions);
 
-      console.log("✅ Order created successfully:", order.id);
+      console.log("✅ Razorpay order created successfully:", order.id);
 
       return NextResponse.json(
         { 
@@ -166,50 +166,88 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Create the order in database
-      const order = await prisma.order.create({
-        data: {
-          id: order_id,
-          pricepaid,
-          delivered: delivery,
-          user: { connect: { id: userId } },
-          orderItems: {
-            create: cartItems.map((cartItem: any) => ({
-              quantity: cartItem.qty,
-              product: {
-                connect: { id: cartItem.item.id },
-              },
-            })),
-          },
-          paymentid: paymentid || razorpay_payment_id,
-        },
+      // Check if order already exists (to prevent duplicate creation)
+      const existingOrder = await prisma.order.findUnique({
+        where: { id: order_id }
       });
 
-      // Decrease product quantity
-      for (const cartItem of cartItems) {
-        await prisma.product.update({
-          where: { id: cartItem.item.id },
+      if (existingOrder) {
+        console.log(`Order ${order_id} already exists, skipping creation`);
+        return NextResponse.json({ 
+          success: true, 
+          order: existingOrder,
+          message: "Order already exists" 
+        }, { status: 200 });
+      }
+
+      // Use transaction to ensure atomicity
+      const result = await prisma.$transaction(async (tx) => {
+        // Create the order in database
+        const order = await tx.order.create({
           data: {
-            stock: {
-              decrement: cartItem.qty,
+            id: order_id,
+            pricepaid,
+            delivered: delivery,
+            paid: false, // Will be updated by webhook when payment is captured
+            complete: false, // Will be updated by webhook
+            user: { connect: { id: userId } },
+            orderItems: {
+              create: cartItems.map((cartItem: any) => ({
+                quantity: cartItem.qty,
+                product: {
+                  connect: { id: cartItem.item.id },
+                },
+              })),
             },
+            paymentid: paymentid || razorpay_payment_id,
           },
         });
-      }
+
+        // Decrease product quantity
+        for (const cartItem of cartItems) {
+          await tx.product.update({
+            where: { id: cartItem.item.id },
+            data: {
+              stock: {
+                decrement: cartItem.qty,
+              },
+            },
+          });
+        }
+
+        return order;
+      });
 
       console.log("✅ Order completed successfully:", order_id);
 
       return NextResponse.json({ 
         success: true, 
-        order,
-        message: "Order created and payment processed successfully" 
+        order: result,
+        message: "Order created successfully" 
       }, { status: 200 });
     }
     
   } catch (err: any) {
     console.error("❌ Order operation failed:", err);
     
-    // More detailed error logging
+    // Handle specific Prisma errors
+    if (err.code === 'P2002') {
+      // Unique constraint violation
+      if (err.meta?.target?.includes('id')) {
+        return NextResponse.json({ 
+          success: false, 
+          error: "Order already exists" 
+        }, { status: 409 });
+      }
+      if (err.meta?.target?.includes('paymentid')) {
+        return NextResponse.json({ 
+          success: false, 
+          error: "Payment already processed" 
+        }, { status: 409 });
+      }
+    }
+    
+    // More detailed error logging for Razorpay errors
     if (err.statusCode === 401) {
       console.error("🔐 Authentication failed - Check your Razorpay credentials");
       return NextResponse.json(
