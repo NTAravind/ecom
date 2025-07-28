@@ -4,6 +4,7 @@ import Razorpay from "razorpay";
 import { auth } from "@/auth";
 import { GetProductPrice } from "@/lib/actions";
 import prisma from "@/lib/prisma";
+import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
   const aut = await auth();
@@ -54,21 +55,23 @@ export async function POST(req: NextRequest) {
       // Calculate product total
       const productIds = cartitems.map((item: any) => item.productId);
       
-      // Get product prices from server
+      // Get product prices from server (SECURITY: Always verify prices server-side)
       const products = await GetProductPrice(productIds);
       
-      // Calculate total amount
+      // Calculate total amount (SECURITY: Server-side calculation only)
       const amount = cartitems.reduce((total: number, orderItem: any) => {
-        // Find the corresponding product from server data
         const product = products.find((p: any) => p.id === orderItem.productId);
         
         if (!product) {
           throw new Error(`Product not found: ${orderItem.productId}`);
         }
         
-        // Use discountedPrice from server and multiply by quantity
+        // Validate quantity is positive integer
+        if (!Number.isInteger(orderItem.qty) || orderItem.qty <= 0) {
+          throw new Error(`Invalid quantity for product: ${orderItem.productId}`);
+        }
+        
         return total + product.discountedPrice * orderItem.qty;
-      
       }, 0);
 
       // Calculate delivery charge based on delivery mode
@@ -77,14 +80,11 @@ export async function POST(req: NextRequest) {
         if(amount >= 2000) {
           deliveryCharge = 0;
         } else {
-          deliveryCharge = 60; // Fixed delivery charge
+          deliveryCharge = 60;
         }
       }
 
-      // Add taxes (if any)
       const taxes = 4;
-      
-      // Calculate final total
       const totalAmount = amount + deliveryCharge + taxes;
       
       if (totalAmount > 10000) {
@@ -94,7 +94,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Validate amount before creating order
       if (totalAmount <= 0) {
         return NextResponse.json(
           { error: "Invalid order amount" },
@@ -104,9 +103,8 @@ export async function POST(req: NextRequest) {
 
       console.log("💰 Creating order with amount:", totalAmount);
 
-      // Create Razorpay order with additional error handling
       const orderOptions = {
-        amount: Math.round(totalAmount * 100), // Ensure integer value in paise
+        amount: Math.round(totalAmount * 100),
         currency: "INR",
         receipt: `receipt_${phoneno}_${Date.now()}`,
         notes: {
@@ -117,10 +115,7 @@ export async function POST(req: NextRequest) {
         }
       };
 
-      console.log("📝 Order options:", orderOptions);
-
       const order = await razorpay.orders.create(orderOptions);
-
       console.log("✅ Razorpay order created successfully:", order.id);
 
       return NextResponse.json(
@@ -138,41 +133,133 @@ export async function POST(req: NextRequest) {
       );
 
     } else {
-      // ORDER COMPLETION FLOW - FIXED TO PREVENT RACE CONDITIONS
+      // ORDER COMPLETION FLOW - SECURE IMPLEMENTATION
       
       const { userId, cartItems, pricepaid, order_id } = body;
 
-      // Validate required fields for order completion
+      // SECURITY: Validate all required fields
       if (!userId || !Array.isArray(cartItems) || cartItems.length === 0 || !order_id) {
         return NextResponse.json({ 
           success: false, 
-          error: "Invalid request - missing userId, cartItems, or order_id" 
+          error: "Invalid request - missing required fields" 
         }, { status: 400 });
       }
 
-      // First verify the payment with Razorpay (if signature provided)
-      if (razorpay_signature) {
-        const crypto = require('crypto');
-        const expectedSignature = crypto
-          .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-          .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-          .digest('hex');
-
-        if (expectedSignature !== razorpay_signature) {
-          return NextResponse.json({ 
-            success: false, 
-            error: "Payment verification failed" 
-          }, { status: 400 });
-        }
+      // SECURITY: Validate payment signature FIRST (Critical!)
+      if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+        return NextResponse.json({ 
+          success: false, 
+          error: "Missing payment verification data" 
+        }, { status: 400 });
       }
 
-      // Check if order already exists (to prevent duplicate creation)
+      // SECURITY: Verify payment signature before processing
+      const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest('hex');
+
+      if (expectedSignature !== razorpay_signature) {
+        console.error(`❌ Payment signature verification failed for order: ${order_id}`);
+        console.error(`Expected: ${expectedSignature}`);
+        console.error(`Received: ${razorpay_signature}`);
+        
+        return NextResponse.json({ 
+          success: false, 
+          error: "Payment verification failed - invalid signature" 
+        }, { status: 400 });
+      }
+
+      console.log(`✅ Payment signature verified for order: ${order_id}`);
+
+      // SECURITY: Verify the order exists in Razorpay and is paid
+      try {
+        const razorpayOrder = await razorpay.orders.fetch(razorpay_order_id);
+        const razorpayPayment = await razorpay.payments.fetch(razorpay_payment_id);
+
+        // SECURITY: Verify order status
+        if (razorpayOrder.status !== 'paid' && razorpayPayment.status !== 'captured') {
+          return NextResponse.json({ 
+            success: false, 
+            error: "Payment not confirmed by Razorpay" 
+          }, { status: 400 });
+        }
+
+        // SECURITY: Verify amount matches (protect against tampering)
+        const expectedAmount = Math.round(pricepaid * 100); // Convert to paise
+        if (razorpayOrder.amount !== expectedAmount) {
+          console.error(`❌ Amount mismatch for order ${order_id}`);
+          console.error(`Expected: ${expectedAmount}, Razorpay: ${razorpayOrder.amount}`);
+          
+          return NextResponse.json({ 
+            success: false, 
+            error: "Payment amount verification failed" 
+          }, { status: 400 });
+        }
+
+        console.log(`✅ Razorpay order verification passed for: ${order_id}`);
+
+      } catch (razorpayError: any) {
+        console.error(`❌ Razorpay verification failed:`, razorpayError);
+        return NextResponse.json({ 
+          success: false, 
+          error: "Payment verification with Razorpay failed" 
+        }, { status: 400 });
+      }
+
+      // SECURITY: Server-side price validation (prevent price manipulation)
+      const productIds = cartItems.map((item: any) => item.item.id);
+      const serverProducts = await GetProductPrice(productIds);
+      
+      let serverCalculatedTotal = 0;
+      for (const cartItem of cartItems) {
+        const serverProduct = serverProducts.find(p => p.id === cartItem.item.id);
+        if (!serverProduct) {
+          return NextResponse.json({ 
+            success: false, 
+            error: `Product validation failed: ${cartItem.item.id}` 
+          }, { status: 400 });
+        }
+        
+        // Validate quantities
+        if (!Number.isInteger(cartItem.qty) || cartItem.qty <= 0) {
+          return NextResponse.json({ 
+            success: false, 
+            error: `Invalid quantity for product: ${cartItem.item.id}` 
+          }, { status: 400 });
+        }
+        
+        serverCalculatedTotal += serverProduct.discountedPrice * cartItem.qty;
+      }
+
+      // Add delivery and taxes (same logic as order creation)
+      let serverDeliveryCharge = 0;
+      if (delivery) {
+        serverDeliveryCharge = serverCalculatedTotal >= 2000 ? 0 : 60;
+      }
+      
+      const serverTotalAmount = serverCalculatedTotal + serverDeliveryCharge + 4;
+      
+      // SECURITY: Verify the paid amount matches server calculation
+      if (Math.abs(pricepaid - serverTotalAmount) > 0.01) { // Allow for small floating point differences
+        console.error(`❌ Price tampering detected for order ${order_id}`);
+        console.error(`Client sent: ${pricepaid}, Server calculated: ${serverTotalAmount}`);
+        
+        return NextResponse.json({ 
+          success: false, 
+          error: "Price verification failed" 
+        }, { status: 400 });
+      }
+
+      console.log(`✅ Server-side price validation passed for order: ${order_id}`);
+
+      // Check if order already exists (prevent duplicates)
       const existingOrder = await prisma.order.findUnique({
         where: { id: order_id }
       });
 
       if (existingOrder) {
-        console.log(`Order ${order_id} already exists, skipping creation`);
+        console.log(`⚠️ Order ${order_id} already exists, returning existing order`);
         return NextResponse.json({ 
           success: true, 
           order: existingOrder,
@@ -180,18 +267,31 @@ export async function POST(req: NextRequest) {
         }, { status: 200 });
       }
 
-      console.log(`🚀 Creating order in database BEFORE responding: ${order_id}`);
+      // SECURITY: Check for duplicate payment IDs
+      const existingPayment = await prisma.order.findFirst({
+        where: { paymentid: razorpay_payment_id }
+      });
 
-      // Use transaction to ensure atomicity - CREATE ORDER FIRST
+      if (existingPayment) {
+        console.log(`⚠️ Payment ${razorpay_payment_id} already used for order ${existingPayment.id}`);
+        return NextResponse.json({ 
+          success: false, 
+          error: "Payment already processed" 
+        }, { status: 409 });
+      }
+
+      console.log(`🚀 Creating secure order in database: ${order_id}`);
+
+      // Create order with all security validations passed
       const result = await prisma.$transaction(async (tx) => {
-        // Create the order in database IMMEDIATELY
+        // Create the order - payment is already verified and captured
         const order = await tx.order.create({
           data: {
             id: order_id,
-            pricepaid,
+            pricepaid: serverTotalAmount, // Use server-calculated amount
             delivered: delivery,
-            paid: false, // Will be updated by webhook when payment is captured
-            complete: false, // Will be updated by webhook
+            paid: true, // Payment is verified and captured
+            complete: true, // Order is complete
             user: { connect: { id: userId } },
             orderItems: {
               create: cartItems.map((cartItem: any) => ({
@@ -201,46 +301,47 @@ export async function POST(req: NextRequest) {
                 },
               })),
             },
-            paymentid: paymentid || razorpay_payment_id,
+            paymentid: razorpay_payment_id,
           },
         });
 
-        console.log(`✅ Order ${order_id} created in database successfully`);
+        console.log(`✅ Secure order ${order_id} created successfully`);
 
-        // Decrease product quantity
+        // Update product stock
         for (const cartItem of cartItems) {
-          await tx.product.update({
+          const updatedProduct = await tx.product.update({
             where: { id: cartItem.item.id },
             data: {
               stock: {
                 decrement: cartItem.qty,
               },
             },
+            select: { stock: true, pname: true }
           });
+
+          // SECURITY: Check for negative stock
+          if (updatedProduct.stock < 0) {
+            throw new Error(`Insufficient stock for product: ${updatedProduct.pname}`);
+          }
         }
 
         return order;
       });
 
-      // Add a small delay to ensure database transaction is fully committed
-      // This helps prevent race conditions with webhooks
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      console.log(`✅ Order completed successfully with delay: ${order_id}`);
+      console.log(`✅ Secure order completed successfully: ${order_id}`);
 
       return NextResponse.json({ 
         success: true, 
         order: result,
-        message: "Order created successfully" 
+        message: "Order created successfully with full security validation" 
       }, { status: 200 });
     }
     
   } catch (err: any) {
-    console.error("❌ Order operation failed:", err);
+    console.error("❌ Secure order operation failed:", err);
     
     // Handle specific Prisma errors
     if (err.code === 'P2002') {
-      // Unique constraint violation
       if (err.meta?.target?.includes('id')) {
         return NextResponse.json({ 
           success: false, 
@@ -255,25 +356,25 @@ export async function POST(req: NextRequest) {
       }
     }
     
-    // More detailed error logging for Razorpay errors
+    // Razorpay specific errors
     if (err.statusCode === 401) {
-      console.error("🔐 Authentication failed - Check your Razorpay credentials");
+      console.error("🔐 Razorpay authentication failed");
       return NextResponse.json(
-        { error: "Payment service authentication failed. Please check configuration." },
+        { error: "Payment service authentication failed" },
         { status: 500 }
       );
     }
     
     if (err.statusCode === 400) {
-      console.error("📋 Bad request - Check order parameters");
+      console.error("📋 Razorpay bad request");
       return NextResponse.json(
-        { error: "Invalid order parameters" },
+        { error: "Invalid payment parameters" },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: "Something went wrong while processing order" },
+      { error: "Something went wrong while processing secure order" },
       { status: 500 }
     );
   }
