@@ -358,13 +358,15 @@ const UserDetails = memo(function UserDetails({ user, deliveryMode }: { user: Us
         </div>
       </div>
 
-      {deliveryMode && (
+      {deliveryMode && user.us.Address && (
         <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
           <MapPin className="h-5 w-5 text-gray-600" />
           <div>
             <p className="text-sm text-gray-600">Delivery Address</p>
             <p className="font-medium text-gray-900">{user.us.Address}</p>
-            <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
+            {user.us.pincode && (
+              <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
+            )}
           </div>
         </div>
       )}
@@ -577,7 +579,7 @@ const ProductCard = memo(function ProductCard({ item, onUpdateQuantity, onRemove
             className="object-cover"
             loading="lazy"
             placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLFhiQQehonbkicnzB/V+YmN2bj3KzLIlk/wDi0k7rk9hm"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGy0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLFhiQQehonbkicnzB/V+YmN2bj3KzLIlk/wDi0k7rk9hm"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
@@ -720,7 +722,7 @@ Please process this bulk order. Thank you!`;
 
   const handlePayment = useCallback(async () => {
     // For delivery mode, check if address AND pincode are provided
-    if (del && (!user.us?.Address || !user.us?.pincode)) {
+    if (del && (!user.us?.Address || !user.us?.pincode || !user.us?.name)) {
       showAlert(
         "Missing Delivery Information",
         "Please add your complete delivery address with pincode to proceed with the order.",
@@ -730,7 +732,7 @@ Please process this bulk order. Thank you!`;
     }
 
     // For pickup mode, ensure user name is provided
-    if (!del && !user.us?.name) {
+    if (!del && (!user.us?.name)) {
       showAlert(
         "Missing Contact Details",
         "Please add your name to proceed with the pickup order.",
@@ -827,8 +829,8 @@ Please process this bulk order. Thank you!`;
                 );
               } else {
                 showAlert(
-                  "Order Processing Issue!",
-                  "Payment successful but order processing failed. Please contact support for assistance.!",
+                  "Order Processing Issue",
+                  "Payment successful but order processing failed. Please contact support for assistance.",
                   "error"
                 );
               }
@@ -877,8 +879,8 @@ Please process this bulk order. Thank you!`;
     if (cartItems.length === 0) return false;
     
     if (del) {
-      // For delivery: need both address and pincode
-      return !!(user.us?.Address && user.us?.pincode);
+      // For delivery: need name, address and pincode
+      return !!(user.us?.name && user.us?.Address && user.us?.pincode);
     } else {
       // For pickup: only need name
       return !!(user.us?.name);
@@ -892,8 +894,8 @@ Please process this bulk order. Thank you!`;
     if (isBulkOrder) return "Contact for Bulk Order";
     
     if (del) {
-      if (!user.us?.Address || !user.us?.pincode) {
-        return "Add Delivery Address";
+      if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
+        return "Add Delivery Details";
       }
     } else {
       if (!user.us?.name) {
@@ -905,11 +907,11 @@ Please process this bulk order. Thank you!`;
   }, [isPending, isBulkOrder, del, user.us?.Address, user.us?.pincode, user.us?.name, totalAmount]);
 
   const getHelpText = useCallback(() => {
-    if (del && (!user.us?.Address || !user.us?.pincode)) {
-      return "Please add your complete delivery address with pincode to proceed";
+    if (del && (!user.us?.name || !user.us?.Address || !user.us?.pincode)) {
+      return "Please add your complete delivery details to proceed";
     }
     if (!del && !user.us?.name) {
-      return "Please add your contact details to proceed";
+      return "Please add your name to proceed";
     }
     if (isBulkOrder) {
       return "Order value above ₹10,000 requires bulk order processing";
