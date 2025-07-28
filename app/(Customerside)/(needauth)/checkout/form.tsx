@@ -250,7 +250,7 @@ const CheckoutForm = memo(function CheckoutForm({ user, onSuccess, delivery }: {
     <form action={action} className="space-y-6">
       <div className="space-y-4">
         <div>
-          <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="name" className="text-sm font-medium text-gray-600">
             Full Name
           </Label>
           <Input
