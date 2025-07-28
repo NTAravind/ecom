@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Product, User } from '@/app/generated/prisma';
@@ -16,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogFooter,
 } from '@/components/ui/alert-dialog';
-import { Edit3, Minus, Plus, X, UserIcon, MapPin, Phone, ShoppingBag, CreditCard, Truck, ServerIcon, Loader2 } from 'lucide-react';
+import { Edit3, Minus, Plus, X, UserIcon, MapPin, Phone, ShoppingBag, CreditCard, Truck, ServerIcon, Loader2, AlertTriangle, Package } from 'lucide-react';
 import { useEffect, useState, useMemo, useCallback, memo, lazy, Suspense } from 'react';
 import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -60,6 +61,17 @@ interface AlertState {
   showCancel?: boolean;
 }
 
+interface StockValidationResult {
+  isValid: boolean;
+  errors: Array<{
+    productId: string;
+    productName: string;
+    requested: number;
+    available: number;
+    message: string;
+  }>;
+}
+
 // Error Boundary Fallback
 function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
   return (
@@ -70,127 +82,6 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetError
         Try Again
       </Button>
     </div>
-  );
-}
-
-function CheckoutContent({ user }: { user: UserData }) {
-  const [isEditing, setIsEditing] = useState(!user.us?.name || !user.us?.Address || !user.us?.pincode);
-  const [currentUser, setCurrentUser] = useState<UserData>(user);
-  const [deliveryMode, setDeliveryMode] = useState(true);
-  const [isClient, setIsClient] = useState(false);
-  const [alertState, setAlertState] = useState<AlertState>({
-    isOpen: false,
-    title: '',
-    description: '',
-    type: 'success',
-  });
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    setCurrentUser(user);
-    if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
-      setIsEditing(true);
-    }
-  }, [user]);
-
-  const showAlert = useCallback(
-    (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel = false) => {
-      setAlertState({ isOpen: true, title, description, type, onConfirm, showCancel });
-    },
-    []
-  );
-
-  const handleFormSuccess = useCallback(
-    (updatedUser: User) => {
-      setCurrentUser({ ...currentUser, us: updatedUser });
-      if (updatedUser.name && updatedUser.Address && updatedUser.pincode) {
-        setIsEditing(false);
-      }
-    },
-    [currentUser]
-  );
-
-  if (!isClient) {
-    return <CheckoutSkeleton />;
-  }
-
-  return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
-            <p className="text-gray-600 mt-2">Complete your order</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card className="shadow-sm border-0 bg-white">
-                <CardHeader className="border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <UserIcon className="h-5 w-5 text-blue-600" />
-                      <CardTitle className="text-xl">
-                        {deliveryMode ? 'Delivery Information' : 'Pickup Information'}
-                      </CardTitle>
-                    </div>
-                    {user.us?.name && user.us?.Address && user.us?.pincode && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditing(!isEditing)}
-                        className="flex items-center gap-2"
-                      >
-                        <Edit3 className="h-4 w-4" />
-                        {isEditing ? 'Cancel' : 'Edit'}
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <DeliveryModeSelector value={deliveryMode} onChange={setDeliveryMode} />
-                  <input type="hidden" name="delivered" value={deliveryMode.toString()} />
-                  {isEditing ? (
-                    <CheckoutForm user={currentUser} onSuccess={handleFormSuccess} delivery={deliveryMode} />
-                  ) : (
-                    <UserDetails user={currentUser} deliveryMode={deliveryMode} />
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="lg:col-span-1">
-              <OrderSummary user={currentUser} showAlert={showAlert} del={deliveryMode} />
-            </div>
-          </div>
-        </div>
-
-        <Suspense fallback={<div>Loading...</div>}>
-          <AlertDialogLazy open={alertState.isOpen} onOpenChange={(open) => setAlertState((prev) => ({ ...prev, isOpen: open }))}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{alertState.title}</AlertDialogTitle>
-                <AlertDialogDescription>{alertState.description}</AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                {alertState.showCancel && <AlertDialogCancel>Cancel</AlertDialogCancel>}
-                <AlertDialogAction
-                  onClick={() => {
-                    alertState.onConfirm?.();
-                    setAlertState((prev) => ({ ...prev, isOpen: false }));
-                  }}
-                >
-                  OK
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogLazy>
-        </Suspense>
-      </div>
-    </ErrorBoundary>
   );
 }
 
@@ -409,12 +300,68 @@ const OrderSummary = memo(function OrderSummary({
   const { cartItems, SetItemQuantity, RemoveProduct, getBasketCount, getTotalPrice } = ProductCart();
   const itemCount = getBasketCount();
 
+  // Stock validation function
+  const validateStock = useCallback((productId: string, requestedQuantity: number): boolean => {
+    const cartItem = cartItems.find(item => item.item.id === productId);
+    if (!cartItem) return false;
+    
+    const availableStock = cartItem.item.stock || 0;
+    return requestedQuantity <= availableStock;
+  }, [cartItems]);
+
+  // Enhanced quantity update with stock validation
+  const handleQuantityUpdate = useCallback((productId: string, newQuantity: number) => {
+    const cartItem = cartItems.find(item => item.item.id === productId);
+    if (!cartItem) return;
+
+    const availableStock = cartItem.item.stock || 0;
+    
+    if (newQuantity <= 0) {
+      RemoveProduct(productId);
+      return;
+    }
+
+    if (newQuantity > availableStock) {
+      showAlert(
+        'Insufficient Stock',
+        `Sorry, only ${availableStock} unit${availableStock !== 1 ? 's' : ''} of "${cartItem.item.pname}" ${availableStock !== 1 ? 'are' : 'is'} available in stock.`,
+        'warning'
+      );
+      return;
+    }
+
+    SetItemQuantity(productId, newQuantity);
+  }, [cartItems, SetItemQuantity, RemoveProduct, showAlert]);
+
   const debouncedSetQuantity = useCallback(
     debounce((id: string, qty: number) => {
-      SetItemQuantity(id, qty);
+      handleQuantityUpdate(id, qty);
     }, 300),
-    [SetItemQuantity]
+    [handleQuantityUpdate]
   );
+
+  // Check for stock issues in current cart
+  const stockValidation = useMemo((): StockValidationResult => {
+    const errors: StockValidationResult['errors'] = [];
+    
+    cartItems.forEach(cartItem => {
+      const availableStock = cartItem.item.stock || 0;
+      if (cartItem.qty > availableStock) {
+        errors.push({
+          productId: cartItem.item.id,
+          productName: cartItem.item.pname || 'Unknown Product',
+          requested: cartItem.qty,
+          available: availableStock,
+          message: `Only ${availableStock} unit${availableStock !== 1 ? 's' : ''} available`
+        });
+      }
+    });
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }, [cartItems]);
 
   return (
     <Card className="shadow-sm border-0 bg-white sticky top-4">
@@ -436,6 +383,23 @@ const OrderSummary = memo(function OrderSummary({
           </div>
         ) : (
           <>
+            {/* Stock validation warnings */}
+            {!stockValidation.isValid && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm font-medium text-red-800">Stock Issues Detected</span>
+                </div>
+                <div className="space-y-1">
+                  {stockValidation.errors.map((error) => (
+                    <p key={error.productId} className="text-xs text-red-700">
+                      <strong>{error.productName}:</strong> {error.message}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
               {cartItems.map((item) => (
                 <ProductCard
@@ -443,13 +407,19 @@ const OrderSummary = memo(function OrderSummary({
                   item={item}
                   onUpdateQuantity={debouncedSetQuantity}
                   onRemove={RemoveProduct}
+                  stockValidation={stockValidation}
                 />
               ))}
             </div>
 
             <div className="border-t border-gray-100 pt-4">
               <PriceBreakdown user={user} deliveryMode={del} />
-              <PurchaseButton user={user} showAlert={showAlert} del={del} />
+              <PurchaseButton 
+                user={user} 
+                showAlert={showAlert} 
+                del={del} 
+                stockValidation={stockValidation}
+              />
             </div>
           </>
         )}
@@ -538,28 +508,36 @@ const ProductCard = memo(function ProductCard({
   item,
   onUpdateQuantity,
   onRemove,
+  stockValidation,
 }: {
   item: { item: Product; qty: number };
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
+  stockValidation: StockValidationResult;
 }) {
   const handleQuantityChange = useCallback(
     (newQuantity: number) => {
-      if (newQuantity <= 0) {
-        onRemove(item.item.id);
-      } else {
-        onUpdateQuantity(item.item.id, newQuantity);
-      }
+      onUpdateQuantity(item.item.id, newQuantity);
     },
-    [item.item.id, onUpdateQuantity, onRemove]
+    [item.item.id, onUpdateQuantity]
   );
 
   const handleIncrement = useCallback(() => handleQuantityChange(item.qty + 1), [handleQuantityChange, item.qty]);
   const handleDecrement = useCallback(() => handleQuantityChange(item.qty - 1), [handleQuantityChange, item.qty]);
   const handleRemove = useCallback(() => onRemove(item.item.id), [onRemove, item.item.id]);
 
+  // Check if this item has stock issues
+  const stockIssue = stockValidation.errors.find(error => error.productId === item.item.id);
+  const availableStock = item.item.stock || 0;
+  const isLowStock = availableStock > 0 && availableStock <= 5;
+  const isOutOfStock = availableStock === 0;
+
   return (
-    <div className="group flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+    <div className={`group flex items-center gap-3 p-3 rounded-lg transition-colors ${
+      stockIssue ? 'bg-red-50 border border-red-200' : 
+      isOutOfStock ? 'bg-gray-50 border border-gray-200 opacity-60' :
+      'bg-gray-50 hover:bg-gray-100'
+    }`}>
       <div className="w-14 h-14 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden relative">
         {item.item.irul ? (
           <Image
@@ -577,11 +555,51 @@ const ProductCard = memo(function ProductCard({
             <span className="text-blue-600 font-semibold text-sm">{item.item.pname?.charAt(0)?.toUpperCase() || 'P'}</span>
           </div>
         )}
+        
+        {/* Stock indicator overlay */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <span className="text-white text-xs font-semibold">Out of Stock</span>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between mb-2">
-          <h4 className="text-sm font-medium text-gray-900 truncate pr-2">{item.item.pname}</h4>
+          <div className="flex-1 pr-2">
+            <h4 className="text-sm font-medium text-gray-900 truncate">{item.item.pname}</h4>
+            
+            {/* Stock status indicators */}
+            <div className="flex items-center gap-2 mt-1">
+              {stockIssue && (
+                <Badge variant="destructive" className="text-xs px-2 py-0">
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Exceeds Stock
+                </Badge>
+              )}
+              
+              {!stockIssue && isOutOfStock && (
+                <Badge variant="secondary" className="text-xs px-2 py-0 bg-gray-200">
+                  <Package className="h-3 w-3 mr-1" />
+                  Out of Stock
+                </Badge>
+              )}
+              
+              {!stockIssue && !isOutOfStock && isLowStock && (
+                <Badge variant="outline" className="text-xs px-2 py-0 border-orange-300 text-orange-700">
+                  <Package className="h-3 w-3 mr-1" />
+                  Low Stock ({availableStock} left)
+                </Badge>
+              )}
+              
+              {!stockIssue && !isOutOfStock && !isLowStock && (
+                <span className="text-xs text-gray-500">
+                  {availableStock} in stock
+                </span>
+              )}
+            </div>
+          </div>
+          
           <button
             onClick={handleRemove}
             className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all duration-200 flex-shrink-0"
@@ -595,16 +613,21 @@ const ProductCard = memo(function ProductCard({
           <div className="flex items-center bg-white rounded-full border border-gray-200 p-1">
             <button
               onClick={handleDecrement}
-              className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-              disabled={item.qty <= 1}
+              className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={item.qty <= 1 || isOutOfStock}
               aria-label="Decrease quantity"
             >
               <Minus className="h-3 w-3 text-gray-600" />
             </button>
-            <span className="text-sm font-medium px-3 min-w-[30px] text-center">{item.qty}</span>
+            <span className={`text-sm font-medium px-3 min-w-[30px] text-center ${
+              stockIssue ? 'text-red-600' : 'text-gray-900'
+            }`}>
+              {item.qty}
+            </span>
             <button
               onClick={handleIncrement}
-              className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+              className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isOutOfStock || item.qty >= availableStock}
               aria-label="Increase quantity"
             >
               <Plus className="h-3 w-3 text-gray-600" />
@@ -615,9 +638,18 @@ const ProductCard = memo(function ProductCard({
             <p className="text-xs text-gray-500">
               {fcurrency(item.item.discountedPrice)} × {item.qty}
             </p>
-            <p className="text-sm font-semibold text-gray-900">{fcurrency(item.item.discountedPrice * item.qty)}</p>
+            <p className={`text-sm font-semibold ${stockIssue ? 'text-red-600' : 'text-gray-900'}`}>
+              {fcurrency(item.item.discountedPrice * item.qty)}
+            </p>
           </div>
         </div>
+
+        {/* Stock issue message */}
+        {stockIssue && (
+          <div className="mt-2 text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
+            {stockIssue.message}. Please reduce quantity to {stockIssue.available} or less.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -627,13 +659,16 @@ function PurchaseButton({
   user,
   showAlert,
   del,
+  stockValidation,
 }: {
   user: UserData;
   showAlert: (title: string, description: string, type?: 'success' | 'error' | 'warning', onConfirm?: () => void, showCancel?: boolean) => void;
   del: boolean;
+  stockValidation: StockValidationResult;
 }) {
   const [isPending, setPending] = useState(false);
-  const [isLoadingOrder, setIsLoadingOrder] = useState(false); // New state for order loading
+  const [isLoadingOrder, setIsLoadingOrder] = useState(false);
+  const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
@@ -661,6 +696,79 @@ function PurchaseButton({
     }
   }, [scriptLoaded, showAlert]);
 
+  // Real-time stock validation with backend
+  const performComprehensiveStockValidation = useCallback(async (): Promise<StockValidationResult> => {
+    // Client-side validation first
+    if (!stockValidation.isValid) {
+      return stockValidation;
+    }
+
+    // Additional client-side validation for zero stock items
+    const zeroStockErrors: StockValidationResult['errors'] = [];
+    cartItems.forEach(cartItem => {
+      const availableStock = cartItem.item.stock || 0;
+      if (availableStock === 0) {
+        zeroStockErrors.push({
+          productId: cartItem.item.id,
+          productName: cartItem.item.pname || 'Unknown Product',
+          requested: cartItem.qty,
+          available: 0,
+          message: 'Product is currently out of stock'
+        });
+      }
+    });
+
+    if (zeroStockErrors.length > 0) {
+      return {
+        isValid: false,
+        errors: zeroStockErrors
+      };
+    }
+
+    // Backend stock validation
+    try {
+      const res = await fetch('/api/check-stock', {
+        method: 'POST',
+        body: JSON.stringify({
+          items: cartItems.map(cartItem => ({
+            productId: cartItem.item.id,
+            qty: cartItem.qty,
+          })),
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ errors: [] }));
+        return {
+          isValid: false,
+          errors: errorData.errors || [{
+            productId: '',
+            productName: 'Unknown',
+            requested: 0,
+            available: 0,
+            message: 'Failed to verify stock. Please try again.'
+          }],
+        };
+      }
+
+      const { valid, errors } = await res.json();
+      return { isValid: valid, errors: errors || [] };
+    } catch (err) {
+      console.error('Stock check failed:', err);
+      return {
+        isValid: false,
+        errors: [{
+          productId: '',
+          productName: 'Unknown',
+          requested: 0,
+          available: 0,
+          message: 'Failed to verify stock. Please check your connection and try again.'
+        }],
+      };
+    }
+  }, [stockValidation, cartItems]);
+
   const generateOrderText = useCallback(() => {
     const orderItems = cartItems
       .map((item) => `${item.item.pname} - Qty: ${item.qty} - Price: ${fcurrency(item.item.discountedPrice * item.qty)}`)
@@ -683,7 +791,7 @@ Phone: ${user.phone}
 ${del ? `Address: ${user.us?.Address || 'Not provided'}\nPincode: ${user.us?.pincode || 'Not provided'}` : 'Order Type: Pickup'}
 
 Please process this bulk order. Thank you!`;
-  }, [cartItems, subtotal, deliveryCharge, del, user]);
+  }, [cartItems, subtotal, deliveryCharge, del, user, totalAmount]);
 
   const copyOrderDetails = useCallback(async () => {
     try {
@@ -702,6 +810,7 @@ Please process this bulk order. Thank you!`;
   }, [generateOrderText]);
 
   const handlePayment = useCallback(async () => {
+    // Basic user validation
     if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
       showAlert(
         'Missing Required Information',
@@ -711,18 +820,38 @@ Please process this bulk order. Thank you!`;
       return;
     }
 
+    // Real-time stock validation
+    setIsCheckingStock(true);
+    const stockCheck = await performComprehensiveStockValidation();
+    setIsCheckingStock(false);
+
+    if (!stockCheck.isValid) {
+      const errorMessages = stockCheck.errors.map(error => 
+        `• ${error.productName}: ${error.message}. Please ${error.available === 0 ? 'remove this item or select another' : `reduce quantity to ${error.available} or less`}`
+      ).join('\n');
+      
+      showAlert(
+        'Stock Validation Failed',
+        `The following items have stock issues:\n\n${errorMessages}\n\nPlease adjust your cart and try again.`,
+        'error'
+      );
+      return;
+    }
+
+    // Bulk order handling
     if (subtotal > 10000) {
       setShowBulkDialog(true);
       return;
     }
 
+    // Payment system validation
     if (!scriptLoaded || !window.Razorpay) {
       showAlert('Payment System Loading', 'Payment system is still loading. Please try again in a moment.', 'warning');
       return;
     }
 
     setPending(true);
-    setIsLoadingOrder(true); // Set loading state for order creation
+    setIsLoadingOrder(true);
 
     try {
       const orderItems = cartItems.map((cartItem) => ({
@@ -741,10 +870,22 @@ Please process this bulk order. Thank you!`;
         headers: { 'Content-Type': 'application/json' },
       });
 
-      setIsLoadingOrder(false); // Clear loading state after response
+      setIsLoadingOrder(false);
 
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error occurred' }));
+        
+        // Handle specific stock-related errors from backend
+        if (res.status === 400 && errorData.error?.includes('stock')) {
+          showAlert(
+            'Stock Issue',
+            errorData.error || 'Some items in your cart are no longer available in the requested quantity.',
+            'error'
+          );
+          return;
+        }
+        
+        throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
       }
 
       const data = await res.json();
@@ -759,7 +900,7 @@ Please process this bulk order. Thank you!`;
         name: 'Roshan Fancy Store',
         description: del ? 'Delivery Order Payment' : 'Pickup Order Payment',
         handler: async function (response: any) {
-          setIsLoadingOrder(true); // Set loading state for order completion
+          setIsLoadingOrder(true);
           try {
             const completeOrderRes = await fetch('/api/razorpay/order', {
               method: 'POST',
@@ -777,10 +918,22 @@ Please process this bulk order. Thank you!`;
               }),
             });
 
-            setIsLoadingOrder(false); // Clear loading state after response
+            setIsLoadingOrder(false);
 
             if (!completeOrderRes.ok) {
-              throw new Error(`HTTP error! status: ${completeOrderRes.status}`);
+              const errorData = await completeOrderRes.json().catch(() => ({ error: 'Unknown error' }));
+              
+              // Handle stock-related errors during order completion
+              if (errorData.error?.includes('stock') || errorData.error?.includes('Insufficient')) {
+                showAlert(
+                  'Stock Issue During Order Processing',
+                  'Some items became unavailable during payment processing. Your payment will be refunded automatically.',
+                  'error'
+                );
+                return;
+              }
+              
+              throw new Error(errorData.error || `HTTP error! status: ${completeOrderRes.status}`);
             }
 
             const orderResult = await completeOrderRes.json();
@@ -795,11 +948,20 @@ Please process this bulk order. Thank you!`;
                 }
               );
             } else {
-              showAlert('Order Processing Issue', orderResult.error || 'Order processing failed. Please contact support for assistance.', 'error');
+              // Handle specific error messages from backend
+              if (orderResult.error?.includes('stock') || orderResult.error?.includes('Insufficient')) {
+                showAlert(
+                  'Stock Issue',
+                  orderResult.error || 'Some items are no longer available in the requested quantity.',
+                  'error'
+                );
+              } else {
+                showAlert('Order Processing Issue', orderResult.error || 'Order processing failed. Please contact support for assistance.', 'error');
+              }
             }
           } catch (completeErr) {
             console.error('Order completion error:', completeErr);
-            setIsLoadingOrder(false); // Clear loading state on error
+            setIsLoadingOrder(false);
             showAlert(
               'Order Processing Error',
               'Payment successful but order completion failed. Please contact support if money was deducted from your account.',
@@ -816,38 +978,49 @@ Please process this bulk order. Thank you!`;
 
       const rzp1 = new window.Razorpay(options);
       rzp1.on('payment.failed', function (response: any) {
-        setIsLoadingOrder(false); // Clear loading state on payment failure
+        setIsLoadingOrder(false);
         showAlert('Payment Failed', `Payment failed: ${response.error.description}. Please try again.`, 'error');
       });
       rzp1.open();
     } catch (err) {
       console.error('Payment failed:', err);
-      setIsLoadingOrder(false); // Clear loading state on error
+      setIsLoadingOrder(false);
       showAlert('Payment Failed', 'Failed to initiate payment. Please check your internet connection and try again.', 'error');
     } finally {
       setPending(false);
     }
-  }, [del, user, subtotal, deliveryCharge, cartItems, scriptLoaded, showAlert, ClearBasket, router]);
+  }, [del, user, subtotal, deliveryCharge, cartItems, scriptLoaded, showAlert, ClearBasket, router, performComprehensiveStockValidation, totalAmount]);
 
   const canProceed = useMemo(
-    () => user.us?.name && user.us?.Address && user.us?.pincode && cartItems.length > 0,
-    [user.us?.name, user.us?.Address, user.us?.pincode, cartItems.length]
+    () => user.us?.name && user.us?.Address && user.us?.pincode && cartItems.length > 0 && stockValidation.isValid,
+    [user.us?.name, user.us?.Address, user.us?.pincode, cartItems.length, stockValidation.isValid]
   );
 
   const isBulkOrder = subtotal > 10000;
+  const hasStockIssues = !stockValidation.isValid;
 
   const getButtonText = useCallback(() => {
+    if (isCheckingStock) return 'Checking Stock...';
     if (isPending || isLoadingOrder) return 'Processing...';
+    if (hasStockIssues) return 'Resolve Stock Issues';
     if (isBulkOrder) return 'Contact for Bulk Order';
     if (!canProceed) return 'Complete Required Details';
     return `Pay ${fcurrency(totalAmount)}`;
-  }, [isPending, isLoadingOrder, isBulkOrder, canProceed, totalAmount]);
+  }, [isCheckingStock, isPending, isLoadingOrder, hasStockIssues, isBulkOrder, canProceed, totalAmount]);
 
   const getHelpText = useCallback(() => {
+    if (isCheckingStock) return 'Verifying stock availability...';
+    if (hasStockIssues) return 'Please resolve stock issues in your cart before proceeding';
     if (!canProceed) return 'Please complete all required details to proceed';
     if (isBulkOrder) return 'Order value above ₹10,000 requires bulk order processing';
     return null;
-  }, [canProceed, isBulkOrder]);
+  }, [isCheckingStock, hasStockIssues, canProceed, isBulkOrder]);
+
+  const getButtonColor = useCallback(() => {
+    if (hasStockIssues) return 'bg-red-600 hover:bg-red-700 text-white';
+    if (isBulkOrder) return 'bg-orange-600 hover:bg-orange-700 text-white';
+    return 'bg-blue-600 hover:bg-blue-700 text-white';
+  }, [hasStockIssues, isBulkOrder]);
 
   return (
     <>
@@ -856,16 +1029,24 @@ Please process this bulk order. Thank you!`;
         {scriptLoaded ? (
           <Button
             onClick={handlePayment}
-            disabled={isPending || !canProceed || isLoadingOrder}
-            className={`w-full font-semibold py-3 flex items-center justify-center gap-2 ${
-              isBulkOrder ? 'bg-orange-600 hover:bg-orange-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
+            disabled={isPending || !canProceed || isLoadingOrder || hasStockIssues || isCheckingStock}
+            className={`w-full font-semibold py-3 flex items-center justify-center gap-2 ${getButtonColor()}`}
             aria-label={getButtonText()}
           >
-            {isLoadingOrder ? (
+            {isCheckingStock ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Checking Stock...
+              </>
+            ) : isLoadingOrder ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Processing...
+              </>
+            ) : hasStockIssues ? (
+              <>
+                <AlertTriangle className="h-5 w-5" />
+                {getButtonText()}
               </>
             ) : (
               getButtonText()
@@ -878,7 +1059,14 @@ Please process this bulk order. Thank you!`;
           </div>
         )}
         {getHelpText() && (
-          <p className={`text-sm mt-2 text-center ${isBulkOrder ? 'text-orange-600' : 'text-gray-500'}`}>{getHelpText()}</p>
+          <p className={`text-sm mt-2 text-center ${
+            hasStockIssues ? 'text-red-600' : 
+            isBulkOrder ? 'text-orange-600' : 
+            isCheckingStock ? 'text-blue-600' : 
+            'text-gray-500'
+          }`}>
+            {getHelpText()}
+          </p>
         )}
       </div>
 
@@ -907,6 +1095,9 @@ Please process this bulk order. Thank you!`;
                       <p className="font-medium text-sm">{item.item.pname}</p>
                       <p className="text-xs text-gray-600">
                         Qty: {item.qty} × {fcurrency(item.item.discountedPrice)}
+                      </p>
+                      <p className="text-xs text-green-600">
+                        Stock: {item.item.stock || 0} available
                       </p>
                     </div>
                     <p className="font-semibold text-sm">{fcurrency(item.item.discountedPrice * item.qty)}</p>
@@ -977,6 +1168,125 @@ Please process this bulk order. Thank you!`;
   );
 }
 
+function CheckoutContent({ user }: { user: UserData }) {
+  const [isEditing, setIsEditing] = useState(!user.us?.name || !user.us?.Address || !user.us?.pincode);
+  const [currentUser, setCurrentUser] = useState<UserData>(user);
+  const [deliveryMode, setDeliveryMode] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+  const [alertState, setAlertState] = useState<AlertState>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'success',
+  });
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    setCurrentUser(user);
+    if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
+      setIsEditing(true);
+    }
+  }, [user]);
+
+  const showAlert = useCallback(
+    (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel = false) => {
+      setAlertState({ isOpen: true, title, description, type, onConfirm, showCancel });
+    },
+    []
+  );
+
+  const handleFormSuccess = useCallback(
+    (updatedUser: User) => {
+      setCurrentUser({ ...currentUser, us: updatedUser });
+      if (updatedUser.name && updatedUser.Address && updatedUser.pincode) {
+        setIsEditing(false);
+      }
+    },
+    [currentUser]
+  );
+
+  if (!isClient) {
+    return <CheckoutSkeleton />;
+  }
+
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+            <p className="text-gray-600 mt-2">Complete your order</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <Card className="shadow-sm border-0 bg-white">
+                <CardHeader className="border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <UserIcon className="h-5 w-5 text-blue-600" />
+                      <CardTitle className="text-xl">
+                        {deliveryMode ? 'Delivery Information' : 'Pickup Information'}
+                      </CardTitle>
+                    </div>
+                    {user.us?.name && user.us?.Address && user.us?.pincode && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsEditing(!isEditing)}
+                        className="flex items-center gap-2"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                        {isEditing ? 'Cancel' : 'Edit'}
+                      </Button>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <DeliveryModeSelector value={deliveryMode} onChange={setDeliveryMode} />
+                  <input type="hidden" name="delivered" value={deliveryMode.toString()} />
+                  {isEditing ? (
+                    <CheckoutForm user={currentUser} onSuccess={handleFormSuccess} delivery={deliveryMode} />
+                  ) : (
+                    <UserDetails user={currentUser} deliveryMode={deliveryMode} />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="lg:col-span-1">
+              <OrderSummary user={currentUser} showAlert={showAlert} del={deliveryMode} />
+            </div>
+          </div>
+        </div>
+
+        <Suspense fallback={<div>Loading...</div>}>
+          <AlertDialogLazy open={alertState.isOpen} onOpenChange={(open) => setAlertState((prev) => ({ ...prev, isOpen: open }))}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{alertState.title}</AlertDialogTitle>
+                <AlertDialogDescription>{alertState.description}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                {alertState.showCancel && <AlertDialogCancel>Cancel</AlertDialogCancel>}
+                <AlertDialogAction
+                  onClick={() => {
+                    alertState.onConfirm?.();
+                    setAlertState((prev) => ({ ...prev, isOpen: false }));
+                  }}
+                >
+                  OK
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogLazy>
+        </Suspense>
+      </div>
+    </ErrorBoundary>
+  );
+}
 
 export default CheckoutContent;
