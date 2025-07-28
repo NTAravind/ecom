@@ -785,7 +785,7 @@ Please process this bulk order. Thank you!`;
       }
 
       const options = {
-        key: 'rzp_test_AmL6959GeDgjsB',
+        key: process.env.NEXT_PUBLIC_RAZORKEY,
         amount: totalAmount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Roshan Fancy Store",
@@ -810,11 +810,11 @@ Please process this bulk order. Thank you!`;
                   cartItems,
                   pricepaid: totalAmount,
                   paymentid: response.razorpay_payment_id,
-                  order_id : data.orderId,
+                  order_id : data.orderid,
                   delivery: del
                 })
               });
-              
+              console.log('order from checkout',data.orderid)
               if (deliveryRes.ok) {
                 showAlert(
                   "Order Placed Successfully!",
