@@ -250,7 +250,7 @@ const CheckoutForm = memo(function CheckoutForm({ user, onSuccess, delivery }: {
     <form action={action} className="space-y-6">
       <div className="space-y-4">
         <div>
-          <Label htmlFor="name" className="text-sm font-medium text-gray-600">
+          <Label htmlFor="name" className="text-sm font-medium text-gray-700">
             Full Name
           </Label>
           <Input
@@ -358,15 +358,13 @@ const UserDetails = memo(function UserDetails({ user, deliveryMode }: { user: Us
         </div>
       </div>
 
-      {deliveryMode && user.us.Address && (
+      {deliveryMode && (
         <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
           <MapPin className="h-5 w-5 text-gray-600" />
           <div>
             <p className="text-sm text-gray-600">Delivery Address</p>
             <p className="font-medium text-gray-900">{user.us.Address}</p>
-            {user.us.pincode && (
-              <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
-            )}
+            <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
           </div>
         </div>
       )}
@@ -483,7 +481,7 @@ const PriceBreakdown = memo(function PriceBreakdown({user, deliveryMode}:{user: 
             <span className="text-sm font-medium text-green-800">Free Delivery Applied!</span>
           </div>
           <p className="text-xs text-green-700 mt-1">
-            Your order qualifies for free delivery (cart value above ₹2,000) 
+            Your order qualifies for free delivery (cart value above ₹2,000)
           </p>
         </div>
       )}
@@ -579,7 +577,7 @@ const ProductCard = memo(function ProductCard({ item, onUpdateQuantity, onRemove
             className="object-cover"
             loading="lazy"
             placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGy0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLFhiQQehonbkicnzB/V+YmN2bj3KzLIlk/wDi0k7rk9hm"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLFhiQQehonbkicnzB/V+YmN2bj3KzLIlk/wDi0k7rk9hm"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
@@ -653,9 +651,9 @@ function PurchaseButton({ user, showAlert, del}: { user: UserData, showAlert: (t
   
   // Updated delivery charge calculation - free if above ₹2000
   const deliveryCharge = useMemo(() => {
-    if (!del) return 0;
+    if (!del || !user.us?.pincode) return 0;
     return subtotal > 2000 ? 0 : 60;  // Free delivery if cart value > ₹2000
-  }, [del, subtotal]);
+  }, [del, user.us?.pincode, subtotal]);
 
   // Load Razorpay script only when needed
   useEffect(() => {
@@ -721,21 +719,21 @@ Please process this bulk order. Thank you!`;
   }, [generateOrderText]);
 
   const handlePayment = useCallback(async () => {
-    // For delivery mode, check if address AND pincode are provided
-    if (del && (!user.us?.Address || !user.us?.pincode || !user.us?.name)) {
+    // For delivery mode, check if address is provided
+    if (del && !user.us?.pincode) {
       showAlert(
-        "Missing Delivery Information",
-        "Please add your complete delivery address with pincode to proceed with the order.",
+        "Missing Delivery Address",
+        "Please add your delivery address with pincode first to proceed with the order.",
         "warning"
       );
       return;
     }
 
-    // For pickup mode, ensure user name is provided
-    if (!del && (!user.us?.name)) {
+    // For pickup mode, ensure user details are provided
+    if (!del && !user.us?.name) {
       showAlert(
-        "Missing Contact Details",
-        "Please add your name to proceed with the pickup order.",
+        "Missing User Details",
+        "Please add your contact details to proceed with the pickup order.",
         "warning"
       );
       return;
@@ -787,7 +785,7 @@ Please process this bulk order. Thank you!`;
       }
 
       const options = {
-        key: process.env.RAZOR_PAY_PUBLIC ,
+        key: process.env.NEXT_PUBLIC_RAZORPAY,
         amount: totalAmount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Roshan Fancy Store",
@@ -874,50 +872,29 @@ Please process this bulk order. Thank you!`;
 
   const totalAmount = subtotal + deliveryCharge + 4;
   
-  // Fix the canProceed logic
+  // Determine if user can proceed based on delivery mode
   const canProceed = useMemo(() => {
-    if (cartItems.length === 0) return false;
-    
-    if (del) {
-      // For delivery: need name, address and pincode
-      return !!(user.us?.name && user.us?.Address && user.us?.pincode);
-    } else {
-      // For pickup: only need name
-      return !!(user.us?.name);
-    }
-  }, [del, user.us?.Address, user.us?.pincode, user.us?.name, cartItems.length]);
+    return del 
+      ? (user.us?.pincode && cartItems.length > 0) // For delivery: need pincode
+      : (user.us?.name && cartItems.length > 0);   // For pickup: need name
+  }, [del, user.us?.pincode, user.us?.name, cartItems.length]);
     
   const isBulkOrder = subtotal > 10000;
 
   const getButtonText = useCallback(() => {
     if (isPending) return "Processing Payment...";
     if (isBulkOrder) return "Contact for Bulk Order";
-    
-    if (del) {
-      if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
-        return "Add Delivery Details";
-      }
-    } else {
-      if (!user.us?.name) {
-        return "Add Contact Details";
-      }
-    }
-    
+    if (del && !user.us?.pincode) return "Add Delivery Address";
+    if (!del && !user.us?.name) return "Add Contact Details";
     return `Pay ${fcurrency(totalAmount)}`;
-  }, [isPending, isBulkOrder, del, user.us?.Address, user.us?.pincode, user.us?.name, totalAmount]);
+  }, [isPending, isBulkOrder, del, user.us?.pincode, user.us?.name, totalAmount]);
 
   const getHelpText = useCallback(() => {
-    if (del && (!user.us?.name || !user.us?.Address || !user.us?.pincode)) {
-      return "Please add your complete delivery details to proceed";
-    }
-    if (!del && !user.us?.name) {
-      return "Please add your name to proceed";
-    }
-    if (isBulkOrder) {
-      return "Order value above ₹10,000 requires bulk order processing";
-    }
+    if (del && !user.us?.pincode) return "Please add your delivery address to proceed";
+    if (!del && !user.us?.name) return "Please add your contact details to proceed";
+    if (isBulkOrder) return "Order value above ₹10,000 requires bulk order processing";
     return null;
-  }, [del, user.us?.Address, user.us?.pincode, user.us?.name, isBulkOrder]);
+  }, [del, user.us?.pincode, user.us?.name, isBulkOrder]);
 
   return (
     <>
