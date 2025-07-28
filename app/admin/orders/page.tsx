@@ -2,6 +2,7 @@ import Header from "@/app/components/Header";
 import { OrdersDataTable } from "./Datatable";
 import {columns } from "./column"
 import prisma from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 export default  async function Order(){
  const orders = await prisma.order.findMany({
     include: { user: true },

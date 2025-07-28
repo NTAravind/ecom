@@ -83,7 +83,7 @@ export default function DeliveryModeSelector({
         ) : (
           <div className="flex items-center gap-1">
             <Store className="h-3 w-3" />
-            Ready for pickup within 2 hours
+            Ready for pickup within 48 - 72  Hours
           </div>
         )}
       </div>

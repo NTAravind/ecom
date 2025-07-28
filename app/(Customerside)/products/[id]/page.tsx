@@ -395,7 +395,7 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
                 <div className="bg-gray-200 h-3 rounded w-3/4"></div>
               </div>
             ))}
-          </div>
+          </div> 
         }>
           <DynamicSimilarProducts products={simprods} />
         </Suspense>
