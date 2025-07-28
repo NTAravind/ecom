@@ -483,7 +483,7 @@ const PriceBreakdown = memo(function PriceBreakdown({user, deliveryMode}:{user: 
             <span className="text-sm font-medium text-green-800">Free Delivery Applied!</span>
           </div>
           <p className="text-xs text-green-700 mt-1">
-            Your order qualifies for free delivery (cart value above ₹2,000)
+            Your order qualifies for free delivery (cart value above ₹2,000) 
           </p>
         </div>
       )}
