@@ -38,7 +38,7 @@ const AlertDialogLazy = lazy(() =>
   }))
 );
 
-// Constants for better performance and maintainability
+
 const DELIVERY_CONSTANTS = {
   FREE_DELIVERY_THRESHOLD: 2000,
   DELIVERY_CHARGE: 60,
@@ -48,7 +48,7 @@ const DELIVERY_CONSTANTS = {
 
 const RAZORPAY_CONFIG = {
   script_url: 'https://checkout.razorpay.com/v1/checkout.js',
-  public_key: process.env.RAZORPAY_KEY_PUBLIC, // Fixed env var name
+  public_key: process.env.RAZORPAY_KEY_PUBLIC, 
   currency: 'INR',
   company_name: 'Roshan Fancy Store',
 } as const;
