@@ -828,7 +828,7 @@ Please process this bulk order. Thank you!`;
               } else {
                 showAlert(
                   "Order Processing Issue!",
-                  "Payment successful but order processing failed. Please contact support for assistance.",
+                  "Payment successful but order processing failed. Please contact support for assistance.!",
                   "error"
                 );
               }
