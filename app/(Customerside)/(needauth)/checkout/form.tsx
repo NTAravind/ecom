@@ -785,7 +785,7 @@ Please process this bulk order. Thank you!`;
       }
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY,
+        key: 'rzp_test_AmL6959GeDgjsB',
         amount: totalAmount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Roshan Fancy Store",

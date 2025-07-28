@@ -167,7 +167,7 @@ export default async function OrderDetailPage({
                     <div className="text-lg font-semibold">₹{item.product.discountedPrice.toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">Qty: {item.quantity}</div>
                     <div className="text-sm font-medium">
-                      Total: ₹{(item.product.price * item.quantity).toLocaleString()}
+                      Total: ₹{(item.product.discountedPrice * item.quantity)}
                     </div>
                   </div>
                 </div>
