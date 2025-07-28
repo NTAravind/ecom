@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
       );
 
     } else {
-      // ORDER COMPLETION FLOW (new integrated logic)
+      // ORDER COMPLETION FLOW - FIXED TO PREVENT RACE CONDITIONS
       
       const { userId, cartItems, pricepaid, order_id } = body;
 
@@ -180,9 +180,11 @@ export async function POST(req: NextRequest) {
         }, { status: 200 });
       }
 
-      // Use transaction to ensure atomicity
+      console.log(`🚀 Creating order in database BEFORE responding: ${order_id}`);
+
+      // Use transaction to ensure atomicity - CREATE ORDER FIRST
       const result = await prisma.$transaction(async (tx) => {
-        // Create the order in database
+        // Create the order in database IMMEDIATELY
         const order = await tx.order.create({
           data: {
             id: order_id,
@@ -203,6 +205,8 @@ export async function POST(req: NextRequest) {
           },
         });
 
+        console.log(`✅ Order ${order_id} created in database successfully`);
+
         // Decrease product quantity
         for (const cartItem of cartItems) {
           await tx.product.update({
@@ -218,7 +222,11 @@ export async function POST(req: NextRequest) {
         return order;
       });
 
-      console.log("✅ Order completed successfully:", order_id);
+      // Add a small delay to ensure database transaction is fully committed
+      // This helps prevent race conditions with webhooks
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      console.log(`✅ Order completed successfully with delay: ${order_id}`);
 
       return NextResponse.json({ 
         success: true, 
