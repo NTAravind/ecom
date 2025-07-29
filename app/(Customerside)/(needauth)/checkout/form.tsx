@@ -30,7 +30,7 @@ import DeliveryModeSelector from './del';
 import { createUser, updateUser } from './action';
 import ProductCart from '@/app/store/store';
 import { fcurrency } from '@/utils/utils';
-
+import { MessageSquare,ShoppingCart,Copy } from 'lucide-react';
 // Lazy load AlertDialog
 const AlertDialogLazy = lazy(() =>
   import('@/components/ui/alert-dialog').then((mod) => ({
@@ -655,6 +655,14 @@ const ProductCard = memo(function ProductCard({
   );
 });
 
+
+
+
+interface StockValidationResult {
+  isValid: boolean;
+  errors: Array<{ productId: string; productName: string; requested: number; available: number; message: string }>;
+}
+
 function PurchaseButton({
   user,
   showAlert,
@@ -667,406 +675,340 @@ function PurchaseButton({
   stockValidation: StockValidationResult;
 }) {
   const [isPending, setPending] = useState(false);
-  const [isLoadingOrder, setIsLoadingOrder] = useState(false);
   const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
   const router = useRouter();
   const subtotal = getTotalPrice();
-  const deliveryCharge = useMemo(() => (del && subtotal <= 2000 ? 60 : 0), [del, subtotal]);
-  const totalAmount = subtotal + deliveryCharge + 4;
+  const deliveryCharge = useMemo(() => (del && subtotal < 2000 ? 60 : 0), [del, subtotal]);
+  const taxes = 4;
+  const totalAmount = subtotal + deliveryCharge + taxes;
 
   useEffect(() => {
-    if (!scriptLoaded) {
+    if (!scriptLoaded && !window.Razorpay) {
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
       script.onload = () => setScriptLoaded(true);
-      script.onerror = () => {
-        showAlert('Payment Script Failed', 'Failed to load payment system. Please try again later.', 'error');
-        setScriptLoaded(false);
-      };
+      script.onerror = () => showAlert('Payment Error', 'Failed to load payment system.', 'error');
       document.head.appendChild(script);
       return () => {
         if (document.head.contains(script)) {
           document.head.removeChild(script);
         }
       };
+    } else if (window.Razorpay) {
+      setScriptLoaded(true);
     }
   }, [scriptLoaded, showAlert]);
 
-  // Real-time stock validation with backend
-  const performComprehensiveStockValidation = useCallback(async (): Promise<StockValidationResult> => {
-    // Client-side validation first
-    if (!stockValidation.isValid) {
-      return stockValidation;
-    }
-
-    // Additional client-side validation for zero stock items
-    const zeroStockErrors: StockValidationResult['errors'] = [];
-    cartItems.forEach(cartItem => {
-      const availableStock = cartItem.item.stock || 0;
-      if (availableStock === 0) {
-        zeroStockErrors.push({
-          productId: cartItem.item.id,
-          productName: cartItem.item.pname || 'Unknown Product',
-          requested: cartItem.qty,
-          available: 0,
-          message: 'Product is currently out of stock'
+  const pollOrderStatus = useCallback(async (orderId: string, maxAttempts: number = 5, delay: number = 2000) => {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const res = await fetch(`/api/check-order/${orderId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
         });
+        if (!res.ok) {
+          console.log(`Polling attempt ${attempt}/${maxAttempts} failed: ${res.status}`);
+          continue;
+        }
+        const data = await res.json();
+        if (data.success && data.order?.paid && data.order?.complete) {
+          showAlert(
+            'Order Placed Successfully!',
+            `Your ${del ? 'delivery' : 'pickup'} order #${orderId.slice(-8)} has been confirmed.`,
+            'success',
+            () => {
+              ClearBasket();
+              router.push('/orders');
+            }
+          );
+          return true;
+        }
+        console.log(`Polling attempt ${attempt}/${maxAttempts}: Order ${orderId} not yet paid`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } catch (err) {
+        console.error(`Polling error for order ${orderId}:`, err);
       }
-    });
-
-    if (zeroStockErrors.length > 0) {
-      return {
-        isValid: false,
-        errors: zeroStockErrors
-      };
     }
-
-    // Backend stock validation
-    try {
-      const res = await fetch('/api/check-stock', {
-        method: 'POST',
-        body: JSON.stringify({
-          items: cartItems.map(cartItem => ({
-            productId: cartItem.item.id,
-            qty: cartItem.qty,
-          })),
-        }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ errors: [] }));
-        return {
-          isValid: false,
-          errors: errorData.errors || [{
-            productId: '',
-            productName: 'Unknown',
-            requested: 0,
-            available: 0,
-            message: 'Failed to verify stock. Please try again.'
-          }],
-        };
-      }
-
-      const { valid, errors } = await res.json();
-      return { isValid: valid, errors: errors || [] };
-    } catch (err) {
-      console.error('Stock check failed:', err);
-      return {
-        isValid: false,
-        errors: [{
-          productId: '',
-          productName: 'Unknown',
-          requested: 0,
-          available: 0,
-          message: 'Failed to verify stock. Please check your connection and try again.'
-        }],
-      };
-    }
-  }, [stockValidation, cartItems]);
+    showAlert(
+      'Payment Pending',
+      `Your order #${orderId.slice(-8)} is still processing. Check the status on the orders page.`,
+      'warning',
+      () => router.push('/orders')
+    );
+    return false;
+  }, [showAlert, ClearBasket, router, del]);
 
   const generateOrderText = useCallback(() => {
     const orderItems = cartItems
-      .map((item) => `${item.item.pname} - Qty: ${item.qty} - Price: ${fcurrency(item.item.discountedPrice * item.qty)}`)
+      .map(item => `${item.item.pname} - Qty: ${item.qty} - Price: ${fcurrency(item.item.discountedPrice * item.qty)}`)
       .join('\n');
-
-    return `🛒 *Bulk Order Request*
-
-📋 *Order Details:*
-${orderItems}
-
-💰 *Order Summary:*
-Subtotal: ${fcurrency(subtotal)}
-${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹2000+ order)' : fcurrency(deliveryCharge)}` : 'Pickup (No Delivery): Free'}
-Taxes: ${fcurrency(4)}
-*Total: ${fcurrency(totalAmount)}*
-
-👤 *Customer Details:*
-Name: ${user.us?.name || 'Not provided'}
-Phone: ${user.phone}
-${del ? `Address: ${user.us?.Address || 'Not provided'}\nPincode: ${user.us?.pincode || 'Not provided'}` : 'Order Type: Pickup'}
-
-Please process this bulk order. Thank you!`;
-  }, [cartItems, subtotal, deliveryCharge, del, user, totalAmount]);
+    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹2000+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${user.us?.Address || 'N/A'}\nPincode: ${user.us?.pincode || 'N/A'}` : 'Order Type: Pickup'}`;
+  }, [cartItems, subtotal, deliveryCharge, del, user, totalAmount, taxes]);
 
   const copyOrderDetails = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(generateOrderText());
-      showAlert('Order Details Copied!', 'Order details have been copied to clipboard. You can now paste them in WhatsApp.', 'success');
+      showAlert('Order Details Copied!', 'Order details copied to clipboard.', 'success');
     } catch (err) {
-      console.error('Failed to copy:', err);
-      showAlert('Copy Failed', 'Failed to copy order details. Please manually copy the text from the dialog.', 'error');
+      showAlert('Copy Failed', 'Failed to copy order details.', 'error');
     }
   }, [generateOrderText, showAlert]);
 
   const openWhatsApp = useCallback(() => {
-    const orderText = generateOrderText();
-    const whatsappUrl = `https://wa.link/132fuh?text=${encodeURIComponent(orderText)}`;
+    const whatsappUrl = `https://wa.link/132fuh?text=${encodeURIComponent(generateOrderText())}`;
     window.open(whatsappUrl, '_blank');
   }, [generateOrderText]);
 
   const handlePayment = useCallback(async () => {
-    // Basic user validation
     if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
-      showAlert(
-        'Missing Required Information',
-        'Please add your name, address, and pincode to proceed with the order.',
-        'warning'
-      );
+      showAlert('Missing Information', 'Please complete your profile with name, address, and pincode.', 'warning');
       return;
     }
 
-    // Real-time stock validation
-    setIsCheckingStock(true);
-    const stockCheck = await performComprehensiveStockValidation();
-    setIsCheckingStock(false);
-
-    if (!stockCheck.isValid) {
-      const errorMessages = stockCheck.errors.map(error => 
-        `• ${error.productName}: ${error.message}. Please ${error.available === 0 ? 'remove this item or select another' : `reduce quantity to ${error.available} or less`}`
-      ).join('\n');
-      
-      showAlert(
-        'Stock Validation Failed',
-        `The following items have stock issues:\n\n${errorMessages}\n\nPlease adjust your cart and try again.`,
-        'error'
-      );
+    if (cartItems.length === 0) {
+      showAlert('Empty Cart', 'Add items to your cart.', 'warning');
       return;
     }
 
-    // Bulk order handling
-    if (subtotal > 10000) {
+    if (!stockValidation.isValid) {
+      const errorMessages = stockValidation.errors.map(error => `• ${error.productName}: ${error.message} (Available: ${error.available})`).join('\n');
+      showAlert('Stock Validation Failed', `Stock issues:\n${errorMessages}`, 'error');
+      return;
+    }
+
+    if (totalAmount > 10000) {
       setShowBulkDialog(true);
       return;
     }
 
-    // Payment system validation
     if (!scriptLoaded || !window.Razorpay) {
-      showAlert('Payment System Loading', 'Payment system is still loading. Please try again in a moment.', 'warning');
+      showAlert('Payment System Error', 'Payment system not loaded. Try again.', 'error');
       return;
     }
 
     setPending(true);
-    setIsLoadingOrder(true);
-
     try {
-      const orderItems = cartItems.map((cartItem) => ({
-        productId: cartItem.item.id,
-        qty: cartItem.qty,
-      }));
-
-      const res = await fetch('/api/razorpay/order', {
+      const orderItems = cartItems.map(cartItem => ({ productId: cartItem.item.id, qty: cartItem.qty }));
+      const createOrderRes = await fetch('/api/razorpay/order', {
         method: 'POST',
         body: JSON.stringify({
+          userId: user.us.id,
           phoneno: user.phone,
           cartitems: orderItems,
-          pincode: user.us?.pincode || null,
+          pincode: del ? user.us.pincode : null,
           delivery: del,
         }),
         headers: { 'Content-Type': 'application/json' },
       });
 
-      setIsLoadingOrder(false);
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: 'Unknown error occurred' }));
-        
-        // Handle specific stock-related errors from backend
-        if (res.status === 400 && errorData.error?.includes('stock')) {
-          showAlert(
-            'Stock Issue',
-            errorData.error || 'Some items in your cart are no longer available in the requested quantity.',
-            'error'
-          );
+      if (!createOrderRes.ok) {
+        const errorData = await createOrderRes.json().catch(() => ({ error: 'Unknown error' }));
+        if (createOrderRes.status === 501) {
+          setShowBulkDialog(true);
+          setPending(false);
           return;
         }
-        
-        throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
+        throw new Error(errorData.error || 'Failed to create order');
       }
 
-      const data = await res.json();
-      if (!data.orderId) {
-        throw new Error(data.error || 'Failed to create order');
+      const orderData = await createOrderRes.json();
+      if (!orderData.success || !orderData.orderId) {
+        throw new Error('Invalid order response');
       }
 
-      const options = {
+      setCurrentOrderId(orderData.orderId);
+
+      const razorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORKEY,
-        amount: totalAmount * 100,
+        amount: Math.round(orderData.amount * 100),
         currency: 'INR',
         name: 'Roshan Fancy Store',
         description: del ? 'Delivery Order Payment' : 'Pickup Order Payment',
+        order_id: orderData.orderId,
+        prefill: { name: user.us?.name || '', contact: user.phone },
+        notes: { delivery_mode: del ? 'delivery' : 'pickup', pincode: del ? user.us?.pincode : 'N/A' },
+        theme: { color: '#2563eb' },
         handler: async function (response: any) {
-          setIsLoadingOrder(true);
           try {
-            const completeOrderRes = await fetch('/api/razorpay/order', {
+            const verifyRes = await fetch('/api/razorpay/verify', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                userId: user?.us?.id,
-                cartItems,
-                pricepaid: totalAmount,
-                paymentid: response.razorpay_payment_id,
-                order_id: data.orderId,
-                delivery: del,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
               }),
             });
 
-            setIsLoadingOrder(false);
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok || !verifyData.success) {
+              console.log('Verification failed, polling order:', orderData.orderId);
+              await pollOrderStatus(orderData.orderId);
+              return;
+            }
 
-            if (!completeOrderRes.ok) {
-              const errorData = await completeOrderRes.json().catch(() => ({ error: 'Unknown error' }));
-              
-              // Handle stock-related errors during order completion
-              if (errorData.error?.includes('stock') || errorData.error?.includes('Insufficient')) {
-                showAlert(
-                  'Stock Issue During Order Processing',
-                  'Some items became unavailable during payment processing. Your payment will be refunded automatically.',
-                  'error'
-                );
+            const completeOrderRes = await fetch('/api/razorpay/order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                userId: user.us.id,
+                cartitems: orderItems,
+                pricepaid: orderData.amount,
+                delivery: del,
+                pincode: del ? user.us.pincode : null,
+              }),
+            });
+
+            const completeData = await completeOrderRes.json();
+            if (!completeOrderRes.ok || !completeData.success) {
+              if (completeData.error?.includes('stock') || completeData.error?.includes('Insufficient')) {
+                showAlert('Stock Issue', 'Items became unavailable. Payment will be refunded.', 'error', () => router.push('/orders'));
                 return;
               }
-              
-              throw new Error(errorData.error || `HTTP error! status: ${completeOrderRes.status}`);
+              console.log('Completion failed, polling order:', orderData.orderId);
+              await pollOrderStatus(orderData.orderId);
+              return;
             }
 
-            const orderResult = await completeOrderRes.json();
-            if (orderResult.success) {
-              showAlert(
-                'Order Placed Successfully!',
-                `Your ${del ? 'delivery' : 'pickup'} order has been placed successfully and you will receive a confirmation shortly.`,
-                'success',
-                () => {
-                  ClearBasket();
-                  router.push('/orders/');
-                }
-              );
-            } else {
-              // Handle specific error messages from backend
-              if (orderResult.error?.includes('stock') || orderResult.error?.includes('Insufficient')) {
-                showAlert(
-                  'Stock Issue',
-                  orderResult.error || 'Some items are no longer available in the requested quantity.',
-                  'error'
-                );
-              } else {
-                showAlert('Order Processing Issue', orderResult.error || 'Order processing failed. Please contact support for assistance.', 'error');
-              }
-            }
-          } catch (completeErr) {
-            console.error('Order completion error:', completeErr);
-            setIsLoadingOrder(false);
             showAlert(
-              'Order Processing Error',
-              'Payment successful but order completion failed. Please contact support if money was deducted from your account.',
-              'error'
+              'Order Placed Successfully!',
+              `Your ${del ? 'delivery' : 'pickup'} order #${orderData.orderId.slice(-8)} has been confirmed.`,
+              'success',
+              () => {
+                ClearBasket();
+                router.push('/orders');
+              }
             );
+          } catch (err) {
+            console.error('Client-side processing error:', err);
+            await pollOrderStatus(orderData.orderId);
+          } finally {
+            setPending(false);
           }
         },
-        order_id: data.orderId,
-        prefill: {
-          name: user?.us?.name || '',
-          contact: user.phone,
+        modal: {
+          ondismiss: async () => {
+            console.log('Payment modal dismissed');
+            setPending(false);
+            if (currentOrderId) {
+              await pollOrderStatus(currentOrderId);
+            }
+          },
         },
       };
 
-      const rzp1 = new window.Razorpay(options);
-      rzp1.on('payment.failed', function (response: any) {
-        setIsLoadingOrder(false);
-        showAlert('Payment Failed', `Payment failed: ${response.error.description}. Please try again.`, 'error');
+      const rzp = new window.Razorpay(razorpayOptions);
+      rzp.on('payment.failed', (response: any) => {
+        setPending(false);
+        showAlert(
+          'Payment Failed',
+          `Payment failed: ${response.error.description || 'Unknown error'}. Check the orders page to retry.`,
+          'error',
+          () => router.push('/orders')
+        );
       });
-      rzp1.open();
+
+      rzp.open();
     } catch (err) {
-      console.error('Payment failed:', err);
-      setIsLoadingOrder(false);
-      showAlert('Payment Failed', 'Failed to initiate payment. Please check your internet connection and try again.', 'error');
-    } finally {
+      console.error('Order creation error:', err);
       setPending(false);
+      showAlert(
+        'Payment Pending',
+        `Your order #${currentOrderId?.slice(-8) || 'unknown'} is still processing. Check the status on the orders page.`,
+        'warning',
+        () => router.push('/orders')
+      );
     }
-  }, [del, user, subtotal, deliveryCharge, cartItems, scriptLoaded, showAlert, ClearBasket, router, performComprehensiveStockValidation, totalAmount]);
+  }, [user, cartItems, scriptLoaded, showAlert, ClearBasket, router, stockValidation, totalAmount, currentOrderId, pollOrderStatus, del]);
 
   const canProceed = useMemo(
-    () => user.us?.name && user.us?.Address && user.us?.pincode && cartItems.length > 0 && stockValidation.isValid,
-    [user.us?.name, user.us?.Address, user.us?.pincode, cartItems.length, stockValidation.isValid]
+    () => user.us?.name && user.us?.Address && user.us?.pincode && cartItems.length > 0 && stockValidation.isValid && totalAmount > 0,
+    [user.us?.name, user.us?.Address, user.us?.pincode, cartItems.length, stockValidation.isValid, totalAmount]
   );
 
-  const isBulkOrder = subtotal > 10000;
+  const isBulkOrder = totalAmount > 10000;
   const hasStockIssues = !stockValidation.isValid;
+  const isEmptyCart = cartItems.length === 0;
 
   const getButtonText = useCallback(() => {
     if (isCheckingStock) return 'Checking Stock...';
-    if (isPending || isLoadingOrder) return 'Processing...';
+    if (isPending) return 'Processing...';
+    if (isEmptyCart) return 'Add Items to Cart';
     if (hasStockIssues) return 'Resolve Stock Issues';
     if (isBulkOrder) return 'Contact for Bulk Order';
-    if (!canProceed) return 'Complete Required Details';
+    if (!canProceed) return 'Complete Profile Details';
     return `Pay ${fcurrency(totalAmount)}`;
-  }, [isCheckingStock, isPending, isLoadingOrder, hasStockIssues, isBulkOrder, canProceed, totalAmount]);
-
-  const getHelpText = useCallback(() => {
-    if (isCheckingStock) return 'Verifying stock availability...';
-    if (hasStockIssues) return 'Please resolve stock issues in your cart before proceeding';
-    if (!canProceed) return 'Please complete all required details to proceed';
-    if (isBulkOrder) return 'Order value above ₹10,000 requires bulk order processing';
-    return null;
-  }, [isCheckingStock, hasStockIssues, canProceed, isBulkOrder]);
+  }, [isCheckingStock, isPending, isEmptyCart, hasStockIssues, isBulkOrder, canProceed, totalAmount]);
 
   const getButtonColor = useCallback(() => {
-    if (hasStockIssues) return 'bg-red-600 hover:bg-red-700 text-white';
+    if (isEmptyCart || hasStockIssues) return 'bg-red-600 hover:bg-red-700 text-white';
     if (isBulkOrder) return 'bg-orange-600 hover:bg-orange-700 text-white';
+    if (!canProceed) return 'bg-gray-500 hover:bg-gray-600 text-white';
     return 'bg-blue-600 hover:bg-blue-700 text-white';
-  }, [hasStockIssues, isBulkOrder]);
+  }, [isEmptyCart, hasStockIssues, isBulkOrder, canProceed]);
 
   return (
     <>
-      <RazorpayScript />
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center space-y-2">
         {scriptLoaded ? (
           <Button
             onClick={handlePayment}
-            disabled={isPending || !canProceed || isLoadingOrder || hasStockIssues || isCheckingStock}
-            className={`w-full font-semibold py-3 flex items-center justify-center gap-2 ${getButtonColor()}`}
-            aria-label={getButtonText()}
+            disabled={isPending || isCheckingStock || (hasStockIssues && !isBulkOrder) || isEmptyCart}
+            className={`w-full py-3 px-4 flex items-center gap-2 ${getButtonColor()}`}
           >
             {isCheckingStock ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Checking Stock...
               </>
-            ) : isLoadingOrder ? (
+            ) : isPending ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Processing...
               </>
-            ) : hasStockIssues ? (
+            ) : hasStockIssues && !isBulkOrder ? (
               <>
                 <AlertTriangle className="h-5 w-5" />
-                {getButtonText()}
+                Resolve Stock Issues
+              </>
+            ) : isBulkOrder ? (
+              <>
+                <MessageSquare className="h-5 w-5" />
+                Contact for Bulk Order
+              </>
+            ) : isEmptyCart ? (
+              <>
+                <ShoppingCart className="h-5 w-5" />
+                Add Items to Cart
               </>
             ) : (
-              getButtonText()
+              <>
+                <CreditCard className="h-5 w-5" />
+                {getButtonText()}
+              </>
             )}
           </Button>
         ) : (
           <div className="w-full h-12 bg-gray-200 rounded-lg animate-pulse flex items-center justify-center">
             <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
-            <p className="text-gray-500 text-sm ml-2">Loading Payment...</p>
+            <p className="text-gray-500 text-sm ml-2">Loading Payment System...</p>
           </div>
         )}
-        {getHelpText() && (
-          <p className={`text-sm mt-2 text-center ${
-            hasStockIssues ? 'text-red-600' : 
-            isBulkOrder ? 'text-orange-600' : 
-            isCheckingStock ? 'text-blue-600' : 
-            'text-gray-500'
-          }`}>
-            {getHelpText()}
-          </p>
+
+        {canProceed && !isBulkOrder && (
+          <div className="text-xs text-gray-500 text-center space-y-1">
+            <div>Items: {cartItems.length} • Total Qty: {cartItems.reduce((sum, item) => sum + item.qty, 0)}</div>
+            {currentOrderId && <div className="font-mono">Order ID: {currentOrderId.slice(-8)}</div>}
+          </div>
         )}
       </div>
 
@@ -1075,30 +1017,27 @@ Please process this bulk order. Thank you!`;
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5 text-orange-600" />
-              Bulk Order Request
+              Bulk Order Request - {fcurrency(totalAmount)}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Your order value is {fcurrency(subtotal)}, which exceeds our ₹10,000 online checkout limit. Please forward your order details to WhatsApp for personalized bulk order processing.
+              Your order exceeds ₹10,000. Please use WhatsApp for bulk order processing.
             </AlertDialogDescription>
           </AlertDialogHeader>
-
-          <div className="my-4">
+          <div className="my-4 space-y-4">
             <div className="bg-gray-50 rounded-lg p-4 border">
               <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <CreditCard className="h-4 w-4" />
-                Order Details:
+                <Package className="h-4 w-4" />
+                Order Items ({cartItems.length}):
               </h4>
-              <div className="space-y-2 mb-4">
-                {cartItems.map((item) => (
-                  <div key={item.item.id} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
-                    <div className="flex-1">
+              <div className="space-y-2 mb-4 max-h-40 overflow-y-auto">
+                {cartItems.map(item => (
+                  <div key={item.item.id} className="flex justify-between py-2 border-b last:border-b-0">
+                    <div>
                       <p className="font-medium text-sm">{item.item.pname}</p>
-                      <p className="text-xs text-gray-600">
-                        Qty: {item.qty} × {fcurrency(item.item.discountedPrice)}
-                      </p>
-                      <p className="text-xs text-green-600">
-                        Stock: {item.item.stock || 0} available
-                      </p>
+                      <div className="flex gap-4 text-xs text-gray-600">
+                        <span>Qty: {item.qty} × {fcurrency(item.item.discountedPrice)}</span>
+                        <span className="text-green-600">Stock: {item.item.stock || 0}</span>
+                      </div>
                     </div>
                     <p className="font-semibold text-sm">{fcurrency(item.item.discountedPrice * item.qty)}</p>
                   </div>
@@ -1110,14 +1049,12 @@ Please process this bulk order. Thank you!`;
                   <span className="font-medium">{fcurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{del ? 'Delivery Charge:' : 'Pickup (No Delivery):'}</span>
-                  <span className={`font-medium ${deliveryCharge === 0 && del ? 'text-green-600' : ''}`}>
-                    {del ? (deliveryCharge === 0 ? 'Free (₹2000+ order)' : fcurrency(deliveryCharge)) : 'Free'}
-                  </span>
+                  <span>{del ? 'Delivery Charge:' : 'Pickup:'}</span>
+                  <span className="font-medium">{del ? (deliveryCharge === 0 ? 'Free' : fcurrency(deliveryCharge)) : 'Free'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Taxes:</span>
-                  <span className="font-medium">{fcurrency(4)}</span>
+                  <span className="font-medium">{fcurrency(taxes)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total:</span>
@@ -1125,40 +1062,32 @@ Please process this bulk order. Thank you!`;
                 </div>
               </div>
             </div>
-
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mt-4">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
               <h4 className="font-semibold mb-2 flex items-center gap-2 text-blue-800">
                 <UserIcon className="h-4 w-4" />
-                Customer Details:
+                Customer Information:
               </h4>
               <div className="text-sm text-blue-700 space-y-1">
-                <p>
-                  <span className="font-medium">Name:</span> {user.us?.name || 'Not provided'}
-                </p>
-                <p>
-                  <span className="font-medium">Phone:</span> {user.phone}
-                </p>
-                <p>
-                  <span className="font-medium">Address:</span> {user.us?.Address || 'Not provided'}
-                </p>
-                <p>
-                  <span className="font-medium">Pincode:</span> {user.us?.pincode || 'Not provided'}
-                </p>
-                <p>
-                  <span className="font-medium">Order Type:</span> {del ? 'Delivery' : 'Pickup'}
-                </p>
+                <p><span className="font-medium">Name:</span> {user.us?.name || 'N/A'}</p>
+                <p><span className="font-medium">Phone:</span> {user.phone}</p>
+                {del && (
+                  <>
+                    <p><span className="font-medium">Address:</span> {user.us?.Address || 'N/A'}</p>
+                    <p><span className="font-medium">Pincode:</span> {user.us?.pincode || 'N/A'}</p>
+                  </>
+                )}
+                <p><span className="font-medium">Order Type:</span> {del ? 'Delivery' : 'Pickup'}</p>
               </div>
             </div>
           </div>
-
           <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
             <AlertDialogCancel>Close</AlertDialogCancel>
             <Button onClick={copyOrderDetails} variant="outline" className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Copy Order Details
+              <Copy className="h-4 w-4" />
+              Copy Details
             </Button>
             <Button onClick={openWhatsApp} className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
-              <Phone className="h-4 w-4" />
+              <MessageSquare className="h-4 w-4" />
               Send to WhatsApp
             </Button>
           </AlertDialogFooter>
@@ -1167,6 +1096,11 @@ Please process this bulk order. Thank you!`;
     </>
   );
 }
+
+
+
+
+
 
 function CheckoutContent({ user }: { user: UserData }) {
   const [isEditing, setIsEditing] = useState(!user.us?.name || !user.us?.Address || !user.us?.pincode);

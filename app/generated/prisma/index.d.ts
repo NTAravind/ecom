@@ -9141,19 +9141,19 @@ export namespace Prisma {
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    paymentid?: string
     AND?: OrderWhereInput | OrderWhereInput[]
     OR?: OrderWhereInput[]
     NOT?: OrderWhereInput | OrderWhereInput[]
     pricepaid?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     userId?: StringFilter<"Order"> | string
+    paymentid?: StringFilter<"Order"> | string
     paid?: BoolFilter<"Order"> | boolean
     complete?: BoolFilter<"Order"> | boolean
     delivered?: BoolFilter<"Order"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     orderItems?: OrderItemListRelationFilter
-  }, "id" | "paymentid">
+  }, "id">
 
   export type OrderOrderByWithAggregationInput = {
     id?: SortOrder

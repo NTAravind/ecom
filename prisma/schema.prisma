@@ -78,7 +78,7 @@ model Order {
   createdAt  DateTime    @default(now())
   userId     String
   user       User        @relation(fields: [userId], references: [id])
-  paymentid  String      @unique
+  paymentid  String      
   paid       Boolean     @default(false)
   orderItems OrderItem[]
   complete   Boolean     @default(false)

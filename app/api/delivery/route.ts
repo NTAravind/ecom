@@ -14,36 +14,28 @@ export async function POST(req: NextRequest) {
     if (!userId || !Array.isArray(cartItems) || cartItems.length === 0) {
       return NextResponse.json({ success: false, error: "Invalid request" }, { status: 400 });
     }
-// In /api/delivery
-const order = await prisma.$transaction(async (prisma) => {
-  // Create order
-  const newOrder = await prisma.order.create({
-    data: {
-      id: order_id,
-      pricepaid,
-      delivered: delivery,
-      paid: false, // Will be updated by webhook
-      user: { connect: { id: userId } },
-      orderItems: {
-        create: cartItems.map((cartItem) => ({
-          quantity: cartItem.qty,
-          product: { connect: { id: cartItem.item.id } }
-        }))
+
+    const order = await prisma.order.create({
+      data: {
+        id: order_id,
+        pricepaid,
+        delivered:delivery,
+        user: { connect: { id: userId } },
+        orderItems: {
+          create: cartItems.map((cartItem: any) => ({
+            quantity: cartItem.qty,
+            product: {
+              connect: { id: cartItem.item.id },
+            },
+            
+          }
+        
+        )),
+        },
+        paymentid: paymentid,
       },
-      paymentid: paymentid,
-    }
-  });
-
-  // Update stock atomically
-  for (const cartItem of cartItems) {
-    await prisma.product.update({
-      where: { id: cartItem.item.id },
-      data: { stock: { decrement: cartItem.qty } }
     });
-  }
-
-  return newOrder;
-});
+    // Decrease product quantity
 for (const cartItem of cartItems) {
   await prisma.product.update({
     where: { id: cartItem.item.id },

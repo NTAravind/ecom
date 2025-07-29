@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 interface DataTableProps<Tdata, TValue> {
@@ -42,7 +42,15 @@ export function OrdersDataTable<Tdata, TValue>({
 }: DataTableProps<Tdata, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [hasAppliedFilters, setHasAppliedFilters] = useState(false)
   const router = useRouter()
+
+  // Set default filter to show only paid orders
+  useEffect(() => {
+    if (!hasAppliedFilters) {
+      setColumnFilters([{ id: "paid", value: true }])
+    }
+  }, [hasAppliedFilters])
 
   const table = useReactTable({
     data,
@@ -52,7 +60,10 @@ export function OrdersDataTable<Tdata, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: (updater) => {
+      setColumnFilters(updater)
+      setHasAppliedFilters(true)
+    },
     state: {
       sorting,
       columnFilters,
@@ -65,6 +76,21 @@ export function OrdersDataTable<Tdata, TValue>({
   )
   const uniquePaymentStatuses = ["paid", "unpaid"]
   const uniqueOrderStatuses = ["complete", "incomplete"]
+
+  // Custom clear filters function to reset to default state
+  const clearFilters = () => {
+    setColumnFilters([{ id: "paid", value: true }])
+    setHasAppliedFilters(false)
+  }
+
+  // Get current payment filter value for the select component
+  const currentPaymentFilter = table.getColumn("paid")?.getFilterValue()
+  let paymentSelectValue = "paid" // default
+  if (currentPaymentFilter === "") {
+    paymentSelectValue = "all"
+  } else if (currentPaymentFilter === false) {
+    paymentSelectValue = "unpaid"
+  }
 
   return (
     <div className="w-full space-y-4">
@@ -98,10 +124,16 @@ export function OrdersDataTable<Tdata, TValue>({
         />
 
         <Select
-          value={(table.getColumn("paid")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("paid")?.setFilterValue(value === "all" ? "" : value === "paid")
-          }
+          value={paymentSelectValue}
+          onValueChange={(value) => {
+            if (value === "all") {
+              table.getColumn("paid")?.setFilterValue("")
+            } else if (value === "paid") {
+              table.getColumn("paid")?.setFilterValue(true)
+            } else {
+              table.getColumn("paid")?.setFilterValue(false)
+            }
+          }}
         >
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Payment Status" />
@@ -157,7 +189,7 @@ export function OrdersDataTable<Tdata, TValue>({
         {/* Clear filters button */}
         <Button
           variant="outline"
-          onClick={() => table.resetColumnFilters()}
+          onClick={clearFilters}
           className="h-8"
         >
           Clear Filters
@@ -215,6 +247,11 @@ export function OrdersDataTable<Tdata, TValue>({
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredRowModel().rows.length} of{" "}
           {table.getCoreRowModel().rows.length} order(s) displayed.
+          {!hasAppliedFilters && (
+            <span className="ml-2 text-xs text-blue-600">
+              (Showing only paid orders by default)
+            </span>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <Button
