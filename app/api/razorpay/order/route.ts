@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       }, 0);
 
       const deliveryCharge = delivery && amount < 2000 ? 60 : 0;
-      const taxes = number(process.env.TAXES);
+      const taxes = 0;
       const totalAmount = amount + deliveryCharge + taxes;
 
       if (totalAmount > 10000) {
