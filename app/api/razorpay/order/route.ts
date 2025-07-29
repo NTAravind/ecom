@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         amount: Math.round(totalAmount * 100),
         currency: "INR",
         receipt: `receipt_${phoneno}_${Date.now()}`,
-        notes: { phone: phoneno, delivery_mode: delivery ? "delivery" : "pickup", pincode: pincode || "N/A" },
+        notes: { phone: phoneno, delivery_mode: delivery ? "delivery" : "pickup", pincode: pincode || "N/A",date: Date.now() },
       };
 
       const razorpayOrder = await razorpay.orders.create(orderOptions);
