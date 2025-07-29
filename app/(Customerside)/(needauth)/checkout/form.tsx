@@ -1125,12 +1125,13 @@ function CheckoutContent({ user }: { user: UserData }) {
     }
   }, [user]);
 
-  const showAlert = useCallback(
-    (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel = false) => {
-      setAlertState({ isOpen: true, title, description, type, onConfirm, showCancel });
-    },
-    []
-  );
+// Inside CheckoutContent component, replace the showAlert definition
+const showAlert = useCallback(
+  (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel = false) => {
+    setAlertState({ isOpen: true, title, description, type, onConfirm, showCancel });
+  },
+  [setAlertState]
+);
 
   const handleFormSuccess = useCallback(
     (updatedUser: User) => {

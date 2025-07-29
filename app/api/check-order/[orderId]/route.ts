@@ -2,13 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
-export async function GET(req: NextRequest, { params }: { params: { orderId: string } }) {
-  const aut = await auth();
-  if (!aut?.user) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ orderId: string }> }
+) {
+  const session = await auth();
+  if (!session?.user) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const { orderId } = params;
+  // Await the params since they're now a Promise
+  const { orderId } = await params;
 
   try {
     const order = await prisma.order.findUnique({
@@ -29,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: { orderId: str
       return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
     }
 
-    if (order.userId !== aut.user.id) {
+    if (order.userId !== session.user.id) {
       console.error(`❌ Unauthorized access to order ${orderId}`);
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
