@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const isOrderCompletion = razorpay_payment_id && razorpay_order_id && razorpay_signature;
 
     if (!isOrderCompletion) {
-      // ORDER CREATION
+      
       if (!phoneno || !cartitems || !Array.isArray(cartitems) || cartitems.length === 0 || !userId) {
         return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
       }
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
         breakdown: { subtotal: amount, deliveryCharge, taxes, total: totalAmount },
       }, { status: 200 });
     } else {
-      // ORDER COMPLETION
+      // ORDER 
       if (!userId || !cartitems || !Array.isArray(cartitems) || cartitems.length === 0 || !pricepaid) {
         return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
       }
