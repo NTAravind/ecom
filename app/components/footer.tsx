@@ -20,7 +20,7 @@ export default function Footer() {
               Your trusted destination for premium quality yarns and textile materials. Crafting dreams with every thread.
             </p>
             <div className="mt-6 flex space-x-4">
-              <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200 hover:scale-110 transform">
+              <Link href="https://www.instagram.com/patelyarnhouse" className="text-purple-200 hover:text-white transition-colors duration-200 hover:scale-110 transform">
                 <Instagram size={20} className="hover:drop-shadow-glow" />
               </Link>
               <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200 hover:scale-110 transform">
@@ -46,7 +46,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-3 text-sm text-purple-200">
                 <Mail size={16} />
-                <span>info@patelyarnhouse.com</span>
+                <span>patelyarnhouseenq@gmail.com</span>
               </div>
             </div>
           </div>

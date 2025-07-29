@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Product, User } from '@/app/generated/prisma';
@@ -30,7 +29,8 @@ import DeliveryModeSelector from './del';
 import { createUser, updateUser } from './action';
 import ProductCart from '@/app/store/store';
 import { fcurrency } from '@/utils/utils';
-import { MessageSquare,ShoppingCart,Copy } from 'lucide-react';
+import { MessageSquare, ShoppingCart, Copy } from 'lucide-react';
+
 // Lazy load AlertDialog
 const AlertDialogLazy = lazy(() =>
   import('@/components/ui/alert-dialog').then((mod) => ({
@@ -655,9 +655,6 @@ const ProductCard = memo(function ProductCard({
   );
 });
 
-
-
-
 interface StockValidationResult {
   isValid: boolean;
   errors: Array<{ productId: string; productName: string; requested: number; available: number; message: string }>;
@@ -1097,11 +1094,6 @@ function PurchaseButton({
   );
 }
 
-
-
-
-
-
 function CheckoutContent({ user }: { user: UserData }) {
   const [isEditing, setIsEditing] = useState(!user.us?.name || !user.us?.Address || !user.us?.pincode);
   const [currentUser, setCurrentUser] = useState<UserData>(user);
@@ -1125,13 +1117,23 @@ function CheckoutContent({ user }: { user: UserData }) {
     }
   }, [user]);
 
-// Inside CheckoutContent component, replace the showAlert definition
-const showAlert = useCallback(
-  (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel = false) => {
-    setAlertState({ isOpen: true, title, description, type, onConfirm, showCancel });
-  },
-  [setAlertState]
-);
+  useEffect(() => {
+    setAlertState({
+      isOpen: true,
+      title: 'Important Payment Information',
+      description:
+        'For your safety, please take a screenshot of your payment confirmation. Visit /refund for any refund-related queries. Avoid performing any actions during payment processing to ensure a smooth transaction.',
+      type: 'warning',
+      showCancel: false,
+    });
+  }, []);
+
+  const showAlert = useCallback(
+    (title: string, description: string, type: 'success' | 'error' | 'warning' = 'success', onConfirm?: () => void, showCancel = false) => {
+      setAlertState({ isOpen: true, title, description, type, onConfirm, showCancel });
+    },
+    [setAlertState]
+  );
 
   const handleFormSuccess = useCallback(
     (updatedUser: User) => {
