@@ -526,7 +526,7 @@ const ProductCard = memo(function ProductCard({
   const handleDecrement = useCallback(() => handleQuantityChange(item.qty - 1), [handleQuantityChange, item.qty]);
   const handleRemove = useCallback(() => onRemove(item.item.id), [onRemove, item.item.id]);
 
-  // Check if this item has stock issues
+  
   const stockIssue = stockValidation.errors.find(error => error.productId === item.item.id);
   const availableStock = item.item.stock || 0;
   const isLowStock = availableStock > 0 && availableStock <= 5;
@@ -1121,8 +1121,7 @@ function CheckoutContent({ user }: { user: UserData }) {
     setAlertState({
       isOpen: true,
       title: 'Important Payment Information',
-      description:
-        'For your safety, please take a screenshot of your payment confirmation. Visit /refund for any refund-related queries. Avoid performing any actions during payment processing to ensure a smooth transaction.',
+      description:'After completing the payment in your UPI app (like PhonePe or GPay), please wait on this page — it will automatically redirect to our website. Do not press back or close the tab.It may take a few seconds to confirm your payment and place your order.',
       type: 'warning',
       showCancel: false,
     });
