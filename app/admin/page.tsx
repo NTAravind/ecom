@@ -17,8 +17,10 @@ async function refreshDashboard() {
 
 async function getSalesData() {
   const [totalSales, paidOrders, pendingOrders, completedOrders] = await Promise.all([
-    prisma.order.aggregate({
-      _sum: { pricepaid: true },
+    prisma.order.aggregate(
+      {
+        where: { paid: true },
+      _sum: { pricepaid:true, },
       _count: true
     }),
     prisma.order.count({
