@@ -394,7 +394,7 @@ export default async function AdminDashboard() {
               </CardContent>
             </Card>
 
-            {/* Low Stock Alert */}
+        
             <Card className="border-0 shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm flex flex-col flex-1">
               <CardHeader className="pb-3 flex-shrink-0">
                 <CardTitle className="text-lg flex items-center gap-2">
