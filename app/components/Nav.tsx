@@ -31,6 +31,7 @@ const shopCategories = [
       { name: "Ganga Delight Yarn", href: "/products?categories=cotton&brands=Ganga+Delight" },
       { name: "Ganga Summer Bloom", href: "/products?categories=cotton&brands=Ganga%20Summer%20Bloom" },
       { name: "4Ply Cotton", href: "/products?categories=cotton&brands=ply+Cotton" },
+      {name:"Picnic Cotton",href:"/products?categories=cotton&brands=Picnic"},
     ]
   },
   {
@@ -41,6 +42,7 @@ const shopCategories = [
       { name: "Ganga Blanket Yarn", href: "/products?categories=polyster&brands=Ganga" },
       { name: "Super Stitch", href: "/products?&brands=Ganga%20SuperStitch" },
       {name:"plush",href:"/products?categories=polyester&brands=Plush"},
+      {name:"Blankie",href:"/products?categories=polyester&brands=Blankie"},
     ]
   },
   {

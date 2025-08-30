@@ -202,7 +202,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/aravind/ecommerce/app/generated/prisma",
+      "value": "/home/aravind/ecom/ecom/app/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -216,7 +216,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/aravind/ecommerce/prisma/schema.prisma",
+    "sourceFilePath": "/home/aravind/ecom/ecom/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
