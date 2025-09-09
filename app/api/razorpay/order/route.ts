@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         data: {
           id: razorpayOrder.id,
           pricepaid: totalAmount,
-          paymentid: "",
+          paymentid: razorpayOrder.id,
           paid: false,
           complete: false,
           delivered: delivery || false,
