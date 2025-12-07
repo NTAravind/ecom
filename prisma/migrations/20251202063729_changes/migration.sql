@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Brand" ADD COLUMN     "category" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "desc" TEXT NOT NULL DEFAULT 'desc',
+ADD COLUMN     "weight_g" INTEGER NOT NULL DEFAULT 1,
+ADD COLUMN     "y_weight" TEXT NOT NULL DEFAULT '';

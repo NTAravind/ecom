@@ -44,6 +44,9 @@ export async function searchProducts(query: string) {
     const products = await prisma.product.findMany({
       where: {
         Shown: true,
+        brand: {
+          isActive: true
+        },
         OR: [
           {
             pname: {
@@ -80,12 +83,14 @@ export async function searchProducts(query: string) {
         discountedPrice: true,
         category: true,
         y_weight: true,
-        iurl1: true,
+        irul: true, // Fixed: was iurl1, should be irul
         brand: {
           select: {
             id: true,
             name: true,
-            discountRate: true
+            discountRate: true,
+            isActive: true,
+            defaultImageUrl: true
           }
         }
       },
@@ -132,6 +137,9 @@ export async function getSearchSuggestions(query: string) {
       prisma.product.findMany({
         where: {
           Shown: true,
+          brand: {
+            isActive: true
+          },
           OR: [
             {
               pname: {
@@ -154,12 +162,14 @@ export async function getSearchSuggestions(query: string) {
           pname: true,
           originalPrice: true,
           discountedPrice: true,
-          iurl1: true,
+          irul: true, // Fixed: was iurl1
           brand: {
             select: {
               id: true,
               name: true,
-              discountRate: true
+              discountRate: true,
+              isActive: true,
+              defaultImageUrl: true
             }
           }
         },
@@ -177,6 +187,9 @@ export async function getSearchSuggestions(query: string) {
         by: ['category'],
         where: {
           Shown: true,
+          brand: {
+            isActive: true
+          },
           category: {
             contains: searchTerm,
             mode: 'insensitive'
@@ -193,6 +206,9 @@ export async function getSearchSuggestions(query: string) {
         by: ['y_weight'],
         where: {
           Shown: true,
+          brand: {
+            isActive: true
+          },
           y_weight: {
             contains: searchTerm,
             mode: 'insensitive'
@@ -269,6 +285,9 @@ export async function advancedSearch({
   try {
     const whereClause: any = {
       Shown: true,
+      brand: {
+        isActive: true
+      }
     };
 
     // Build where clause dynamically
@@ -300,6 +319,7 @@ export async function advancedSearch({
 
     if (brand) {
       whereClause.brand = {
+        ...whereClause.brand,
         name: {
           equals: brand,
           mode: 'insensitive'
@@ -329,12 +349,15 @@ export async function advancedSearch({
         discountedPrice: true,
         category: true,
         y_weight: true,
-        iurl1: true,
+        irul: true, // Fixed: was iurl1
+        stock: true,
         brand: {
           select: {
             id: true,
             name: true,
-            discountRate: true
+            discountRate: true,
+            isActive: true,
+            defaultImageUrl: true
           }
         }
       },
@@ -363,7 +386,10 @@ export async function getPopularSearchTerms(limit: number = 10) {
       prisma.product.groupBy({
         by: ['category'],
         where: {
-          Shown: true
+          Shown: true,
+          brand: {
+            isActive: true
+          }
         },
         _count: {
           category: true

@@ -1,25 +1,25 @@
 import Link from "next/link";
 import Image from "next/image";
 import { memo } from "react";
-import { Product, Brand } from "../generated/prisma";
 import { fcurrency } from "@/utils/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCardActions } from "./Productcardclient";
+import { ProductCardData } from "@/app/types/products";
 
+// Use centralized type definition
 type ProductCardProps = {
-  product: Product & {
-    brand: Brand;
-    category?: string;
-    y_weight?: string;
-  };
+  product: ProductCardData;
 };
 
 const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
   // --- Memoized values for performance ---
   const imageUrl = product.irul || '/placeholder-image.jpg';
   const isInStock = product.stock > 0;
+  
+  // Get category and weight from PRODUCT (not brand) - this is the fix
   const category = product.category || 'Yarn';
+  const yWeight = product.y_weight || '';
   const brandName = product.brand?.name || 'Unknown Brand';
   const discountRate = product.brand?.discountRate || 0;
   
@@ -29,7 +29,7 @@ const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
   const hasDiscount = discountRate > 0 && originalPrice > discountedPrice;
 
   return (
-    <Card className="group flex flex-col w-full h-fit pb-0 mb-0 mt-0 pt-1.5 bg-white  overflow-hidden transition-all rounded-none duration-300 hover:shadow-lg hover:border-violet-200">
+    <Card className="group flex flex-col w-full h-fit pb-0 mb-0 mt-0 pt-1.5 bg-white overflow-hidden transition-all rounded-none duration-300 hover:shadow-lg hover:border-violet-200">
       
       {/* --- IMAGE SECTION --- */}
       <Link href={`/products/${product.id}`} className="relative block aspect-square overflow-hidden">
@@ -66,8 +66,9 @@ const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
       <div className="p-3 flex flex-col flex-grow">
         {/* Top-aligned content: Brand, Name, Weight */}
         <div className="space-y-0.5">
-          {product.y_weight && (
-            <p className="text-xs text-slate-500">{product.y_weight}</p>
+          {/* Display weight from product */}
+          {yWeight && (
+            <p className="text-xs text-slate-500">{yWeight}</p>
           )}
           <Link href={`/products/${product.id}`}>
             <h3 className="font-semibold text-slate-800 leading-tight line-clamp-1 hover:text-violet-800 transition-colors">

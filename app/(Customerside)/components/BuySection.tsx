@@ -1,19 +1,18 @@
 "use client";
-
-import { Product } from "@/app/generated/prisma";
-import ProductCart, { CartItem } from "@/app/store/store";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import { toast } from "sonner"; // If you're using sonner for toasts
+import { toast } from "sonner";
+import ProductCart from "@/app/store/store";
+import { FullProductData } from "@/app/types/products";
 
-export default function BuySection({ prop }: { prop: Product }) {
+// Use centralized type definition
+export default function BuySection({ prop }: { prop: FullProductData }) {
   const router = useRouter();
   const { AddProduct, RemoveProduct, getItemQuantity, SetItemQuantity } = ProductCart();
-
   const [quantity, setQuantity] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
@@ -29,7 +28,6 @@ export default function BuySection({ prop }: { prop: Product }) {
       });
       return;
     }
-    
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
     SetItemQuantity(prop.id, newQuantity);
@@ -54,7 +52,6 @@ export default function BuySection({ prop }: { prop: Product }) {
         description: `Maximum ${prop.stock} items available.`,
       });
     }
-    
     setQuantity(newQuantity);
     SetItemQuantity(prop.id, newQuantity);
   };
@@ -66,14 +63,12 @@ export default function BuySection({ prop }: { prop: Product }) {
       });
       return;
     }
-
     if (!prop.Shown) {
       toast?.("Out of stock", {
         description: "This item is currently out of stock.",
       });
       return;
     }
-
     setIsLoading(true);
     try {
       AddProduct({ item: prop, qty: quantity });
@@ -94,16 +89,13 @@ export default function BuySection({ prop }: { prop: Product }) {
       });
       return;
     }
-
     if (!prop.Shown) {
       toast?.("Out of stock", {
         description: "This item is currently out of stock.",
       });
       return;
     }
-
     setIsAddingToCart(true);
-    
     // Add a small delay for better visual feedback
     setTimeout(() => {
       AddProduct({ item: prop, qty: quantity });
@@ -150,7 +142,7 @@ export default function BuySection({ prop }: { prop: Product }) {
                   <Minus className="h-4 w-4" />
                   <span className="sr-only">Decrease quantity</span>
                 </Button>
-
+                
                 <div className="relative">
                   <Input
                     type="number"
@@ -163,7 +155,7 @@ export default function BuySection({ prop }: { prop: Product }) {
                     aria-label="Product quantity"
                   />
                 </div>
-
+                
                 <Button
                   onClick={handleIncrement}
                   variant="ghost"
@@ -176,7 +168,7 @@ export default function BuySection({ prop }: { prop: Product }) {
                 </Button>
               </div>
             </div>
-            
+
             {/* Total Price Display */}
             {quantity > 0 && (
               <div className="flex-1 text-center sm:text-left">
@@ -257,7 +249,7 @@ export default function BuySection({ prop }: { prop: Product }) {
           </p>
         </div>
       )}
-      
+
       {/* Stock Warning for Low Stock */}
       {!isOutOfStock && prop.stock <= 5 && prop.stock > 0 && (
         <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-4">

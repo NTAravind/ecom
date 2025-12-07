@@ -27,9 +27,14 @@ const PRODUCTS_PER_PAGE = 20;
 const GetPopularProducts = unstable_cache(
   async () => {
     const data = await prisma.product.findMany({
-      where: { Shown: true },
+      where: { 
+        Shown: true,
+        brand: {
+          isActive: true
+        }
+      },
       include: {
-        brand: true, // Include brand details
+        brand: true, // Include brand details (contains category, weight, etc.)
       },
       orderBy: {
         orderItems: {
@@ -58,21 +63,32 @@ const GetPaginatedProducts = unstable_cache(
     const { categories, weights, brands, search } = filters;
     
     // Build where clause
-    const whereClause: any = { Shown: true };
+    const whereClause: any = { 
+      Shown: true,
+      brand: {
+        isActive: true
+      }
+    };
     
-    // Apply filters to where clause for database-level filtering
+    // Apply filters to brand properties
     if (categories && categories.length > 0) {
-      whereClause.category = { in: categories };
+      whereClause.brand = {
+        ...whereClause.brand,
+        category: { in: categories }
+      };
     }
     
     if (weights && weights.length > 0) {
-      whereClause.y_weight = { in: weights };
+      whereClause.brand = {
+        ...whereClause.brand,
+        y_weight: { in: weights }
+      };
     }
     
     if (brands && brands.length > 0) {
-      whereClause.brand = { 
-        name: { in: brands },
-        isActive: true // Only include active brands
+      whereClause.brand = {
+        ...whereClause.brand,
+        name: { in: brands }
       };
     }
     
@@ -80,8 +96,16 @@ const GetPaginatedProducts = unstable_cache(
       const searchTerm = search.trim();
       whereClause.OR = [
         { pname: { contains: searchTerm, mode: 'insensitive' } },
-        { category: { contains: searchTerm, mode: 'insensitive' } },
-        { y_weight: { contains: searchTerm, mode: 'insensitive' } },
+        { brand: { 
+            category: { contains: searchTerm, mode: 'insensitive' },
+            isActive: true 
+          } 
+        },
+        { brand: { 
+            y_weight: { contains: searchTerm, mode: 'insensitive' },
+            isActive: true 
+          } 
+        },
         { brand: { 
             name: { contains: searchTerm, mode: 'insensitive' },
             isActive: true 
@@ -100,7 +124,7 @@ const GetPaginatedProducts = unstable_cache(
     const products = await prisma.product.findMany({
       where: whereClause,
       include: {
-        brand: true, // Include brand details with discount rates
+        brand: true, // Include brand details with category, weight, discount rates
       },
       skip: (page - 1) * PRODUCTS_PER_PAGE,
       take: PRODUCTS_PER_PAGE,
@@ -175,7 +199,9 @@ const GetActiveBrands = unstable_cache(
       select: {
         id: true,
         name: true,
-        discountRate: true
+        discountRate: true,
+        category: true,
+        y_weight: true
       },
       orderBy: { name: 'asc' }
     });
@@ -440,7 +466,7 @@ export default async function ProductsPage({
       {/* Main Container */}
       <div className="px-1 sm:px-0 lg:px-2 py-6 lg:mx-1">
         <div className="flex flex-col lg:flex-row gap-0">
-          {/* Sidebar - FIXED: Removed the wrapper div that was causing z-index issues */}
+          {/* Sidebar */}
           <aside className="lg:w-64 xl:w-72 flex-shrink-0">
             <CollapsibleSideMenu />
           </aside>

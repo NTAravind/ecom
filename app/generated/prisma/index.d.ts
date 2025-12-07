@@ -1501,10 +1501,12 @@ export namespace Prisma {
 
   export type BrandAvgAggregateOutputType = {
     discountRate: number | null
+    weight_g: number | null
   }
 
   export type BrandSumAggregateOutputType = {
     discountRate: number | null
+    weight_g: number | null
   }
 
   export type BrandMinAggregateOutputType = {
@@ -1512,8 +1514,13 @@ export namespace Prisma {
     name: string | null
     discountRate: number | null
     isActive: boolean | null
+    defaultImageUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    desc: string | null
+    y_weight: string | null
+    weight_g: number | null
+    category: string | null
   }
 
   export type BrandMaxAggregateOutputType = {
@@ -1521,8 +1528,13 @@ export namespace Prisma {
     name: string | null
     discountRate: number | null
     isActive: boolean | null
+    defaultImageUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    desc: string | null
+    y_weight: string | null
+    weight_g: number | null
+    category: string | null
   }
 
   export type BrandCountAggregateOutputType = {
@@ -1530,18 +1542,25 @@ export namespace Prisma {
     name: number
     discountRate: number
     isActive: number
+    defaultImageUrl: number
     createdAt: number
     updatedAt: number
+    desc: number
+    y_weight: number
+    weight_g: number
+    category: number
     _all: number
   }
 
 
   export type BrandAvgAggregateInputType = {
     discountRate?: true
+    weight_g?: true
   }
 
   export type BrandSumAggregateInputType = {
     discountRate?: true
+    weight_g?: true
   }
 
   export type BrandMinAggregateInputType = {
@@ -1549,8 +1568,13 @@ export namespace Prisma {
     name?: true
     discountRate?: true
     isActive?: true
+    defaultImageUrl?: true
     createdAt?: true
     updatedAt?: true
+    desc?: true
+    y_weight?: true
+    weight_g?: true
+    category?: true
   }
 
   export type BrandMaxAggregateInputType = {
@@ -1558,8 +1582,13 @@ export namespace Prisma {
     name?: true
     discountRate?: true
     isActive?: true
+    defaultImageUrl?: true
     createdAt?: true
     updatedAt?: true
+    desc?: true
+    y_weight?: true
+    weight_g?: true
+    category?: true
   }
 
   export type BrandCountAggregateInputType = {
@@ -1567,8 +1596,13 @@ export namespace Prisma {
     name?: true
     discountRate?: true
     isActive?: true
+    defaultImageUrl?: true
     createdAt?: true
     updatedAt?: true
+    desc?: true
+    y_weight?: true
+    weight_g?: true
+    category?: true
     _all?: true
   }
 
@@ -1663,8 +1697,13 @@ export namespace Prisma {
     name: string
     discountRate: number
     isActive: boolean
+    defaultImageUrl: string
     createdAt: Date
     updatedAt: Date
+    desc: string
+    y_weight: string
+    weight_g: number
+    category: string
     _count: BrandCountAggregateOutputType | null
     _avg: BrandAvgAggregateOutputType | null
     _sum: BrandSumAggregateOutputType | null
@@ -1691,8 +1730,13 @@ export namespace Prisma {
     name?: boolean
     discountRate?: boolean
     isActive?: boolean
+    defaultImageUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    desc?: boolean
+    y_weight?: boolean
+    weight_g?: boolean
+    category?: boolean
     products?: boolean | Brand$productsArgs<ExtArgs>
     yarnAccessories?: boolean | Brand$yarnAccessoriesArgs<ExtArgs>
     _count?: boolean | BrandCountOutputTypeDefaultArgs<ExtArgs>
@@ -1703,8 +1747,13 @@ export namespace Prisma {
     name?: boolean
     discountRate?: boolean
     isActive?: boolean
+    defaultImageUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    desc?: boolean
+    y_weight?: boolean
+    weight_g?: boolean
+    category?: boolean
   }, ExtArgs["result"]["brand"]>
 
   export type BrandSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1712,8 +1761,13 @@ export namespace Prisma {
     name?: boolean
     discountRate?: boolean
     isActive?: boolean
+    defaultImageUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    desc?: boolean
+    y_weight?: boolean
+    weight_g?: boolean
+    category?: boolean
   }, ExtArgs["result"]["brand"]>
 
   export type BrandSelectScalar = {
@@ -1721,11 +1775,16 @@ export namespace Prisma {
     name?: boolean
     discountRate?: boolean
     isActive?: boolean
+    defaultImageUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    desc?: boolean
+    y_weight?: boolean
+    weight_g?: boolean
+    category?: boolean
   }
 
-  export type BrandOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "discountRate" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["brand"]>
+  export type BrandOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "discountRate" | "isActive" | "defaultImageUrl" | "createdAt" | "updatedAt" | "desc" | "y_weight" | "weight_g" | "category", ExtArgs["result"]["brand"]>
   export type BrandInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     products?: boolean | Brand$productsArgs<ExtArgs>
     yarnAccessories?: boolean | Brand$yarnAccessoriesArgs<ExtArgs>
@@ -1745,8 +1804,13 @@ export namespace Prisma {
       name: string
       discountRate: number
       isActive: boolean
+      defaultImageUrl: string
       createdAt: Date
       updatedAt: Date
+      desc: string
+      y_weight: string
+      weight_g: number
+      category: string
     }, ExtArgs["result"]["brand"]>
     composites: {}
   }
@@ -2176,8 +2240,13 @@ export namespace Prisma {
     readonly name: FieldRef<"Brand", 'String'>
     readonly discountRate: FieldRef<"Brand", 'Float'>
     readonly isActive: FieldRef<"Brand", 'Boolean'>
+    readonly defaultImageUrl: FieldRef<"Brand", 'String'>
     readonly createdAt: FieldRef<"Brand", 'DateTime'>
     readonly updatedAt: FieldRef<"Brand", 'DateTime'>
+    readonly desc: FieldRef<"Brand", 'String'>
+    readonly y_weight: FieldRef<"Brand", 'String'>
+    readonly weight_g: FieldRef<"Brand", 'Int'>
+    readonly category: FieldRef<"Brand", 'String'>
   }
     
 
@@ -2666,7 +2735,6 @@ export namespace Prisma {
     discountedPrice: number | null
     Shown: boolean | null
     irul: string | null
-    iurl1: string | null
     desc: string | null
     y_weight: string | null
     weight_g: number | null
@@ -2684,7 +2752,6 @@ export namespace Prisma {
     discountedPrice: number | null
     Shown: boolean | null
     irul: string | null
-    iurl1: string | null
     desc: string | null
     y_weight: string | null
     weight_g: number | null
@@ -2702,7 +2769,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown: number
     irul: number
-    iurl1: number
     desc: number
     y_weight: number
     weight_g: number
@@ -2736,7 +2802,6 @@ export namespace Prisma {
     discountedPrice?: true
     Shown?: true
     irul?: true
-    iurl1?: true
     desc?: true
     y_weight?: true
     weight_g?: true
@@ -2754,7 +2819,6 @@ export namespace Prisma {
     discountedPrice?: true
     Shown?: true
     irul?: true
-    iurl1?: true
     desc?: true
     y_weight?: true
     weight_g?: true
@@ -2772,7 +2836,6 @@ export namespace Prisma {
     discountedPrice?: true
     Shown?: true
     irul?: true
-    iurl1?: true
     desc?: true
     y_weight?: true
     weight_g?: true
@@ -2877,7 +2940,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -2914,7 +2976,6 @@ export namespace Prisma {
     discountedPrice?: boolean
     Shown?: boolean
     irul?: boolean
-    iurl1?: boolean
     desc?: boolean
     y_weight?: boolean
     weight_g?: boolean
@@ -2935,7 +2996,6 @@ export namespace Prisma {
     discountedPrice?: boolean
     Shown?: boolean
     irul?: boolean
-    iurl1?: boolean
     desc?: boolean
     y_weight?: boolean
     weight_g?: boolean
@@ -2954,7 +3014,6 @@ export namespace Prisma {
     discountedPrice?: boolean
     Shown?: boolean
     irul?: boolean
-    iurl1?: boolean
     desc?: boolean
     y_weight?: boolean
     weight_g?: boolean
@@ -2973,7 +3032,6 @@ export namespace Prisma {
     discountedPrice?: boolean
     Shown?: boolean
     irul?: boolean
-    iurl1?: boolean
     desc?: boolean
     y_weight?: boolean
     weight_g?: boolean
@@ -2983,7 +3041,7 @@ export namespace Prisma {
     isYarn?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pname" | "brandId" | "originalPrice" | "discountedPrice" | "Shown" | "irul" | "iurl1" | "desc" | "y_weight" | "weight_g" | "category" | "stock" | "color" | "isYarn", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pname" | "brandId" | "originalPrice" | "discountedPrice" | "Shown" | "irul" | "desc" | "y_weight" | "weight_g" | "category" | "stock" | "color" | "isYarn", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     brand?: boolean | BrandDefaultArgs<ExtArgs>
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
@@ -3010,7 +3068,6 @@ export namespace Prisma {
       discountedPrice: number
       Shown: boolean
       irul: string
-      iurl1: string
       desc: string
       y_weight: string
       weight_g: number
@@ -3450,7 +3507,6 @@ export namespace Prisma {
     readonly discountedPrice: FieldRef<"Product", 'Int'>
     readonly Shown: FieldRef<"Product", 'Boolean'>
     readonly irul: FieldRef<"Product", 'String'>
-    readonly iurl1: FieldRef<"Product", 'String'>
     readonly desc: FieldRef<"Product", 'String'>
     readonly y_weight: FieldRef<"Product", 'String'>
     readonly weight_g: FieldRef<"Product", 'Int'>
@@ -8578,8 +8634,13 @@ export namespace Prisma {
     name: 'name',
     discountRate: 'discountRate',
     isActive: 'isActive',
+    defaultImageUrl: 'defaultImageUrl',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    desc: 'desc',
+    y_weight: 'y_weight',
+    weight_g: 'weight_g',
+    category: 'category'
   };
 
   export type BrandScalarFieldEnum = (typeof BrandScalarFieldEnum)[keyof typeof BrandScalarFieldEnum]
@@ -8593,7 +8654,6 @@ export namespace Prisma {
     discountedPrice: 'discountedPrice',
     Shown: 'Shown',
     irul: 'irul',
-    iurl1: 'iurl1',
     desc: 'desc',
     y_weight: 'y_weight',
     weight_g: 'weight_g',
@@ -8768,8 +8828,13 @@ export namespace Prisma {
     name?: StringFilter<"Brand"> | string
     discountRate?: FloatFilter<"Brand"> | number
     isActive?: BoolFilter<"Brand"> | boolean
+    defaultImageUrl?: StringFilter<"Brand"> | string
     createdAt?: DateTimeFilter<"Brand"> | Date | string
     updatedAt?: DateTimeFilter<"Brand"> | Date | string
+    desc?: StringFilter<"Brand"> | string
+    y_weight?: StringFilter<"Brand"> | string
+    weight_g?: IntFilter<"Brand"> | number
+    category?: StringFilter<"Brand"> | string
     products?: ProductListRelationFilter
     yarnAccessories?: YarnAccessoryListRelationFilter
   }
@@ -8779,8 +8844,13 @@ export namespace Prisma {
     name?: SortOrder
     discountRate?: SortOrder
     isActive?: SortOrder
+    defaultImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    desc?: SortOrder
+    y_weight?: SortOrder
+    weight_g?: SortOrder
+    category?: SortOrder
     products?: ProductOrderByRelationAggregateInput
     yarnAccessories?: YarnAccessoryOrderByRelationAggregateInput
   }
@@ -8793,8 +8863,13 @@ export namespace Prisma {
     NOT?: BrandWhereInput | BrandWhereInput[]
     discountRate?: FloatFilter<"Brand"> | number
     isActive?: BoolFilter<"Brand"> | boolean
+    defaultImageUrl?: StringFilter<"Brand"> | string
     createdAt?: DateTimeFilter<"Brand"> | Date | string
     updatedAt?: DateTimeFilter<"Brand"> | Date | string
+    desc?: StringFilter<"Brand"> | string
+    y_weight?: StringFilter<"Brand"> | string
+    weight_g?: IntFilter<"Brand"> | number
+    category?: StringFilter<"Brand"> | string
     products?: ProductListRelationFilter
     yarnAccessories?: YarnAccessoryListRelationFilter
   }, "id" | "name">
@@ -8804,8 +8879,13 @@ export namespace Prisma {
     name?: SortOrder
     discountRate?: SortOrder
     isActive?: SortOrder
+    defaultImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    desc?: SortOrder
+    y_weight?: SortOrder
+    weight_g?: SortOrder
+    category?: SortOrder
     _count?: BrandCountOrderByAggregateInput
     _avg?: BrandAvgOrderByAggregateInput
     _max?: BrandMaxOrderByAggregateInput
@@ -8821,8 +8901,13 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Brand"> | string
     discountRate?: FloatWithAggregatesFilter<"Brand"> | number
     isActive?: BoolWithAggregatesFilter<"Brand"> | boolean
+    defaultImageUrl?: StringWithAggregatesFilter<"Brand"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Brand"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Brand"> | Date | string
+    desc?: StringWithAggregatesFilter<"Brand"> | string
+    y_weight?: StringWithAggregatesFilter<"Brand"> | string
+    weight_g?: IntWithAggregatesFilter<"Brand"> | number
+    category?: StringWithAggregatesFilter<"Brand"> | string
   }
 
   export type ProductWhereInput = {
@@ -8836,7 +8921,6 @@ export namespace Prisma {
     discountedPrice?: IntFilter<"Product"> | number
     Shown?: BoolFilter<"Product"> | boolean
     irul?: StringFilter<"Product"> | string
-    iurl1?: StringFilter<"Product"> | string
     desc?: StringFilter<"Product"> | string
     y_weight?: StringFilter<"Product"> | string
     weight_g?: IntFilter<"Product"> | number
@@ -8856,7 +8940,6 @@ export namespace Prisma {
     discountedPrice?: SortOrder
     Shown?: SortOrder
     irul?: SortOrder
-    iurl1?: SortOrder
     desc?: SortOrder
     y_weight?: SortOrder
     weight_g?: SortOrder
@@ -8879,7 +8962,6 @@ export namespace Prisma {
     discountedPrice?: IntFilter<"Product"> | number
     Shown?: BoolFilter<"Product"> | boolean
     irul?: StringFilter<"Product"> | string
-    iurl1?: StringFilter<"Product"> | string
     desc?: StringFilter<"Product"> | string
     y_weight?: StringFilter<"Product"> | string
     weight_g?: IntFilter<"Product"> | number
@@ -8899,7 +8981,6 @@ export namespace Prisma {
     discountedPrice?: SortOrder
     Shown?: SortOrder
     irul?: SortOrder
-    iurl1?: SortOrder
     desc?: SortOrder
     y_weight?: SortOrder
     weight_g?: SortOrder
@@ -8925,7 +9006,6 @@ export namespace Prisma {
     discountedPrice?: IntWithAggregatesFilter<"Product"> | number
     Shown?: BoolWithAggregatesFilter<"Product"> | boolean
     irul?: StringWithAggregatesFilter<"Product"> | string
-    iurl1?: StringWithAggregatesFilter<"Product"> | string
     desc?: StringWithAggregatesFilter<"Product"> | string
     y_weight?: StringWithAggregatesFilter<"Product"> | string
     weight_g?: IntWithAggregatesFilter<"Product"> | number
@@ -9253,8 +9333,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
     products?: ProductCreateNestedManyWithoutBrandInput
     yarnAccessories?: YarnAccessoryCreateNestedManyWithoutBrandInput
   }
@@ -9264,8 +9349,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
     products?: ProductUncheckedCreateNestedManyWithoutBrandInput
     yarnAccessories?: YarnAccessoryUncheckedCreateNestedManyWithoutBrandInput
   }
@@ -9275,8 +9365,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
     products?: ProductUpdateManyWithoutBrandNestedInput
     yarnAccessories?: YarnAccessoryUpdateManyWithoutBrandNestedInput
   }
@@ -9286,8 +9381,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
     products?: ProductUncheckedUpdateManyWithoutBrandNestedInput
     yarnAccessories?: YarnAccessoryUncheckedUpdateManyWithoutBrandNestedInput
   }
@@ -9297,8 +9397,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
   }
 
   export type BrandUpdateManyMutationInput = {
@@ -9306,8 +9411,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
   }
 
   export type BrandUncheckedUpdateManyInput = {
@@ -9315,8 +9425,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProductCreateInput = {
@@ -9326,7 +9441,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -9346,7 +9460,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -9364,7 +9477,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -9384,7 +9496,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -9403,7 +9514,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -9420,7 +9530,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -9438,7 +9547,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -9826,6 +9934,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type ProductListRelationFilter = {
     every?: ProductWhereInput
     some?: ProductWhereInput
@@ -9851,12 +9970,18 @@ export namespace Prisma {
     name?: SortOrder
     discountRate?: SortOrder
     isActive?: SortOrder
+    defaultImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    desc?: SortOrder
+    y_weight?: SortOrder
+    weight_g?: SortOrder
+    category?: SortOrder
   }
 
   export type BrandAvgOrderByAggregateInput = {
     discountRate?: SortOrder
+    weight_g?: SortOrder
   }
 
   export type BrandMaxOrderByAggregateInput = {
@@ -9864,8 +9989,13 @@ export namespace Prisma {
     name?: SortOrder
     discountRate?: SortOrder
     isActive?: SortOrder
+    defaultImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    desc?: SortOrder
+    y_weight?: SortOrder
+    weight_g?: SortOrder
+    category?: SortOrder
   }
 
   export type BrandMinOrderByAggregateInput = {
@@ -9873,12 +10003,18 @@ export namespace Prisma {
     name?: SortOrder
     discountRate?: SortOrder
     isActive?: SortOrder
+    defaultImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    desc?: SortOrder
+    y_weight?: SortOrder
+    weight_g?: SortOrder
+    category?: SortOrder
   }
 
   export type BrandSumOrderByAggregateInput = {
     discountRate?: SortOrder
+    weight_g?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -9937,7 +10073,7 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -9945,7 +10081,12 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BrandScalarRelationFilter = {
@@ -9971,7 +10112,6 @@ export namespace Prisma {
     discountedPrice?: SortOrder
     Shown?: SortOrder
     irul?: SortOrder
-    iurl1?: SortOrder
     desc?: SortOrder
     y_weight?: SortOrder
     weight_g?: SortOrder
@@ -9996,7 +10136,6 @@ export namespace Prisma {
     discountedPrice?: SortOrder
     Shown?: SortOrder
     irul?: SortOrder
-    iurl1?: SortOrder
     desc?: SortOrder
     y_weight?: SortOrder
     weight_g?: SortOrder
@@ -10014,7 +10153,6 @@ export namespace Prisma {
     discountedPrice?: SortOrder
     Shown?: SortOrder
     irul?: SortOrder
-    iurl1?: SortOrder
     desc?: SortOrder
     y_weight?: SortOrder
     weight_g?: SortOrder
@@ -10029,22 +10167,6 @@ export namespace Prisma {
     discountedPrice?: SortOrder
     weight_g?: SortOrder
     stock?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -10332,6 +10454,14 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type ProductUpdateManyWithoutBrandNestedInput = {
     create?: XOR<ProductCreateWithoutBrandInput, ProductUncheckedCreateWithoutBrandInput> | ProductCreateWithoutBrandInput[] | ProductUncheckedCreateWithoutBrandInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutBrandInput | ProductCreateOrConnectWithoutBrandInput[]
@@ -10406,14 +10536,6 @@ export namespace Prisma {
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
     createMany?: OrderItemCreateManyProductInputEnvelope
     connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type BrandUpdateOneRequiredWithoutProductsNestedInput = {
@@ -10697,6 +10819,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -10712,17 +10845,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -10828,7 +10950,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -10846,7 +10967,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -10944,7 +11064,6 @@ export namespace Prisma {
     discountedPrice?: IntFilter<"Product"> | number
     Shown?: BoolFilter<"Product"> | boolean
     irul?: StringFilter<"Product"> | string
-    iurl1?: StringFilter<"Product"> | string
     desc?: StringFilter<"Product"> | string
     y_weight?: StringFilter<"Product"> | string
     weight_g?: IntFilter<"Product"> | number
@@ -10998,8 +11117,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
     yarnAccessories?: YarnAccessoryCreateNestedManyWithoutBrandInput
   }
 
@@ -11008,8 +11132,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
     yarnAccessories?: YarnAccessoryUncheckedCreateNestedManyWithoutBrandInput
   }
 
@@ -11058,8 +11187,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
     yarnAccessories?: YarnAccessoryUpdateManyWithoutBrandNestedInput
   }
 
@@ -11068,8 +11202,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
     yarnAccessories?: YarnAccessoryUncheckedUpdateManyWithoutBrandNestedInput
   }
 
@@ -11105,8 +11244,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
     products?: ProductCreateNestedManyWithoutBrandInput
   }
 
@@ -11115,8 +11259,13 @@ export namespace Prisma {
     name: string
     discountRate?: number
     isActive?: boolean
+    defaultImageUrl?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    desc?: string
+    y_weight?: string
+    weight_g?: number
+    category?: string
     products?: ProductUncheckedCreateNestedManyWithoutBrandInput
   }
 
@@ -11165,8 +11314,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
     products?: ProductUpdateManyWithoutBrandNestedInput
   }
 
@@ -11175,8 +11329,13 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     discountRate?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    defaultImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    desc?: StringFieldUpdateOperationsInput | string
+    y_weight?: StringFieldUpdateOperationsInput | string
+    weight_g?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
     products?: ProductUncheckedUpdateManyWithoutBrandNestedInput
   }
 
@@ -11380,7 +11539,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -11399,7 +11557,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -11510,7 +11667,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -11529,7 +11685,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -11597,7 +11752,6 @@ export namespace Prisma {
     discountedPrice: number
     Shown?: boolean
     irul: string
-    iurl1: string
     desc: string
     y_weight: string
     weight_g: number
@@ -11633,7 +11787,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -11651,7 +11804,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
@@ -11669,7 +11821,6 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     Shown?: BoolFieldUpdateOperationsInput | boolean
     irul?: StringFieldUpdateOperationsInput | string
-    iurl1?: StringFieldUpdateOperationsInput | string
     desc?: StringFieldUpdateOperationsInput | string
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number

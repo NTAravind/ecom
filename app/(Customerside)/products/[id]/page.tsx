@@ -21,7 +21,6 @@ type StaticProductData = {
   brandId: string
   Shown: boolean
   irul: string
-  iurl1: string
   desc: string
   y_weight: string
   weight_g: number
@@ -35,6 +34,7 @@ type StaticProductData = {
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    defaultImageUrl: string
   }
 }
 
@@ -56,7 +56,6 @@ async function getStaticProductData(id: string): Promise<StaticProductData | nul
       brandId: true,
       Shown: true,
       irul: true,
-      iurl1: true,
       desc: true,
       y_weight: true,
       weight_g: true,
@@ -71,6 +70,7 @@ async function getStaticProductData(id: string): Promise<StaticProductData | nul
           discountRate: true,
           isActive: true,
           createdAt: true,
+          defaultImageUrl: true,
           updatedAt: true
         }
       }
@@ -97,7 +97,6 @@ async function getStaticSimilarProducts(category: string, currentProductId: stri
       brandId: true,
       Shown: true,
       irul: true,
-      iurl1: true,
       desc: true,
       y_weight: true,
       weight_g: true,
@@ -112,7 +111,8 @@ async function getStaticSimilarProducts(category: string, currentProductId: stri
           discountRate: true,
           isActive: true,
           createdAt: true,
-          updatedAt: true
+          updatedAt: true,
+          defaultImageUrl: true,
         }
       }
     },
@@ -283,8 +283,8 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
       id: 1,
     },
     // Add more images if available
-    ...(data.iurl1 ? [{
-      url: data.iurl1,
+    ...(data.brand.defaultImageUrl ? [{
+      url: data.brand.defaultImageUrl,
       alt: `${data.pname} - Image 2`,
       id: 2,
     }] : []),

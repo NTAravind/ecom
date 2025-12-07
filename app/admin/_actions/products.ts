@@ -4,20 +4,15 @@ import { redirect } from "next/navigation"
 import z from "zod"
 import { revalidatePath } from "next/cache"
 
-// Updated schema to match your new database structure
+// Updated schema - removed url2, desc, category, weight, gweight since they come from Brand
 const formdat = z.object({
   name: z.string().min(1, "Product name is required"),
   brandId: z.string().min(1, "Brand selection is required"),
-  url: z.string().min(1, "Primary image URL is required"),
-  url2: z.string().min(1, "Secondary image URL is required"),
+  url: z.string().min(1, "Product image URL is required"),
   originalPrice: z.coerce.number().int().min(1, "Original price must be at least 1"),
   discountedPrice: z.coerce.number().int().min(1, "Discounted price must be at least 1"),
-  category: z.string().min(1, "Category is required"),
   stock: z.coerce.number().int().min(0, "Stock cannot be negative"),
   color: z.string().min(1, "Color is required"),
-  weight: z.string().min(1, "Yarn weight is required"),
-  desc: z.string().min(1, "Description is required"),
-  gweight: z.coerce.number().int().min(25, "Weight must be at least 25g"),
   shown: z.string().transform((val) => val === "true"), // Convert string to boolean
 })
 
@@ -31,22 +26,32 @@ export async function addProduct(prevState: unknown, formdata: FormData) {
   const data = res.data
 
   try {
+    // Get brand details to inherit properties
+    const brand = await prisma.brand.findUnique({
+      where: { id: data.brandId }
+    })
+
+    if (!brand) {
+      return { message: "Selected brand not found" }
+    }
+
+    // Create product with inherited brand properties
     await prisma.product.create({
       data: {
         pname: data.name,
         brandId: data.brandId,
         originalPrice: data.originalPrice,
         discountedPrice: data.discountedPrice,
-        desc: data.desc,
-        category: data.category,
         irul: data.url,
-        iurl1: data.url2,
         stock: data.stock,
         color: data.color,
-        y_weight: data.weight,
-        weight_g: data.gweight,
         Shown: data.shown,
-        isYarn: true, // Default to true for yarn products
+        isYarn: true,
+        // Inherited from brand
+        desc: brand.desc,
+        category: brand.category,
+        y_weight: brand.y_weight,
+        weight_g: brand.weight_g,
       }
     })
 
@@ -72,6 +77,16 @@ export async function updateproduct(id: string, prevState: unknown, formdata: Fo
   const data = res.data
 
   try {
+    // Get brand details to inherit properties
+    const brand = await prisma.brand.findUnique({
+      where: { id: data.brandId }
+    })
+
+    if (!brand) {
+      return { message: "Selected brand not found" }
+    }
+
+    // Update product with inherited brand properties
     await prisma.product.update({
       where: { id },
       data: {
@@ -79,15 +94,15 @@ export async function updateproduct(id: string, prevState: unknown, formdata: Fo
         brandId: data.brandId,
         originalPrice: data.originalPrice,
         discountedPrice: data.discountedPrice,
-        desc: data.desc,
-        category: data.category,
         irul: data.url,
-        iurl1: data.url2,
         stock: data.stock,
         color: data.color,
-        y_weight: data.weight,
-        weight_g: data.gweight,
         Shown: data.shown,
+        // Update inherited properties from brand
+        desc: brand.desc,
+        category: brand.category,
+        y_weight: brand.y_weight,
+        weight_g: brand.weight_g,
       }
     })
 
@@ -144,12 +159,12 @@ export async function deleteproduct(id: string) {
     console.error("Error deleting product:", error)
     
     // Re-throw our custom errors
-    if (error.message.includes("Cannot delete product")) {
+    if (error instanceof Error && error.message.includes("Cannot delete product")) {
       throw error
     }
     
     // Check if the error is due to foreign key constraints
-    if (error.code === 'P2003') {
+    if ((error as any).code === 'P2003') {
       throw new Error("Cannot delete product: it is referenced in existing orders. Consider hiding it instead.")
     }
     

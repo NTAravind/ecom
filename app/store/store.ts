@@ -1,9 +1,9 @@
-import { Product } from "../generated/prisma";
 import { create } from "zustand";
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { ProductWithBrand } from "@/app/types/products";
 
 export interface CartItem {
-  item: Product;
+  item: ProductWithBrand;
   qty: number;
 }
 

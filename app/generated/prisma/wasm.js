@@ -125,8 +125,13 @@ exports.Prisma.BrandScalarFieldEnum = {
   name: 'name',
   discountRate: 'discountRate',
   isActive: 'isActive',
+  defaultImageUrl: 'defaultImageUrl',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  desc: 'desc',
+  y_weight: 'y_weight',
+  weight_g: 'weight_g',
+  category: 'category'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -137,7 +142,6 @@ exports.Prisma.ProductScalarFieldEnum = {
   discountedPrice: 'discountedPrice',
   Shown: 'Shown',
   irul: 'irul',
-  iurl1: 'iurl1',
   desc: 'desc',
   y_weight: 'y_weight',
   weight_g: 'weight_g',

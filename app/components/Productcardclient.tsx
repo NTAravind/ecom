@@ -1,14 +1,12 @@
 'use client'
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Product } from "../generated/prisma";
 import ProductCart from "../store/store";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Check, Loader2 } from "lucide-react";
+import { ProductCardData } from "@/app/types/products";
 
 interface ProductCardActionsProps {
-  product: Product & {
-    stock_quantity?: number;
-  };
+  product: ProductCardData;
 }
 
 export function ProductCardActions({ product }: ProductCardActionsProps) {
@@ -29,7 +27,8 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
     return getItemQuantity(product.id) > 0;
   }, [getItemQuantity, product.id, isHydrated]);
   
-  const stock = useMemo(() => product.stock_quantity ?? 20, [product.stock_quantity]);
+  // Use stock field directly from product
+  const stock = product.stock;
   const isOutOfStock = stock === 0;
 
   const handleAddToCart = useCallback((e: React.MouseEvent) => {

@@ -8,59 +8,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// New Brand model for centralized brand management with discounts
 model Brand {
   id              String          @id @default(uuid())
   name            String          @unique
-  discountRate    Float           @default(0) // Percentage discount (0-100)
+  discountRate    Float           @default(0)
   isActive        Boolean         @default(true)
+  defaultImageUrl String          @default("https://example.com/default-brand-img.jpg")
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+  desc            String          @default("desc")
+  y_weight        String          @default("")
+  weight_g        Int             @default(1)
+  category        String          @default("")
   products        Product[]
   yarnAccessories YarnAccessory[]
 }
 
 model Product {
-  id              String      @id @default(uuid())
-  pname           String
-  brandId         String // Foreign key to Brand
-  brand           Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  originalPrice   Int // Renamed from 'price' to be more explicit
-  discountedPrice Int // Calculated discounted price
-  Shown           Boolean     @default(true)
-  irul            String
-  iurl1           String
-  desc            String
-  y_weight        String
-  weight_g        Int
-  category        String
-  stock           Int
-  color           String
-  isYarn          Boolean     @default(true)
-  orderItems      OrderItem[]
+  id      String @id @default(uuid())
+  pname   String
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  originalPrice   Int
+  discountedPrice Int
+
+  Shown    Boolean @default(true)
+  irul     String
+  desc     String
+  y_weight String
+  weight_g Int
+  category String
+  stock    Int
+  color    String
+  isYarn   Boolean @default(true)
+
+  orderItems OrderItem[]
 }
 
-// New model for other yarn-related products (accessories, tools, etc.)
 model YarnAccessory {
-  id              String      @id @default(uuid())
-  name            String
-  brandId         String // Foreign key to Brand
-  brand           Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  id      String @id @default(uuid())
+  name    String
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
   originalPrice   Int
-  discountedPrice Int // Calculated discounted price
-  isActive        Boolean     @default(true)
+  discountedPrice Int
+  isActive        Boolean  @default(true)
   imageUrl        String
-  imageUrl1       String? // Optional second image
+  imageUrl1       String? // Still allowed separately if needed
   description     String
-  category        String // e.g., "needles", "hooks", "accessories", "tools"
-  subcategory     String? // e.g., "circular needles", "stitch markers"
+  category        String
+  subcategory     String?
   stock           Int
-  dimensions      String? // For needles: size, for accessories: dimensions
-  material        String? // Wood, metal, plastic, etc.
+  dimensions      String?
+  material        String?
   color           String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  orderItems      OrderItem[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  orderItems OrderItem[]
 }
 
 model User {
@@ -82,19 +89,17 @@ model Order {
   paid       Boolean     @default(false)
   orderItems OrderItem[]
   complete   Boolean     @default(false)
-  delivered  Boolean     @default(false) // New delivery boolean field
+  delivered  Boolean     @default(false)
 }
 
 model OrderItem {
   id              String  @id @default(uuid())
   orderId         String
-  productId       String? // Made optional since we now have two product types
-  yarnAccessoryId String? // New field for yarn accessories
+  productId       String?
+  yarnAccessoryId String?
   quantity        Int
 
   order         Order          @relation(fields: [orderId], references: [id])
   product       Product?       @relation(fields: [productId], references: [id])
   yarnAccessory YarnAccessory? @relation(fields: [yarnAccessoryId], references: [id])
-
-  // Ensure that either productId or yarnAccessoryId is set, but not both
 }

@@ -29,7 +29,7 @@ import {
   Trash2 
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { updateBrandStatus, updateBrandDiscount, DeleteBrand } from './../_actions/brands'
+import { updateBrandStatus, updateBrandDiscount, deleteBrand } from './../_actions/brands'
 import { toast } from 'sonner'
 
 type BrandWithCount = {
@@ -100,7 +100,7 @@ const BrandCard: React.FC<BrandCardProps> = ({ brand }) => {
     setIsDeleting(true)
     startTransition(async () => {
       try {
-        const result = await DeleteBrand(brand.id)
+        const result = await deleteBrand(brand.id)
         if (result.success) {
           toast.success('Brand deleted successfully')
           // The component will be removed from the list due to revalidatePath in the action
