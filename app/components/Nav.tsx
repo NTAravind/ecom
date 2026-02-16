@@ -13,7 +13,7 @@ import CartSidebar from "../components/SideBar"
 import { ModernSearchSystem } from "./../(Customerside)/components/searchBar"
 import logo from '@/public/logo.jpg'
 import Image from "next/image"
-//latest fixed
+//latest 
 const shopCategories = [
   {
     name: "Acrylic Yarn",
