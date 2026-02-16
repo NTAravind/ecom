@@ -13,7 +13,7 @@ import CartSidebar from "../components/SideBar"
 import { ModernSearchSystem } from "./../(Customerside)/components/searchBar"
 import logo from '@/public/logo.jpg'
 import Image from "next/image"
-
+//latest fixed
 const shopCategories = [
   {
     name: "Acrylic Yarn",
@@ -21,7 +21,7 @@ const shopCategories = [
     subcategories: [
       { name: "Ganga Desire", href: "/products?categories=acrylic&brands=Ganga%20Desire" },
       { name: "Acrylic Hobby India", href: "/products?categories=acrylic&brands=Hobby" },
-      {name: "Ganga Spectrum",href:"/products?categories=acrylic&brands=Ganga%20Spectrum"},
+      { name: "Ganga Spectrum", href: "/products?categories=acrylic&brands=Ganga%20Spectrum" },
     ]
   },
   {
@@ -31,7 +31,7 @@ const shopCategories = [
       { name: "Ganga Delight Yarn", href: "/products?categories=cotton&brands=Ganga+Delight" },
       { name: "Ganga Summer Bloom", href: "/products?categories=cotton&brands=Ganga%20Summer%20Bloom" },
       { name: "4Ply Cotton", href: "/products?categories=cotton&brands=ply+Cotton" },
-      {name:"Picnic Cotton",href:"/products?categories=cotton&brands=Picnic"},
+      { name: "Picnic Cotton", href: "/products?categories=cotton&brands=Picnic" },
     ]
   },
   {
@@ -41,8 +41,8 @@ const shopCategories = [
       { name: "Chenille/Velvet", href: "/products?brands=Gulmarg+Oswal" },
       { name: "Ganga Blanket Yarn", href: "/products?categories=polyster&brands=Ganga" },
       { name: "Super Stitch", href: "/products?&brands=Ganga%20SuperStitch" },
-      {name:"plush",href:"/products?categories=polyester&brands=Plush"},
-      {name:"Blankie",href:"/products?categories=polyester&brands=Blankie"},
+      { name: "plush", href: "/products?categories=polyester&brands=Plush" },
+      { name: "Blankie", href: "/products?categories=polyester&brands=Blankie" },
     ]
   },
   {
@@ -75,37 +75,26 @@ export function NavBar() {
   const shopDropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const submenuTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Use useEffect to update qty when basket count changes
+  // Use Zustand subscribe to reactively update qty when cart state changes
   useEffect(() => {
-    const updateQty = () => {
-      const count = getBasketCount()
-      setQty(count)
-    }
-    
-    updateQty()
+    setQty(getBasketCount())
     setIsClient(true)
-    
-    // Set up an interval to check for cart updates
-    const interval = setInterval(updateQty, 100)
-    
-    return () => clearInterval(interval)
-  }, [getBasketCount])
 
-  // Additional effect to listen for storage events or custom cart events
-  useEffect(() => {
-    const handleCartUpdate = () => {
+    // Subscribe to Zustand store changes — fires only when state actually changes
+    const unsubscribe = ProductCart.subscribe((state) => {
+      const count = state.cartItems.reduce((total, cartItem) => total + cartItem.qty, 0)
+      setQty(count)
+    })
+
+    // Also listen for storage events (cross-tab sync)
+    const handleStorageUpdate = () => {
       setQty(getBasketCount())
     }
+    window.addEventListener('storage', handleStorageUpdate)
 
-    // Listen for custom cart update events
-    window.addEventListener('cartUpdated', handleCartUpdate)
-    
-    // Listen for storage changes (if cart uses localStorage)
-    window.addEventListener('storage', handleCartUpdate)
-    
     return () => {
-      window.removeEventListener('cartUpdated', handleCartUpdate)
-      window.removeEventListener('storage', handleCartUpdate)
+      unsubscribe()
+      window.removeEventListener('storage', handleStorageUpdate)
     }
   }, [getBasketCount])
 
@@ -133,27 +122,27 @@ export function NavBar() {
     setIsTransitioning(false)
   }, [])
 
-  useEffect(() => { 
-    resetMobileMenu() 
+  useEffect(() => {
+    resetMobileMenu()
   }, [pathname, resetMobileMenu])
 
   // Fixed click outside handler for mobile menu
   useEffect(() => {
     if (!isClient || !isMobileMenuOpen) return
-    
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node
-      
+
       // Don't close if clicking on the mobile menu button or its children
       if (mobileMenuButtonRef.current && mobileMenuButtonRef.current.contains(target)) {
         return
       }
-      
+
       // Don't close if clicking inside the mobile menu
       if (mobileMenuRef.current && mobileMenuRef.current.contains(target)) {
         return
       }
-      
+
       // Close menu if clicking outside
       resetMobileMenu()
     }
@@ -192,7 +181,7 @@ export function NavBar() {
     } else {
       document.body.style.overflow = 'unset'
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset'
     }
@@ -213,7 +202,7 @@ export function NavBar() {
   const toggleMobileMenu = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault()
     e?.stopPropagation()
-    
+
     setIsMobileMenuOpen(prev => {
       const newState = !prev
       if (!newState) {
@@ -500,9 +489,9 @@ export function NavBar() {
                         <ShoppingBag className="w-5 h-5 mr-3 text-gray-400" />
                         <span>Products</span>
                       </Link>
-                      
+
                       <div className="h-px bg-gray-200 mx-4 my-2"></div>
-                      
+
                       <Link
                         href="/orders"
                         className="flex items-center px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors rounded-lg font-medium"
@@ -511,9 +500,9 @@ export function NavBar() {
                         <Package className="w-5 h-5 mr-3 text-gray-400" />
                         <span>Orders</span>
                       </Link>
-                      
+
                       <div className="h-px bg-gray-200 mx-4 my-2"></div>
-                      
+
                       <Link
                         href="/About"
                         className="flex items-center px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors rounded-lg font-medium"

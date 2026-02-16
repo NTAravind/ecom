@@ -6,6 +6,8 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Always cache the Prisma client globally to prevent creating
+// multiple instances in production (causes connection pool exhaustion & high CPU)
+globalForPrisma.prisma = prisma;
 
 export default prisma;

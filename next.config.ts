@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Required for Docker deployments — creates a self-contained build
+  // without needing full node_modules (~100MB vs ~1GB image)
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -16,11 +23,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      // Add other image hosts as needed
-    ],
-    domains: [
-      'cdn.jsdelivr.net',
-      'jsdelivr.net'
     ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
@@ -29,9 +31,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-// IMPORTANT: Pass your config to withBundleAnalyzer
 export default withBundleAnalyzer(nextConfig);
