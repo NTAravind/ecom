@@ -42,7 +42,7 @@ export async function getStockItems(searchParams: {
   
   // Build Product query if applicable
   if (typeFilter === "all" || typeFilter === "yarn" || typeFilter === "non-yarn") {
-    let where: any = {}
+    const where: any = {}
     
     // Apply specific type filter if requested
     if (typeFilter === "yarn") where.isYarn = true
@@ -65,7 +65,7 @@ export async function getStockItems(searchParams: {
 
   // Build YarnAccessory query if applicable
   if (typeFilter === "all" || typeFilter === "accessory") {
-    let where: any = {}
+    const where: any = {}
     
     if (searchParams.brandId && searchParams.brandId !== "all") {
       where.brandId = searchParams.brandId
@@ -85,7 +85,7 @@ export async function getStockItems(searchParams: {
   // Fetch all matching data (we'll paginate in memory since we merge two tables)
   const [rawProducts, rawAccessories] = await Promise.all([productsPromise, accessoriesPromise])
 
-  let allItems: StockItem[] = []
+  const allItems: StockItem[] = []
 
   // Map products
   rawProducts.forEach(p => {
