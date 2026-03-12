@@ -10,28 +10,40 @@ import {
   SidebarMenuButton,
   SidebarGroupContent,
 } from "@/components/ui/sidebar"
-import { Box, CarIcon, Home , FactoryIcon } from "lucide-react"
+import { Box, CarIcon, Home, FactoryIcon } from "lucide-react"
 import { title } from "process"
 const items = [
-  { title: "Home",
-  url:"/admin",
-  icon: Home},
-    { title: "Products",
-  url:"/admin/products",
-  icon: Box},
-  { title: "Orders",
-  url:"/admin/orders",
-  icon: CarIcon},
-  {title:"Brands",
-    url:"/admin/brands",
+  {
+    title: "Home",
+    url: "/admin",
+    icon: Home
+  },
+  {
+    title: "Products",
+    url: "/admin/products",
+    icon: Box
+  },
+  {
+    title: "Orders",
+    url: "/admin/orders",
+    icon: CarIcon
+  },
+  {
+    title: "Brands",
+    url: "/admin/brands",
+    icon: FactoryIcon,
+  },
+  {
+    title: "Stock",
+    url: "/admin/stock",
     icon: FactoryIcon,
   }
 ]
 
 export function AppSideBar() {
   return (
-   <Sidebar>
-    <SidebarHeader><div className="text-3xl sm:2xl my-5 font-semibold">Patel Yarn House</div></SidebarHeader>
+    <Sidebar>
+      <SidebarHeader><div className="text-3xl sm:2xl my-5 font-semibold">Patel Yarn House</div></SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Admin Portal</SidebarGroupLabel>

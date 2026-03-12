@@ -27,17 +27,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 
 interface DataTableProps<Tdata, TValue> {
   columns: ColumnDef<Tdata, TValue>[]
   data: Tdata[]
+  brands?: { id: string, name: string }[]
+  categories?: string[]
+  colors?: string[]
 }
 
 export function DataTable<Tdata, TValue>({
   columns,
   data,
+  brands = [],
+  categories = [],
+  colors = [],
 }: DataTableProps<Tdata, TValue>) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
@@ -56,61 +67,77 @@ export function DataTable<Tdata, TValue>({
     },
   })
 
-  // Get unique values for filter dropdowns - updated for new schema
-  const uniqueBrands = Array.from(
-    new Set(data.map((item: any) => item.brand?.name).filter(Boolean))
-  )
-  const uniqueColors = Array.from(
+  const [pnameSearch, setPnameSearch] = useState(searchParams.get("pname") ?? "")
+
+  useEffect(() => {
+    setPnameSearch(searchParams.get("pname") ?? "")
+  }, [searchParams])
+
+  // Get unique values for filter dropdowns if not provided as props
+  const uniqueBrands = brands.length > 0 ? brands : Array.from(
+    new Map(data.map((item: any) => [item.brand?.id, { id: item.brand?.id, name: item.brand?.name }])).values()
+  ).filter(b => b.id)
+  
+  const uniqueColors = colors.length > 0 ? colors : Array.from(
     new Set(data.map((item: any) => item.color).filter(Boolean))
   )
-  const uniqueCategories = Array.from(
+  const uniqueCategories = categories.length > 0 ? categories : Array.from(
     new Set(data.map((item: any) => item.category).filter(Boolean))
   )
+
+  const updateParam = useCallback((key: string, value: string | undefined) => {
+    const newParams = new URLSearchParams(searchParams.toString())
+    if (value && value !== "" && value !== "all") {
+      newParams.set(key, value)
+    } else {
+      newParams.delete(key)
+    }
+    router.push(`${pathname}?${newParams.toString()}`)
+  }, [searchParams, pathname, router])
 
   return (
     <div className="w-full space-y-4">
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
         <Input
-          placeholder="Filter by product name..."
-          value={(table.getColumn("pname")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("pname")?.setFilterValue(event.target.value)
-          }
+          placeholder="Filter by product name (Press Enter)..."
+          value={pnameSearch}
+          onChange={(event) => setPnameSearch(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              updateParam("pname", pnameSearch)
+            }
+          }}
           className="w-full"
         />
 
         <Select
-          value={(table.getColumn("brand-name")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("brand-name")?.setFilterValue(value === "all" ? "" : value)
-          }
+          value={searchParams.get("brandId") ?? ""}
+          onValueChange={(value) => updateParam("brandId", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by brand" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Brands</SelectItem>
-            {uniqueBrands.map((brand) => (
-              <SelectItem key={brand} value={brand}>
-                {brand}
+            {uniqueBrands.map((brand: any) => (
+              <SelectItem key={brand.id} value={brand.id}>
+                {brand.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <Select
-          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)
-          }
+          value={searchParams.get("category") ?? ""}
+          onValueChange={(value) => updateParam("category", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {uniqueCategories.map((category) => (
+            {uniqueCategories.map((category: any) => (
               <SelectItem key={category} value={category}>
                 {category}
               </SelectItem>
@@ -119,17 +146,15 @@ export function DataTable<Tdata, TValue>({
         </Select>
 
         <Select
-          value={(table.getColumn("color")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("color")?.setFilterValue(value === "all" ? "" : value)
-          }
+          value={searchParams.get("color") ?? ""}
+          onValueChange={(value) => updateParam("color", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by color" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Colors</SelectItem>
-            {uniqueColors.map((color) => (
+            {uniqueColors.map((color: any) => (
               <SelectItem key={color} value={color}>
                 <div className="flex items-center gap-2">
                   <div
@@ -144,10 +169,8 @@ export function DataTable<Tdata, TValue>({
         </Select>
 
         <Select
-          value={(table.getColumn("Shown")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("Shown")?.setFilterValue(value === "all" ? "" : value === "true")
-          }
+          value={searchParams.get("Shown") ?? ""}
+          onValueChange={(value) => updateParam("Shown", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by visibility" />
@@ -160,10 +183,8 @@ export function DataTable<Tdata, TValue>({
         </Select>
 
         <Select
-          value={(table.getColumn("isYarn")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("isYarn")?.setFilterValue(value === "all" ? "" : value === "true")
-          }
+          value={searchParams.get("isYarn") ?? ""}
+          onValueChange={(value) => updateParam("isYarn", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by type" />
@@ -178,7 +199,7 @@ export function DataTable<Tdata, TValue>({
         {/* Clear filters button */}
         <Button
           variant="outline"
-          onClick={() => table.resetColumnFilters()}
+          onClick={() => router.push(pathname)}
           className="w-full"
         >
           Clear Filters
@@ -191,30 +212,16 @@ export function DataTable<Tdata, TValue>({
           <Input
             placeholder="Min stock"
             type="number"
-            value={(table.getColumn("stock")?.getFilterValue() as [number, number])?.[0] ?? ""}
-            onChange={(event) => {
-              const value = event.target.value
-              const currentFilter = table.getColumn("stock")?.getFilterValue() as [number, number] | undefined
-              table.getColumn("stock")?.setFilterValue([
-                value ? Number(value) : undefined,
-                currentFilter?.[1]
-              ])
-            }}
+            value={searchParams.get("minStock") ?? ""}
+            onChange={(event) => updateParam("minStock", event.target.value)}
             className="w-24"
           />
           <span className="text-sm text-gray-500">to</span>
           <Input
             placeholder="Max stock"
             type="number"
-            value={(table.getColumn("stock")?.getFilterValue() as [number, number])?.[1] ?? ""}
-            onChange={(event) => {
-              const value = event.target.value
-              const currentFilter = table.getColumn("stock")?.getFilterValue() as [number, number] | undefined
-              table.getColumn("stock")?.setFilterValue([
-                currentFilter?.[0],
-                value ? Number(value) : undefined
-              ])
-            }}
+            value={searchParams.get("maxStock") ?? ""}
+            onChange={(event) => updateParam("maxStock", event.target.value)}
             className="w-24"
           />
         </div>
@@ -223,30 +230,16 @@ export function DataTable<Tdata, TValue>({
           <Input
             placeholder="Min price"
             type="number"
-            value={(table.getColumn("discountedPrice")?.getFilterValue() as [number, number])?.[0] ?? ""}
-            onChange={(event) => {
-              const value = event.target.value
-              const currentFilter = table.getColumn("discountedPrice")?.getFilterValue() as [number, number] | undefined
-              table.getColumn("discountedPrice")?.setFilterValue([
-                value ? Number(value) : undefined,
-                currentFilter?.[1]
-              ])
-            }}
+            value={searchParams.get("minPrice") ?? ""}
+            onChange={(event) => updateParam("minPrice", event.target.value)}
             className="w-24"
           />
           <span className="text-sm text-gray-500">to</span>
           <Input
             placeholder="Max price"
             type="number"
-            value={(table.getColumn("discountedPrice")?.getFilterValue() as [number, number])?.[1] ?? ""}
-            onChange={(event) => {
-              const value = event.target.value
-              const currentFilter = table.getColumn("discountedPrice")?.getFilterValue() as [number, number] | undefined
-              table.getColumn("discountedPrice")?.setFilterValue([
-                currentFilter?.[0],
-                value ? Number(value) : undefined
-              ])
-            }}
+            value={searchParams.get("maxPrice") ?? ""}
+            onChange={(event) => updateParam("maxPrice", event.target.value)}
             className="w-24"
           />
         </div>

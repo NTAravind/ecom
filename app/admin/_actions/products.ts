@@ -118,8 +118,42 @@ export async function updateproduct(id: string, prevState: unknown, formdata: Fo
   }
 }
 
-export async function ProductsTable() {
+export async function ProductsTable(searchParams?: { [key: string]: string | string[] | undefined }) {
+  const where: any = {};
+  
+  if (searchParams) {
+    if (searchParams.pname) {
+      where.pname = { contains: searchParams.pname as string, mode: 'insensitive' };
+    }
+    if (searchParams.brandId && searchParams.brandId !== 'all') {
+      where.brandId = searchParams.brandId as string;
+    }
+    if (searchParams.category && searchParams.category !== 'all') {
+      where.category = searchParams.category as string;
+    }
+    if (searchParams.color && searchParams.color !== 'all') {
+      where.color = searchParams.color as string;
+    }
+    if (searchParams.Shown && searchParams.Shown !== 'all') {
+      where.Shown = searchParams.Shown === 'true';
+    }
+    if (searchParams.isYarn && searchParams.isYarn !== 'all') {
+      where.isYarn = searchParams.isYarn === 'true';
+    }
+    if (searchParams.minStock || searchParams.maxStock) {
+      where.stock = {};
+      if (searchParams.minStock) where.stock.gte = Number(searchParams.minStock);
+      if (searchParams.maxStock) where.stock.lte = Number(searchParams.maxStock);
+    }
+    if (searchParams.minPrice || searchParams.maxPrice) {
+      where.discountedPrice = {};
+      if (searchParams.minPrice) where.discountedPrice.gte = Number(searchParams.minPrice);
+      if (searchParams.maxPrice) where.discountedPrice.lte = Number(searchParams.maxPrice);
+    }
+  }
+
   const products = await prisma.product.findMany({
+    where,
     include: {
       brand: true, // Include brand information
     }

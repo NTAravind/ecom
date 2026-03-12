@@ -9,8 +9,22 @@ import { ProductsTable } from "../_actions/products";
 
 
 
-export default async function AdminProducts() {
-  const data = await ProductsTable()
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export default async function AdminProducts(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams
+  const data = await ProductsTable(searchParams)
+  
+  const brands = await prisma.brand.findMany({ select: { id: true, name: true } })
+  const categories = (await prisma.product.findMany({
+    select: { category: true },
+    distinct: ['category'],
+  })).map(p => p.category).filter(Boolean)
+  const colors = (await prisma.product.findMany({
+    select: { color: true },
+    distinct: ['color'],
+  })).map(p => p.color).filter(Boolean)
+
   return (
     <>
       <div className="mx-5 lg:mx-5 my-3 ">
@@ -20,7 +34,13 @@ export default async function AdminProducts() {
             <Link href="/admin/products/new">Add</Link>
           </Button>
         </div><div className="lg:my-5  my-4 min-w-full">
-          <DataTable columns={columns} data={data} />
+          <DataTable 
+            columns={columns} 
+            data={data} 
+            brands={brands}
+            categories={categories}
+            colors={colors}
+          />
         </div>
       </div>
     </>

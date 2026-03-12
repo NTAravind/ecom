@@ -206,7 +206,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/aravind/ecom/app/generated/prisma",
+      "value": "C:\\Users\\ntara\\Desktop\\WEBDEV\\ecom\\app\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -215,16 +215,17 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/aravind/ecom/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\ntara\\Desktop\\WEBDEV\\ecom\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.19.2",
@@ -233,7 +234,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
