@@ -79,7 +79,7 @@ const GetNewArrivals = unstable_cache(
   async () => {
     const data = await prisma.product.findMany({
       orderBy: {
-      id:'desc'
+        id: 'desc'
       },
       include: { brand: true },
       take: 8,
@@ -98,7 +98,7 @@ const GetNewArrivals = unstable_cache(
 const GetAllBrands = unstable_cache(
   async () => {
     console.log("Fetching brands from database...");
-    
+
     try {
       const brands = await prisma.brand.findMany({
         where: {
@@ -180,7 +180,7 @@ const GetAllBrands = unstable_cache(
       return [];
     }
   },
-  ['brands-list'],
+  ['brands-list-v2'],
   {
     revalidate: 43200, // 12 hours
     tags: ['brands', 'products']
@@ -202,7 +202,7 @@ export const dynamic = 'force-static'; // Force static generation
 export default async function Home() {
   try {
     console.log("Starting Home page data fetch...");
-    
+
     // Fetch all data in parallel for better performance
     const [newArrivalsData, brandsData, popularProductsData] = await Promise.all([
       GetNewArrivals().catch(error => {
@@ -279,12 +279,12 @@ export default async function Home() {
 
     return (
       <>
-        {/* JSON-LD Structured Data */}
+        {/* JSON-LD StructuredData*/}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        
+
         {/* SEO-optimized main content */}
         <main role="main">
           <Hero />
@@ -303,7 +303,7 @@ export default async function Home() {
     )
   } catch (error) {
     console.error("Error in Home component:", error);
-    
+
     // Fallback UI in case of complete failure
     return (
       <main role="main">
@@ -381,7 +381,7 @@ function BulkBenefits() {
   return (
     <section className="w-full bg-white" aria-labelledby="bulk-benefits-heading">
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 sm:gap-6 items-stretch">
-        
+
         {/* Left Column: Benefits List */}
         <div className="lg:col-span-2 flex flex-col justify-center gap-4 sm:gap-6 p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 lg:gap-4 text-center sm:text-left">
@@ -413,8 +413,8 @@ function BulkBenefits() {
 
         {/* Right Column: WhatsApp Link */}
         <div className="lg:col-span-1 flex justify-center">
-          <Link 
-            href={'https://wa.link/stc3xk'} 
+          <Link
+            href={'https://wa.link/stc3xk'}
             className="w-full"
             aria-label="Contact us on WhatsApp for bulk yarn orders"
           >
@@ -456,15 +456,15 @@ function Map() {
   return (
     <section className="w-full mb-5" aria-labelledby="visit-store-heading">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center">
-        
+
         {/* Map Card */}
         <Card className="w-full">
           <CardContent className="p-0">
             <div className="relative w-full aspect-square sm:aspect-video lg:aspect-square overflow-hidden">
               {/* Embedded Map */}
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.061482618031!2d77.57618537418816!3d12.967917614960797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae17b2a0074205%3A0x70b19767320c085c!2sRoshan%20fancy%20store!5e0!3m2!1sen!2sin!4v1753385080088!5m2!1sen!2sin" 
-                width="100%" 
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.061482618031!2d77.57618537418816!3d12.967917614960797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae17b2a0074205%3A0x70b19767320c085c!2sRoshan%20fancy%20store!5e0!3m2!1sen!2sin!4v1753385080088!5m2!1sen!2sin"
+                width="100%"
                 height="100%"
                 className="absolute inset-0 pointer-events-none"
                 loading="lazy"
@@ -497,9 +497,9 @@ function Map() {
           </p>
 
           <Button asChild size="lg" className="sm:mx-auto">
-            <a 
-              href="https://maps.app.goo.gl/aJienJi5AnayPu3m9" 
-              target="_blank" 
+            <a
+              href="https://maps.app.goo.gl/aJienJi5AnayPu3m9"
+              target="_blank"
               rel="noopener noreferrer"
               aria-label="Get directions to Patel Yarn House"
             >
