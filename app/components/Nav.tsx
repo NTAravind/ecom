@@ -55,7 +55,15 @@ const shopCategories = [
     href: "/products?brands=Ganga+SuperStitch",
     subcategories: []
   },
-
+  {
+    name: "Accessories",
+    href: "/yarn-accessories",
+    subcategories: [
+      { name: "Tools", href: "/yarn-accessories?categories=Tools" },
+      { name: "Accessories", href: "/yarn-accessories?categories=Accessories" },
+      { name: "Amigurumi", href: "/yarn-accessories?categories=Amigurumi" },
+    ]
+  },
 ]
 
 export function NavBar() {
@@ -63,6 +71,7 @@ export function NavBar() {
   const [qty, setQty] = useState(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isShopOpen, setIsShopOpen] = useState(false)
+  const [isMobileAccessoriesOpen, setIsMobileAccessoriesOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const [activeMobileSubmenu, setActiveMobileSubmenu] = useState<string | null>(null)
@@ -118,6 +127,7 @@ export function NavBar() {
   const resetMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false)
     setIsShopOpen(false)
+    setIsMobileAccessoriesOpen(false)
     setActiveMobileSubmenu(null)
     setIsTransitioning(false)
   }, [])
@@ -207,6 +217,7 @@ export function NavBar() {
       const newState = !prev
       if (!newState) {
         setIsShopOpen(false)
+        setIsMobileAccessoriesOpen(false)
         setActiveMobileSubmenu(null)
         setIsTransitioning(false)
       }
@@ -217,6 +228,10 @@ export function NavBar() {
   const toggleShopDropdown = useCallback(() => {
     setIsShopOpen(prev => !prev)
     setActiveMobileSubmenu(null)
+  }, [])
+
+  const toggleMobileAccessoriesDropdown = useCallback(() => {
+    setIsMobileAccessoriesOpen(prev => !prev)
   }, [])
 
   // Desktop shop dropdown handlers
@@ -384,6 +399,29 @@ export function NavBar() {
                     </div>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
+                    <div className="relative group">
+                      <Link 
+                        href="/yarn-accessories" 
+                        className={`flex items-center space-x-1 ${pathname.startsWith('/yarn-accessories') ? "relative text-purple-600 font-medium px-4 py-2 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:to-pink-500 after:transform after:scale-x-100" : "relative text-gray-700 hover:text-purple-600 font-medium px-4 py-2 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:to-pink-500 after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"}`}
+                      >
+                        <span>Accessories</span>
+                        <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+                      </Link>
+                      
+                      {/* Hover Dropdown */}
+                      <div className="absolute top-full left-0 pt-2 w-48 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200 z-[100]">
+                        <div className="bg-white rounded-lg shadow-xl border border-gray-200 py-2">
+                          <Link href="/yarn-accessories?categories=Tools" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">Tools</Link>
+                          <Link href="/yarn-accessories?categories=Accessories" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">Accessories</Link>
+                          <Link href="/yarn-accessories?categories=Amigurumi" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">Amigurumi</Link>
+                          <div className="border-t border-gray-100 mt-2 pt-2">
+                            <Link href="/yarn-accessories" className="block px-4 py-2 text-sm text-purple-600 font-medium hover:bg-purple-50 transition-colors">View All</Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
                     <Link href="/orders" className={navLinkClass("/orders")}>
                       Orders
                     </Link>
@@ -489,6 +527,31 @@ export function NavBar() {
                         <ShoppingBag className="w-5 h-5 mr-3 text-gray-400" />
                         <span>Products</span>
                       </Link>
+
+                      <div className="h-px bg-gray-200 mx-4 my-2"></div>
+
+                      <div className="px-2">
+                        <button
+                          onClick={toggleMobileAccessoriesDropdown}
+                          className={`flex items-center justify-between w-full px-2 py-3 text-gray-700 hover:bg-purple-50 active:bg-purple-100 rounded-lg font-medium transition-all duration-200 ${isMobileAccessoriesOpen ? 'bg-purple-50 text-purple-600' : ''}`}
+                          aria-expanded={isMobileAccessoriesOpen}
+                        >
+                          <div className="flex items-center">
+                            <Package className="w-5 h-5 mr-3 text-gray-400" />
+                            <span>Accessories</span>
+                          </div>
+                          <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isMobileAccessoriesOpen ? 'rotate-180 text-purple-600' : ''}`} />
+                        </button>
+                        
+                        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isMobileAccessoriesOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+                          <div className="ml-10 space-y-1 py-2">
+                            <Link href="/yarn-accessories?categories=Tools" className="block py-2 text-sm text-gray-600 hover:text-purple-600" onClick={resetMobileMenu}>Tools</Link>
+                            <Link href="/yarn-accessories?categories=Accessories" className="block py-2 text-sm text-gray-600 hover:text-purple-600" onClick={resetMobileMenu}>Accessories</Link>
+                            <Link href="/yarn-accessories?categories=Amigurumi" className="block py-2 text-sm text-gray-600 hover:text-purple-600" onClick={resetMobileMenu}>Amigurumi</Link>
+                            <Link href="/yarn-accessories" className="block py-2 text-sm font-medium text-purple-600" onClick={resetMobileMenu}>View All Accessories</Link>
+                          </div>
+                        </div>
+                      </div>
 
                       <div className="h-px bg-gray-200 mx-4 my-2"></div>
 

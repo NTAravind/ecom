@@ -3,7 +3,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import ProductCart from "../store/store";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Check, Loader2 } from "lucide-react";
-import { ProductCardData } from "@/app/types/products";
+import { ProductCardData, CartProduct } from "@/app/types/products";
 
 interface ProductCardActionsProps {
   product: ProductCardData;
@@ -38,7 +38,20 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
     if (isAdding || isOutOfStock) return;
     
     setIsAdding(true);
-    AddProduct({ item: product, qty: 1 });
+    
+    const cartItem: CartProduct = {
+      id: product.id,
+      pname: product.pname,
+      irul: product.irul,
+      discountedPrice: product.discountedPrice,
+      originalPrice: product.originalPrice,
+      stock: product.stock,
+      Shown: product.Shown,
+      type: "product",
+      originalItem: product
+    };
+    
+    AddProduct({ item: cartItem, qty: 1 });
     
     // Optimized timeout handling
     const timer = setTimeout(() => {

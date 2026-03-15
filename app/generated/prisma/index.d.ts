@@ -1317,12 +1317,10 @@ export namespace Prisma {
 
   export type BrandCountOutputType = {
     products: number
-    yarnAccessories: number
   }
 
   export type BrandCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     products?: boolean | BrandCountOutputTypeCountProductsArgs
-    yarnAccessories?: boolean | BrandCountOutputTypeCountYarnAccessoriesArgs
   }
 
   // Custom InputTypes
@@ -1341,13 +1339,6 @@ export namespace Prisma {
    */
   export type BrandCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductWhereInput
-  }
-
-  /**
-   * BrandCountOutputType without action
-   */
-  export type BrandCountOutputTypeCountYarnAccessoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: YarnAccessoryWhereInput
   }
 
 
@@ -1730,7 +1721,6 @@ export namespace Prisma {
     weight_g?: boolean
     category?: boolean
     products?: boolean | Brand$productsArgs<ExtArgs>
-    yarnAccessories?: boolean | Brand$yarnAccessoriesArgs<ExtArgs>
     _count?: boolean | BrandCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["brand"]>
 
@@ -1779,7 +1769,6 @@ export namespace Prisma {
   export type BrandOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "discountRate" | "isActive" | "defaultImageUrl" | "createdAt" | "updatedAt" | "desc" | "y_weight" | "weight_g" | "category", ExtArgs["result"]["brand"]>
   export type BrandInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     products?: boolean | Brand$productsArgs<ExtArgs>
-    yarnAccessories?: boolean | Brand$yarnAccessoriesArgs<ExtArgs>
     _count?: boolean | BrandCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BrandIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1789,7 +1778,6 @@ export namespace Prisma {
     name: "Brand"
     objects: {
       products: Prisma.$ProductPayload<ExtArgs>[]
-      yarnAccessories: Prisma.$YarnAccessoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2198,7 +2186,6 @@ export namespace Prisma {
   export interface Prisma__BrandClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     products<T extends Brand$productsArgs<ExtArgs> = {}>(args?: Subset<T, Brand$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    yarnAccessories<T extends Brand$yarnAccessoriesArgs<ExtArgs> = {}>(args?: Subset<T, Brand$yarnAccessoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$YarnAccessoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2648,30 +2635,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
-  }
-
-  /**
-   * Brand.yarnAccessories
-   */
-  export type Brand$yarnAccessoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the YarnAccessory
-     */
-    select?: YarnAccessorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the YarnAccessory
-     */
-    omit?: YarnAccessoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YarnAccessoryInclude<ExtArgs> | null
-    where?: YarnAccessoryWhereInput
-    orderBy?: YarnAccessoryOrderByWithRelationInput | YarnAccessoryOrderByWithRelationInput[]
-    cursor?: YarnAccessoryWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: YarnAccessoryScalarFieldEnum | YarnAccessoryScalarFieldEnum[]
   }
 
   /**
@@ -3971,19 +3934,13 @@ export namespace Prisma {
   export type YarnAccessoryMinAggregateOutputType = {
     id: string | null
     name: string | null
-    brandId: string | null
     originalPrice: number | null
     discountedPrice: number | null
     isActive: boolean | null
     imageUrl: string | null
-    imageUrl1: string | null
     description: string | null
     category: string | null
-    subcategory: string | null
     stock: number | null
-    dimensions: string | null
-    material: string | null
-    color: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3991,19 +3948,13 @@ export namespace Prisma {
   export type YarnAccessoryMaxAggregateOutputType = {
     id: string | null
     name: string | null
-    brandId: string | null
     originalPrice: number | null
     discountedPrice: number | null
     isActive: boolean | null
     imageUrl: string | null
-    imageUrl1: string | null
     description: string | null
     category: string | null
-    subcategory: string | null
     stock: number | null
-    dimensions: string | null
-    material: string | null
-    color: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4011,19 +3962,13 @@ export namespace Prisma {
   export type YarnAccessoryCountAggregateOutputType = {
     id: number
     name: number
-    brandId: number
     originalPrice: number
     discountedPrice: number
     isActive: number
     imageUrl: number
-    imageUrl1: number
     description: number
     category: number
-    subcategory: number
     stock: number
-    dimensions: number
-    material: number
-    color: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -4045,19 +3990,13 @@ export namespace Prisma {
   export type YarnAccessoryMinAggregateInputType = {
     id?: true
     name?: true
-    brandId?: true
     originalPrice?: true
     discountedPrice?: true
     isActive?: true
     imageUrl?: true
-    imageUrl1?: true
     description?: true
     category?: true
-    subcategory?: true
     stock?: true
-    dimensions?: true
-    material?: true
-    color?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4065,19 +4004,13 @@ export namespace Prisma {
   export type YarnAccessoryMaxAggregateInputType = {
     id?: true
     name?: true
-    brandId?: true
     originalPrice?: true
     discountedPrice?: true
     isActive?: true
     imageUrl?: true
-    imageUrl1?: true
     description?: true
     category?: true
-    subcategory?: true
     stock?: true
-    dimensions?: true
-    material?: true
-    color?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4085,19 +4018,13 @@ export namespace Prisma {
   export type YarnAccessoryCountAggregateInputType = {
     id?: true
     name?: true
-    brandId?: true
     originalPrice?: true
     discountedPrice?: true
     isActive?: true
     imageUrl?: true
-    imageUrl1?: true
     description?: true
     category?: true
-    subcategory?: true
     stock?: true
-    dimensions?: true
-    material?: true
-    color?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4192,19 +4119,13 @@ export namespace Prisma {
   export type YarnAccessoryGroupByOutputType = {
     id: string
     name: string
-    brandId: string
     originalPrice: number
     discountedPrice: number
     isActive: boolean
     imageUrl: string
-    imageUrl1: string | null
     description: string
     category: string
-    subcategory: string | null
     stock: number
-    dimensions: string | null
-    material: string | null
-    color: string | null
     createdAt: Date
     updatedAt: Date
     _count: YarnAccessoryCountAggregateOutputType | null
@@ -4231,22 +4152,15 @@ export namespace Prisma {
   export type YarnAccessorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    brandId?: boolean
     originalPrice?: boolean
     discountedPrice?: boolean
     isActive?: boolean
     imageUrl?: boolean
-    imageUrl1?: boolean
     description?: boolean
     category?: boolean
-    subcategory?: boolean
     stock?: boolean
-    dimensions?: boolean
-    material?: boolean
-    color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brand?: boolean | BrandDefaultArgs<ExtArgs>
     orderItems?: boolean | YarnAccessory$orderItemsArgs<ExtArgs>
     _count?: boolean | YarnAccessoryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["yarnAccessory"]>
@@ -4254,100 +4168,68 @@ export namespace Prisma {
   export type YarnAccessorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    brandId?: boolean
     originalPrice?: boolean
     discountedPrice?: boolean
     isActive?: boolean
     imageUrl?: boolean
-    imageUrl1?: boolean
     description?: boolean
     category?: boolean
-    subcategory?: boolean
     stock?: boolean
-    dimensions?: boolean
-    material?: boolean
-    color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brand?: boolean | BrandDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["yarnAccessory"]>
 
   export type YarnAccessorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    brandId?: boolean
     originalPrice?: boolean
     discountedPrice?: boolean
     isActive?: boolean
     imageUrl?: boolean
-    imageUrl1?: boolean
     description?: boolean
     category?: boolean
-    subcategory?: boolean
     stock?: boolean
-    dimensions?: boolean
-    material?: boolean
-    color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brand?: boolean | BrandDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["yarnAccessory"]>
 
   export type YarnAccessorySelectScalar = {
     id?: boolean
     name?: boolean
-    brandId?: boolean
     originalPrice?: boolean
     discountedPrice?: boolean
     isActive?: boolean
     imageUrl?: boolean
-    imageUrl1?: boolean
     description?: boolean
     category?: boolean
-    subcategory?: boolean
     stock?: boolean
-    dimensions?: boolean
-    material?: boolean
-    color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type YarnAccessoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "brandId" | "originalPrice" | "discountedPrice" | "isActive" | "imageUrl" | "imageUrl1" | "description" | "category" | "subcategory" | "stock" | "dimensions" | "material" | "color" | "createdAt" | "updatedAt", ExtArgs["result"]["yarnAccessory"]>
+  export type YarnAccessoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "originalPrice" | "discountedPrice" | "isActive" | "imageUrl" | "description" | "category" | "stock" | "createdAt" | "updatedAt", ExtArgs["result"]["yarnAccessory"]>
   export type YarnAccessoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    brand?: boolean | BrandDefaultArgs<ExtArgs>
     orderItems?: boolean | YarnAccessory$orderItemsArgs<ExtArgs>
     _count?: boolean | YarnAccessoryCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type YarnAccessoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    brand?: boolean | BrandDefaultArgs<ExtArgs>
-  }
-  export type YarnAccessoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    brand?: boolean | BrandDefaultArgs<ExtArgs>
-  }
+  export type YarnAccessoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type YarnAccessoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $YarnAccessoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "YarnAccessory"
     objects: {
-      brand: Prisma.$BrandPayload<ExtArgs>
       orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      brandId: string
       originalPrice: number
       discountedPrice: number
       isActive: boolean
       imageUrl: string
-      imageUrl1: string | null
       description: string
       category: string
-      subcategory: string | null
       stock: number
-      dimensions: string | null
-      material: string | null
-      color: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["yarnAccessory"]>
@@ -4744,7 +4626,6 @@ export namespace Prisma {
    */
   export interface Prisma__YarnAccessoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    brand<T extends BrandDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BrandDefaultArgs<ExtArgs>>): Prisma__BrandClient<$Result.GetResult<Prisma.$BrandPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     orderItems<T extends YarnAccessory$orderItemsArgs<ExtArgs> = {}>(args?: Subset<T, YarnAccessory$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4777,19 +4658,13 @@ export namespace Prisma {
   interface YarnAccessoryFieldRefs {
     readonly id: FieldRef<"YarnAccessory", 'String'>
     readonly name: FieldRef<"YarnAccessory", 'String'>
-    readonly brandId: FieldRef<"YarnAccessory", 'String'>
     readonly originalPrice: FieldRef<"YarnAccessory", 'Int'>
     readonly discountedPrice: FieldRef<"YarnAccessory", 'Int'>
     readonly isActive: FieldRef<"YarnAccessory", 'Boolean'>
     readonly imageUrl: FieldRef<"YarnAccessory", 'String'>
-    readonly imageUrl1: FieldRef<"YarnAccessory", 'String'>
     readonly description: FieldRef<"YarnAccessory", 'String'>
     readonly category: FieldRef<"YarnAccessory", 'String'>
-    readonly subcategory: FieldRef<"YarnAccessory", 'String'>
     readonly stock: FieldRef<"YarnAccessory", 'Int'>
-    readonly dimensions: FieldRef<"YarnAccessory", 'String'>
-    readonly material: FieldRef<"YarnAccessory", 'String'>
-    readonly color: FieldRef<"YarnAccessory", 'String'>
     readonly createdAt: FieldRef<"YarnAccessory", 'DateTime'>
     readonly updatedAt: FieldRef<"YarnAccessory", 'DateTime'>
   }
@@ -5041,10 +4916,6 @@ export namespace Prisma {
      */
     data: YarnAccessoryCreateManyInput | YarnAccessoryCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YarnAccessoryIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5115,10 +4986,6 @@ export namespace Prisma {
      * Limit how many YarnAccessories to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YarnAccessoryIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -8661,19 +8528,13 @@ export namespace Prisma {
   export const YarnAccessoryScalarFieldEnum: {
     id: 'id',
     name: 'name',
-    brandId: 'brandId',
     originalPrice: 'originalPrice',
     discountedPrice: 'discountedPrice',
     isActive: 'isActive',
     imageUrl: 'imageUrl',
-    imageUrl1: 'imageUrl1',
     description: 'description',
     category: 'category',
-    subcategory: 'subcategory',
     stock: 'stock',
-    dimensions: 'dimensions',
-    material: 'material',
-    color: 'color',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -8828,7 +8689,6 @@ export namespace Prisma {
     weight_g?: IntFilter<"Brand"> | number
     category?: StringFilter<"Brand"> | string
     products?: ProductListRelationFilter
-    yarnAccessories?: YarnAccessoryListRelationFilter
   }
 
   export type BrandOrderByWithRelationInput = {
@@ -8844,7 +8704,6 @@ export namespace Prisma {
     weight_g?: SortOrder
     category?: SortOrder
     products?: ProductOrderByRelationAggregateInput
-    yarnAccessories?: YarnAccessoryOrderByRelationAggregateInput
   }
 
   export type BrandWhereUniqueInput = Prisma.AtLeast<{
@@ -8863,7 +8722,6 @@ export namespace Prisma {
     weight_g?: IntFilter<"Brand"> | number
     category?: StringFilter<"Brand"> | string
     products?: ProductListRelationFilter
-    yarnAccessories?: YarnAccessoryListRelationFilter
   }, "id" | "name">
 
   export type BrandOrderByWithAggregationInput = {
@@ -9013,44 +8871,30 @@ export namespace Prisma {
     NOT?: YarnAccessoryWhereInput | YarnAccessoryWhereInput[]
     id?: StringFilter<"YarnAccessory"> | string
     name?: StringFilter<"YarnAccessory"> | string
-    brandId?: StringFilter<"YarnAccessory"> | string
     originalPrice?: IntFilter<"YarnAccessory"> | number
     discountedPrice?: IntFilter<"YarnAccessory"> | number
     isActive?: BoolFilter<"YarnAccessory"> | boolean
     imageUrl?: StringFilter<"YarnAccessory"> | string
-    imageUrl1?: StringNullableFilter<"YarnAccessory"> | string | null
     description?: StringFilter<"YarnAccessory"> | string
     category?: StringFilter<"YarnAccessory"> | string
-    subcategory?: StringNullableFilter<"YarnAccessory"> | string | null
     stock?: IntFilter<"YarnAccessory"> | number
-    dimensions?: StringNullableFilter<"YarnAccessory"> | string | null
-    material?: StringNullableFilter<"YarnAccessory"> | string | null
-    color?: StringNullableFilter<"YarnAccessory"> | string | null
     createdAt?: DateTimeFilter<"YarnAccessory"> | Date | string
     updatedAt?: DateTimeFilter<"YarnAccessory"> | Date | string
-    brand?: XOR<BrandScalarRelationFilter, BrandWhereInput>
     orderItems?: OrderItemListRelationFilter
   }
 
   export type YarnAccessoryOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    brandId?: SortOrder
     originalPrice?: SortOrder
     discountedPrice?: SortOrder
     isActive?: SortOrder
     imageUrl?: SortOrder
-    imageUrl1?: SortOrderInput | SortOrder
     description?: SortOrder
     category?: SortOrder
-    subcategory?: SortOrderInput | SortOrder
     stock?: SortOrder
-    dimensions?: SortOrderInput | SortOrder
-    material?: SortOrderInput | SortOrder
-    color?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    brand?: BrandOrderByWithRelationInput
     orderItems?: OrderItemOrderByRelationAggregateInput
   }
 
@@ -9060,41 +8904,28 @@ export namespace Prisma {
     OR?: YarnAccessoryWhereInput[]
     NOT?: YarnAccessoryWhereInput | YarnAccessoryWhereInput[]
     name?: StringFilter<"YarnAccessory"> | string
-    brandId?: StringFilter<"YarnAccessory"> | string
     originalPrice?: IntFilter<"YarnAccessory"> | number
     discountedPrice?: IntFilter<"YarnAccessory"> | number
     isActive?: BoolFilter<"YarnAccessory"> | boolean
     imageUrl?: StringFilter<"YarnAccessory"> | string
-    imageUrl1?: StringNullableFilter<"YarnAccessory"> | string | null
     description?: StringFilter<"YarnAccessory"> | string
     category?: StringFilter<"YarnAccessory"> | string
-    subcategory?: StringNullableFilter<"YarnAccessory"> | string | null
     stock?: IntFilter<"YarnAccessory"> | number
-    dimensions?: StringNullableFilter<"YarnAccessory"> | string | null
-    material?: StringNullableFilter<"YarnAccessory"> | string | null
-    color?: StringNullableFilter<"YarnAccessory"> | string | null
     createdAt?: DateTimeFilter<"YarnAccessory"> | Date | string
     updatedAt?: DateTimeFilter<"YarnAccessory"> | Date | string
-    brand?: XOR<BrandScalarRelationFilter, BrandWhereInput>
     orderItems?: OrderItemListRelationFilter
   }, "id">
 
   export type YarnAccessoryOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    brandId?: SortOrder
     originalPrice?: SortOrder
     discountedPrice?: SortOrder
     isActive?: SortOrder
     imageUrl?: SortOrder
-    imageUrl1?: SortOrderInput | SortOrder
     description?: SortOrder
     category?: SortOrder
-    subcategory?: SortOrderInput | SortOrder
     stock?: SortOrder
-    dimensions?: SortOrderInput | SortOrder
-    material?: SortOrderInput | SortOrder
-    color?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: YarnAccessoryCountOrderByAggregateInput
@@ -9110,19 +8941,13 @@ export namespace Prisma {
     NOT?: YarnAccessoryScalarWhereWithAggregatesInput | YarnAccessoryScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"YarnAccessory"> | string
     name?: StringWithAggregatesFilter<"YarnAccessory"> | string
-    brandId?: StringWithAggregatesFilter<"YarnAccessory"> | string
     originalPrice?: IntWithAggregatesFilter<"YarnAccessory"> | number
     discountedPrice?: IntWithAggregatesFilter<"YarnAccessory"> | number
     isActive?: BoolWithAggregatesFilter<"YarnAccessory"> | boolean
     imageUrl?: StringWithAggregatesFilter<"YarnAccessory"> | string
-    imageUrl1?: StringNullableWithAggregatesFilter<"YarnAccessory"> | string | null
     description?: StringWithAggregatesFilter<"YarnAccessory"> | string
     category?: StringWithAggregatesFilter<"YarnAccessory"> | string
-    subcategory?: StringNullableWithAggregatesFilter<"YarnAccessory"> | string | null
     stock?: IntWithAggregatesFilter<"YarnAccessory"> | number
-    dimensions?: StringNullableWithAggregatesFilter<"YarnAccessory"> | string | null
-    material?: StringNullableWithAggregatesFilter<"YarnAccessory"> | string | null
-    color?: StringNullableWithAggregatesFilter<"YarnAccessory"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"YarnAccessory"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"YarnAccessory"> | Date | string
   }
@@ -9333,7 +9158,6 @@ export namespace Prisma {
     weight_g?: number
     category?: string
     products?: ProductCreateNestedManyWithoutBrandInput
-    yarnAccessories?: YarnAccessoryCreateNestedManyWithoutBrandInput
   }
 
   export type BrandUncheckedCreateInput = {
@@ -9349,7 +9173,6 @@ export namespace Prisma {
     weight_g?: number
     category?: string
     products?: ProductUncheckedCreateNestedManyWithoutBrandInput
-    yarnAccessories?: YarnAccessoryUncheckedCreateNestedManyWithoutBrandInput
   }
 
   export type BrandUpdateInput = {
@@ -9365,7 +9188,6 @@ export namespace Prisma {
     weight_g?: IntFieldUpdateOperationsInput | number
     category?: StringFieldUpdateOperationsInput | string
     products?: ProductUpdateManyWithoutBrandNestedInput
-    yarnAccessories?: YarnAccessoryUpdateManyWithoutBrandNestedInput
   }
 
   export type BrandUncheckedUpdateInput = {
@@ -9381,7 +9203,6 @@ export namespace Prisma {
     weight_g?: IntFieldUpdateOperationsInput | number
     category?: StringFieldUpdateOperationsInput | string
     products?: ProductUncheckedUpdateManyWithoutBrandNestedInput
-    yarnAccessories?: YarnAccessoryUncheckedUpdateManyWithoutBrandNestedInput
   }
 
   export type BrandCreateManyInput = {
@@ -9555,36 +9376,24 @@ export namespace Prisma {
     discountedPrice: number
     isActive?: boolean
     imageUrl: string
-    imageUrl1?: string | null
     description: string
     category: string
-    subcategory?: string | null
     stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    brand: BrandCreateNestedOneWithoutYarnAccessoriesInput
     orderItems?: OrderItemCreateNestedManyWithoutYarnAccessoryInput
   }
 
   export type YarnAccessoryUncheckedCreateInput = {
     id?: string
     name: string
-    brandId: string
     originalPrice: number
     discountedPrice: number
     isActive?: boolean
     imageUrl: string
-    imageUrl1?: string | null
     description: string
     category: string
-    subcategory?: string | null
     stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutYarnAccessoryInput
@@ -9597,36 +9406,24 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brand?: BrandUpdateOneRequiredWithoutYarnAccessoriesNestedInput
     orderItems?: OrderItemUpdateManyWithoutYarnAccessoryNestedInput
   }
 
   export type YarnAccessoryUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    brandId?: StringFieldUpdateOperationsInput | string
     originalPrice?: IntFieldUpdateOperationsInput | number
     discountedPrice?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutYarnAccessoryNestedInput
@@ -9635,19 +9432,13 @@ export namespace Prisma {
   export type YarnAccessoryCreateManyInput = {
     id?: string
     name: string
-    brandId: string
     originalPrice: number
     discountedPrice: number
     isActive?: boolean
     imageUrl: string
-    imageUrl1?: string | null
     description: string
     category: string
-    subcategory?: string | null
     stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9659,14 +9450,9 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9674,19 +9460,13 @@ export namespace Prisma {
   export type YarnAccessoryUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    brandId?: StringFieldUpdateOperationsInput | string
     originalPrice?: IntFieldUpdateOperationsInput | number
     discountedPrice?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9943,17 +9723,7 @@ export namespace Prisma {
     none?: ProductWhereInput
   }
 
-  export type YarnAccessoryListRelationFilter = {
-    every?: YarnAccessoryWhereInput
-    some?: YarnAccessoryWhereInput
-    none?: YarnAccessoryWhereInput
-  }
-
   export type ProductOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type YarnAccessoryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10161,42 +9931,16 @@ export namespace Prisma {
     stock?: SortOrder
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type YarnAccessoryCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    brandId?: SortOrder
     originalPrice?: SortOrder
     discountedPrice?: SortOrder
     isActive?: SortOrder
     imageUrl?: SortOrder
-    imageUrl1?: SortOrder
     description?: SortOrder
     category?: SortOrder
-    subcategory?: SortOrder
     stock?: SortOrder
-    dimensions?: SortOrder
-    material?: SortOrder
-    color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10210,19 +9954,13 @@ export namespace Prisma {
   export type YarnAccessoryMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    brandId?: SortOrder
     originalPrice?: SortOrder
     discountedPrice?: SortOrder
     isActive?: SortOrder
     imageUrl?: SortOrder
-    imageUrl1?: SortOrder
     description?: SortOrder
     category?: SortOrder
-    subcategory?: SortOrder
     stock?: SortOrder
-    dimensions?: SortOrder
-    material?: SortOrder
-    color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10230,19 +9968,13 @@ export namespace Prisma {
   export type YarnAccessoryMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    brandId?: SortOrder
     originalPrice?: SortOrder
     discountedPrice?: SortOrder
     isActive?: SortOrder
     imageUrl?: SortOrder
-    imageUrl1?: SortOrder
     description?: SortOrder
     category?: SortOrder
-    subcategory?: SortOrder
     stock?: SortOrder
-    dimensions?: SortOrder
-    material?: SortOrder
-    color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10251,24 +9983,6 @@ export namespace Prisma {
     originalPrice?: SortOrder
     discountedPrice?: SortOrder
     stock?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type OrderListRelationFilter = {
@@ -10351,6 +10065,21 @@ export namespace Prisma {
     pricepaid?: SortOrder
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type OrderScalarRelationFilter = {
     is?: OrderWhereInput
     isNot?: OrderWhereInput
@@ -10364,6 +10093,11 @@ export namespace Prisma {
   export type YarnAccessoryNullableScalarRelationFilter = {
     is?: YarnAccessoryWhereInput | null
     isNot?: YarnAccessoryWhereInput | null
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type OrderItemCountOrderByAggregateInput = {
@@ -10398,6 +10132,24 @@ export namespace Prisma {
     quantity?: SortOrder
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type ProductCreateNestedManyWithoutBrandInput = {
     create?: XOR<ProductCreateWithoutBrandInput, ProductUncheckedCreateWithoutBrandInput> | ProductCreateWithoutBrandInput[] | ProductUncheckedCreateWithoutBrandInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutBrandInput | ProductCreateOrConnectWithoutBrandInput[]
@@ -10405,25 +10157,11 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
-  export type YarnAccessoryCreateNestedManyWithoutBrandInput = {
-    create?: XOR<YarnAccessoryCreateWithoutBrandInput, YarnAccessoryUncheckedCreateWithoutBrandInput> | YarnAccessoryCreateWithoutBrandInput[] | YarnAccessoryUncheckedCreateWithoutBrandInput[]
-    connectOrCreate?: YarnAccessoryCreateOrConnectWithoutBrandInput | YarnAccessoryCreateOrConnectWithoutBrandInput[]
-    createMany?: YarnAccessoryCreateManyBrandInputEnvelope
-    connect?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-  }
-
   export type ProductUncheckedCreateNestedManyWithoutBrandInput = {
     create?: XOR<ProductCreateWithoutBrandInput, ProductUncheckedCreateWithoutBrandInput> | ProductCreateWithoutBrandInput[] | ProductUncheckedCreateWithoutBrandInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutBrandInput | ProductCreateOrConnectWithoutBrandInput[]
     createMany?: ProductCreateManyBrandInputEnvelope
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
-  }
-
-  export type YarnAccessoryUncheckedCreateNestedManyWithoutBrandInput = {
-    create?: XOR<YarnAccessoryCreateWithoutBrandInput, YarnAccessoryUncheckedCreateWithoutBrandInput> | YarnAccessoryCreateWithoutBrandInput[] | YarnAccessoryUncheckedCreateWithoutBrandInput[]
-    connectOrCreate?: YarnAccessoryCreateOrConnectWithoutBrandInput | YarnAccessoryCreateOrConnectWithoutBrandInput[]
-    createMany?: YarnAccessoryCreateManyBrandInputEnvelope
-    connect?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10468,20 +10206,6 @@ export namespace Prisma {
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
-  export type YarnAccessoryUpdateManyWithoutBrandNestedInput = {
-    create?: XOR<YarnAccessoryCreateWithoutBrandInput, YarnAccessoryUncheckedCreateWithoutBrandInput> | YarnAccessoryCreateWithoutBrandInput[] | YarnAccessoryUncheckedCreateWithoutBrandInput[]
-    connectOrCreate?: YarnAccessoryCreateOrConnectWithoutBrandInput | YarnAccessoryCreateOrConnectWithoutBrandInput[]
-    upsert?: YarnAccessoryUpsertWithWhereUniqueWithoutBrandInput | YarnAccessoryUpsertWithWhereUniqueWithoutBrandInput[]
-    createMany?: YarnAccessoryCreateManyBrandInputEnvelope
-    set?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    disconnect?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    delete?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    connect?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    update?: YarnAccessoryUpdateWithWhereUniqueWithoutBrandInput | YarnAccessoryUpdateWithWhereUniqueWithoutBrandInput[]
-    updateMany?: YarnAccessoryUpdateManyWithWhereWithoutBrandInput | YarnAccessoryUpdateManyWithWhereWithoutBrandInput[]
-    deleteMany?: YarnAccessoryScalarWhereInput | YarnAccessoryScalarWhereInput[]
-  }
-
   export type ProductUncheckedUpdateManyWithoutBrandNestedInput = {
     create?: XOR<ProductCreateWithoutBrandInput, ProductUncheckedCreateWithoutBrandInput> | ProductCreateWithoutBrandInput[] | ProductUncheckedCreateWithoutBrandInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutBrandInput | ProductCreateOrConnectWithoutBrandInput[]
@@ -10494,20 +10218,6 @@ export namespace Prisma {
     update?: ProductUpdateWithWhereUniqueWithoutBrandInput | ProductUpdateWithWhereUniqueWithoutBrandInput[]
     updateMany?: ProductUpdateManyWithWhereWithoutBrandInput | ProductUpdateManyWithWhereWithoutBrandInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
-  }
-
-  export type YarnAccessoryUncheckedUpdateManyWithoutBrandNestedInput = {
-    create?: XOR<YarnAccessoryCreateWithoutBrandInput, YarnAccessoryUncheckedCreateWithoutBrandInput> | YarnAccessoryCreateWithoutBrandInput[] | YarnAccessoryUncheckedCreateWithoutBrandInput[]
-    connectOrCreate?: YarnAccessoryCreateOrConnectWithoutBrandInput | YarnAccessoryCreateOrConnectWithoutBrandInput[]
-    upsert?: YarnAccessoryUpsertWithWhereUniqueWithoutBrandInput | YarnAccessoryUpsertWithWhereUniqueWithoutBrandInput[]
-    createMany?: YarnAccessoryCreateManyBrandInputEnvelope
-    set?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    disconnect?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    delete?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    connect?: YarnAccessoryWhereUniqueInput | YarnAccessoryWhereUniqueInput[]
-    update?: YarnAccessoryUpdateWithWhereUniqueWithoutBrandInput | YarnAccessoryUpdateWithWhereUniqueWithoutBrandInput[]
-    updateMany?: YarnAccessoryUpdateManyWithWhereWithoutBrandInput | YarnAccessoryUpdateManyWithWhereWithoutBrandInput[]
-    deleteMany?: YarnAccessoryScalarWhereInput | YarnAccessoryScalarWhereInput[]
   }
 
   export type BrandCreateNestedOneWithoutProductsInput = {
@@ -10566,12 +10276,6 @@ export namespace Prisma {
     deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
   }
 
-  export type BrandCreateNestedOneWithoutYarnAccessoriesInput = {
-    create?: XOR<BrandCreateWithoutYarnAccessoriesInput, BrandUncheckedCreateWithoutYarnAccessoriesInput>
-    connectOrCreate?: BrandCreateOrConnectWithoutYarnAccessoriesInput
-    connect?: BrandWhereUniqueInput
-  }
-
   export type OrderItemCreateNestedManyWithoutYarnAccessoryInput = {
     create?: XOR<OrderItemCreateWithoutYarnAccessoryInput, OrderItemUncheckedCreateWithoutYarnAccessoryInput> | OrderItemCreateWithoutYarnAccessoryInput[] | OrderItemUncheckedCreateWithoutYarnAccessoryInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutYarnAccessoryInput | OrderItemCreateOrConnectWithoutYarnAccessoryInput[]
@@ -10584,18 +10288,6 @@ export namespace Prisma {
     connectOrCreate?: OrderItemCreateOrConnectWithoutYarnAccessoryInput | OrderItemCreateOrConnectWithoutYarnAccessoryInput[]
     createMany?: OrderItemCreateManyYarnAccessoryInputEnvelope
     connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
-  export type BrandUpdateOneRequiredWithoutYarnAccessoriesNestedInput = {
-    create?: XOR<BrandCreateWithoutYarnAccessoriesInput, BrandUncheckedCreateWithoutYarnAccessoriesInput>
-    connectOrCreate?: BrandCreateOrConnectWithoutYarnAccessoriesInput
-    upsert?: BrandUpsertWithoutYarnAccessoriesInput
-    connect?: BrandWhereUniqueInput
-    update?: XOR<XOR<BrandUpdateToOneWithWhereWithoutYarnAccessoriesInput, BrandUpdateWithoutYarnAccessoriesInput>, BrandUncheckedUpdateWithoutYarnAccessoriesInput>
   }
 
   export type OrderItemUpdateManyWithoutYarnAccessoryNestedInput = {
@@ -10768,6 +10460,10 @@ export namespace Prisma {
     delete?: YarnAccessoryWhereInput | boolean
     connect?: YarnAccessoryWhereUniqueInput
     update?: XOR<XOR<YarnAccessoryUpdateToOneWithWhereWithoutOrderItemsInput, YarnAccessoryUpdateWithoutOrderItemsInput>, YarnAccessoryUncheckedUpdateWithoutOrderItemsInput>
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10979,56 +10675,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type YarnAccessoryCreateWithoutBrandInput = {
-    id?: string
-    name: string
-    originalPrice: number
-    discountedPrice: number
-    isActive?: boolean
-    imageUrl: string
-    imageUrl1?: string | null
-    description: string
-    category: string
-    subcategory?: string | null
-    stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    orderItems?: OrderItemCreateNestedManyWithoutYarnAccessoryInput
-  }
-
-  export type YarnAccessoryUncheckedCreateWithoutBrandInput = {
-    id?: string
-    name: string
-    originalPrice: number
-    discountedPrice: number
-    isActive?: boolean
-    imageUrl: string
-    imageUrl1?: string | null
-    description: string
-    category: string
-    subcategory?: string | null
-    stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    orderItems?: OrderItemUncheckedCreateNestedManyWithoutYarnAccessoryInput
-  }
-
-  export type YarnAccessoryCreateOrConnectWithoutBrandInput = {
-    where: YarnAccessoryWhereUniqueInput
-    create: XOR<YarnAccessoryCreateWithoutBrandInput, YarnAccessoryUncheckedCreateWithoutBrandInput>
-  }
-
-  export type YarnAccessoryCreateManyBrandInputEnvelope = {
-    data: YarnAccessoryCreateManyBrandInput | YarnAccessoryCreateManyBrandInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ProductUpsertWithWhereUniqueWithoutBrandInput = {
     where: ProductWhereUniqueInput
     update: XOR<ProductUpdateWithoutBrandInput, ProductUncheckedUpdateWithoutBrandInput>
@@ -11065,45 +10711,6 @@ export namespace Prisma {
     isYarn?: BoolFilter<"Product"> | boolean
   }
 
-  export type YarnAccessoryUpsertWithWhereUniqueWithoutBrandInput = {
-    where: YarnAccessoryWhereUniqueInput
-    update: XOR<YarnAccessoryUpdateWithoutBrandInput, YarnAccessoryUncheckedUpdateWithoutBrandInput>
-    create: XOR<YarnAccessoryCreateWithoutBrandInput, YarnAccessoryUncheckedCreateWithoutBrandInput>
-  }
-
-  export type YarnAccessoryUpdateWithWhereUniqueWithoutBrandInput = {
-    where: YarnAccessoryWhereUniqueInput
-    data: XOR<YarnAccessoryUpdateWithoutBrandInput, YarnAccessoryUncheckedUpdateWithoutBrandInput>
-  }
-
-  export type YarnAccessoryUpdateManyWithWhereWithoutBrandInput = {
-    where: YarnAccessoryScalarWhereInput
-    data: XOR<YarnAccessoryUpdateManyMutationInput, YarnAccessoryUncheckedUpdateManyWithoutBrandInput>
-  }
-
-  export type YarnAccessoryScalarWhereInput = {
-    AND?: YarnAccessoryScalarWhereInput | YarnAccessoryScalarWhereInput[]
-    OR?: YarnAccessoryScalarWhereInput[]
-    NOT?: YarnAccessoryScalarWhereInput | YarnAccessoryScalarWhereInput[]
-    id?: StringFilter<"YarnAccessory"> | string
-    name?: StringFilter<"YarnAccessory"> | string
-    brandId?: StringFilter<"YarnAccessory"> | string
-    originalPrice?: IntFilter<"YarnAccessory"> | number
-    discountedPrice?: IntFilter<"YarnAccessory"> | number
-    isActive?: BoolFilter<"YarnAccessory"> | boolean
-    imageUrl?: StringFilter<"YarnAccessory"> | string
-    imageUrl1?: StringNullableFilter<"YarnAccessory"> | string | null
-    description?: StringFilter<"YarnAccessory"> | string
-    category?: StringFilter<"YarnAccessory"> | string
-    subcategory?: StringNullableFilter<"YarnAccessory"> | string | null
-    stock?: IntFilter<"YarnAccessory"> | number
-    dimensions?: StringNullableFilter<"YarnAccessory"> | string | null
-    material?: StringNullableFilter<"YarnAccessory"> | string | null
-    color?: StringNullableFilter<"YarnAccessory"> | string | null
-    createdAt?: DateTimeFilter<"YarnAccessory"> | Date | string
-    updatedAt?: DateTimeFilter<"YarnAccessory"> | Date | string
-  }
-
   export type BrandCreateWithoutProductsInput = {
     id?: string
     name: string
@@ -11116,7 +10723,6 @@ export namespace Prisma {
     y_weight?: string
     weight_g?: number
     category?: string
-    yarnAccessories?: YarnAccessoryCreateNestedManyWithoutBrandInput
   }
 
   export type BrandUncheckedCreateWithoutProductsInput = {
@@ -11131,7 +10737,6 @@ export namespace Prisma {
     y_weight?: string
     weight_g?: number
     category?: string
-    yarnAccessories?: YarnAccessoryUncheckedCreateNestedManyWithoutBrandInput
   }
 
   export type BrandCreateOrConnectWithoutProductsInput = {
@@ -11186,7 +10791,6 @@ export namespace Prisma {
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
     category?: StringFieldUpdateOperationsInput | string
-    yarnAccessories?: YarnAccessoryUpdateManyWithoutBrandNestedInput
   }
 
   export type BrandUncheckedUpdateWithoutProductsInput = {
@@ -11201,7 +10805,6 @@ export namespace Prisma {
     y_weight?: StringFieldUpdateOperationsInput | string
     weight_g?: IntFieldUpdateOperationsInput | number
     category?: StringFieldUpdateOperationsInput | string
-    yarnAccessories?: YarnAccessoryUncheckedUpdateManyWithoutBrandNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -11231,41 +10834,6 @@ export namespace Prisma {
     quantity?: IntFilter<"OrderItem"> | number
   }
 
-  export type BrandCreateWithoutYarnAccessoriesInput = {
-    id?: string
-    name: string
-    discountRate?: number
-    isActive?: boolean
-    defaultImageUrl?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    desc?: string
-    y_weight?: string
-    weight_g?: number
-    category?: string
-    products?: ProductCreateNestedManyWithoutBrandInput
-  }
-
-  export type BrandUncheckedCreateWithoutYarnAccessoriesInput = {
-    id?: string
-    name: string
-    discountRate?: number
-    isActive?: boolean
-    defaultImageUrl?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    desc?: string
-    y_weight?: string
-    weight_g?: number
-    category?: string
-    products?: ProductUncheckedCreateNestedManyWithoutBrandInput
-  }
-
-  export type BrandCreateOrConnectWithoutYarnAccessoriesInput = {
-    where: BrandWhereUniqueInput
-    create: XOR<BrandCreateWithoutYarnAccessoriesInput, BrandUncheckedCreateWithoutYarnAccessoriesInput>
-  }
-
   export type OrderItemCreateWithoutYarnAccessoryInput = {
     id?: string
     quantity: number
@@ -11288,47 +10856,6 @@ export namespace Prisma {
   export type OrderItemCreateManyYarnAccessoryInputEnvelope = {
     data: OrderItemCreateManyYarnAccessoryInput | OrderItemCreateManyYarnAccessoryInput[]
     skipDuplicates?: boolean
-  }
-
-  export type BrandUpsertWithoutYarnAccessoriesInput = {
-    update: XOR<BrandUpdateWithoutYarnAccessoriesInput, BrandUncheckedUpdateWithoutYarnAccessoriesInput>
-    create: XOR<BrandCreateWithoutYarnAccessoriesInput, BrandUncheckedCreateWithoutYarnAccessoriesInput>
-    where?: BrandWhereInput
-  }
-
-  export type BrandUpdateToOneWithWhereWithoutYarnAccessoriesInput = {
-    where?: BrandWhereInput
-    data: XOR<BrandUpdateWithoutYarnAccessoriesInput, BrandUncheckedUpdateWithoutYarnAccessoriesInput>
-  }
-
-  export type BrandUpdateWithoutYarnAccessoriesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    discountRate?: FloatFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    defaultImageUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    desc?: StringFieldUpdateOperationsInput | string
-    y_weight?: StringFieldUpdateOperationsInput | string
-    weight_g?: IntFieldUpdateOperationsInput | number
-    category?: StringFieldUpdateOperationsInput | string
-    products?: ProductUpdateManyWithoutBrandNestedInput
-  }
-
-  export type BrandUncheckedUpdateWithoutYarnAccessoriesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    discountRate?: FloatFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    defaultImageUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    desc?: StringFieldUpdateOperationsInput | string
-    y_weight?: StringFieldUpdateOperationsInput | string
-    weight_g?: IntFieldUpdateOperationsInput | number
-    category?: StringFieldUpdateOperationsInput | string
-    products?: ProductUncheckedUpdateManyWithoutBrandNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutYarnAccessoryInput = {
@@ -11570,35 +11097,23 @@ export namespace Prisma {
     discountedPrice: number
     isActive?: boolean
     imageUrl: string
-    imageUrl1?: string | null
     description: string
     category: string
-    subcategory?: string | null
     stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    brand: BrandCreateNestedOneWithoutYarnAccessoriesInput
   }
 
   export type YarnAccessoryUncheckedCreateWithoutOrderItemsInput = {
     id?: string
     name: string
-    brandId: string
     originalPrice: number
     discountedPrice: number
     isActive?: boolean
     imageUrl: string
-    imageUrl1?: string | null
     description: string
     category: string
-    subcategory?: string | null
     stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11704,35 +11219,23 @@ export namespace Prisma {
     discountedPrice?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brand?: BrandUpdateOneRequiredWithoutYarnAccessoriesNestedInput
   }
 
   export type YarnAccessoryUncheckedUpdateWithoutOrderItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    brandId?: StringFieldUpdateOperationsInput | string
     originalPrice?: IntFieldUpdateOperationsInput | number
     discountedPrice?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11751,25 +11254,6 @@ export namespace Prisma {
     stock: number
     color: string
     isYarn?: boolean
-  }
-
-  export type YarnAccessoryCreateManyBrandInput = {
-    id?: string
-    name: string
-    originalPrice: number
-    discountedPrice: number
-    isActive?: boolean
-    imageUrl: string
-    imageUrl1?: string | null
-    description: string
-    category: string
-    subcategory?: string | null
-    stock: number
-    dimensions?: string | null
-    material?: string | null
-    color?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type ProductUpdateWithoutBrandInput = {
@@ -11820,65 +11304,6 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     color?: StringFieldUpdateOperationsInput | string
     isYarn?: BoolFieldUpdateOperationsInput | boolean
-  }
-
-  export type YarnAccessoryUpdateWithoutBrandInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    originalPrice?: IntFieldUpdateOperationsInput | number
-    discountedPrice?: IntFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
-    stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    orderItems?: OrderItemUpdateManyWithoutYarnAccessoryNestedInput
-  }
-
-  export type YarnAccessoryUncheckedUpdateWithoutBrandInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    originalPrice?: IntFieldUpdateOperationsInput | number
-    discountedPrice?: IntFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
-    stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    orderItems?: OrderItemUncheckedUpdateManyWithoutYarnAccessoryNestedInput
-  }
-
-  export type YarnAccessoryUncheckedUpdateManyWithoutBrandInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    originalPrice?: IntFieldUpdateOperationsInput | number
-    discountedPrice?: IntFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    imageUrl1?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
-    stock?: IntFieldUpdateOperationsInput | number
-    dimensions?: NullableStringFieldUpdateOperationsInput | string | null
-    material?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrderItemCreateManyProductInput = {

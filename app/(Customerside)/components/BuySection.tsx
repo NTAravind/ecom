@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import ProductCart from "@/app/store/store";
-import { FullProductData } from "@/app/types/products";
+import { FullProductData, CartProduct } from "@/app/types/products";
 
 // Use centralized type definition
 export default function BuySection({ prop }: { prop: FullProductData }) {
@@ -69,9 +69,23 @@ export default function BuySection({ prop }: { prop: FullProductData }) {
       });
       return;
     }
+    
     setIsLoading(true);
+    
+    const cartItem: CartProduct = {
+      id: prop.id,
+      pname: prop.pname,
+      irul: prop.irul,
+      discountedPrice: prop.discountedPrice,
+      originalPrice: prop.originalPrice,
+      stock: prop.stock,
+      Shown: prop.Shown,
+      type: "product",
+      originalItem: prop
+    };
+    
     try {
-      AddProduct({ item: prop, qty: quantity });
+      AddProduct({ item: cartItem, qty: quantity });
       router.push('/checkout');
     } catch (error) {
       toast?.("Error", {
@@ -96,9 +110,22 @@ export default function BuySection({ prop }: { prop: FullProductData }) {
       return;
     }
     setIsAddingToCart(true);
+
+    const cartItem: CartProduct = {
+      id: prop.id,
+      pname: prop.pname,
+      irul: prop.irul,
+      discountedPrice: prop.discountedPrice,
+      originalPrice: prop.originalPrice,
+      stock: prop.stock,
+      Shown: prop.Shown,
+      type: "product",
+      originalItem: prop
+    };
+
     // Add a small delay for better visual feedback
     setTimeout(() => {
-      AddProduct({ item: prop, qty: quantity });
+      AddProduct({ item: cartItem, qty: quantity });
       toast?.("Added to cart", {
         description: `${quantity} × ${prop.pname} added to your cart.`,
       });

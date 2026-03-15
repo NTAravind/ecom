@@ -293,7 +293,7 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
-        <div className="flex justify-center items-start lg:relative lg:top:100px xl:relative xl:top-[100px]">
+        <div className="flex justify-center items-start lg:relative lg:top-[100px] xl:relative xl:top-[100px]">
           <ProductCarousel 
             images={productImages}
             baseWidth={430}

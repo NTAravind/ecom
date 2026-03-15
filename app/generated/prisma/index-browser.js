@@ -155,19 +155,13 @@ exports.Prisma.ProductScalarFieldEnum = {
 exports.Prisma.YarnAccessoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  brandId: 'brandId',
   originalPrice: 'originalPrice',
   discountedPrice: 'discountedPrice',
   isActive: 'isActive',
   imageUrl: 'imageUrl',
-  imageUrl1: 'imageUrl1',
   description: 'description',
   category: 'category',
-  subcategory: 'subcategory',
   stock: 'stock',
-  dimensions: 'dimensions',
-  material: 'material',
-  color: 'color',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

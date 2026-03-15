@@ -77,7 +77,6 @@ export async function getStockItems(searchParams: {
 
     accessoriesPromise = prisma.yarnAccessory.findMany({
       where,
-      include: { brand: { select: { id: true, name: true } } },
       orderBy: { name: 'asc' }
     })
   }
@@ -108,10 +107,10 @@ export async function getStockItems(searchParams: {
       id: a.id,
       type: "accessory",
       name: a.name,
-      brand: a.brand,
+      brand: { id: "none", name: "No Brand" }, // Accessories have no brand relation
       category: a.category,
-      color: a.color || "N/A",
-      weight: a.dimensions || "N/A", // Reusing this field to show dimensions for accessories
+      color: "N/A", // Not stored in DB
+      weight: "N/A", 
       stock: a.stock,
       image: a.imageUrl
     })

@@ -1,7 +1,7 @@
 // app/types/product.ts
 // Centralized type definitions for products to avoid type mismatches
 
-import { Product, Brand } from "../generated/prisma";
+import { Product, Brand, YarnAccessory } from "../generated/prisma";
 
 /**
  * Basic Brand info (minimal fields needed for most operations)
@@ -62,6 +62,29 @@ export type DynamicProductData = {
  * Full product data (complete product with all fields)
  */
 export type FullProductData = ProductWithBrand;
+
+/**
+ * Unified types for Global Cart Support
+ */
+export type CartItemType = 'product' | 'accessory';
+
+// The base shape expected by the cart UI
+export interface CartItemBase {
+  id: string; // productId or yarnAccessoryId
+  pname: string; // mapped from name for accessories
+  irul: string; // mapped from imageUrl for accessories
+  discountedPrice: number;
+  originalPrice: number;
+  stock: number;
+  Shown: boolean; // mapped from isActive for accessories
+  type: CartItemType;
+}
+
+export type CartProduct = CartItemBase & { type: 'product', originalItem: ProductWithBrand };
+export type CartAccessory = CartItemBase & { type: 'accessory', originalItem: YarnAccessory };
+
+// The item stored inside the zustand CartItem { item: UnifiedCartItem, qty: number }
+export type UnifiedCartItem = CartProduct | CartAccessory;
 
 /**
  * Helper function to check if product has discount

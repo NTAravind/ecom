@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { auth } from "@/auth";
-import { GetProductPrice } from "@/lib/actions";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import { number } from "zod/v4";
@@ -37,16 +36,31 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Pincode required for delivery" }, { status: 400 });
       }
 
-      const productIds = cartitems.map((item: any) => item.productId);
-      const products = await GetProductPrice(productIds);
+      const productIds = cartitems.filter((item: any) => item.productId).map((item: any) => item.productId);
+      const accessoryIds = cartitems.filter((item: any) => item.yarnAccessoryId).map((item: any) => item.yarnAccessoryId);
+      
+      const [products, accessories] = await Promise.all([
+        productIds.length > 0 ? prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, discountedPrice: true } }) : Promise.resolve([]),
+        accessoryIds.length > 0 ? prisma.yarnAccessory.findMany({ where: { id: { in: accessoryIds } }, select: { id: true, discountedPrice: true } }) : Promise.resolve([])
+      ]);
 
       const amount = cartitems.reduce((total: number, orderItem: any) => {
-        const product = products.find((p: any) => p.id === orderItem.productId);
-        if (!product) throw new Error(`Product not found: ${orderItem.productId}`);
-        if (!Number.isInteger(orderItem.qty) || orderItem.qty <= 0) {
-          throw new Error(`Invalid quantity for product: ${orderItem.productId}`);
+        let itemData;
+        
+        if (orderItem.productId) {
+          itemData = products.find((p: any) => p.id === orderItem.productId);
+          if (!itemData) throw new Error(`Product not found: ${orderItem.productId}`);
+        } else if (orderItem.yarnAccessoryId) {
+          itemData = accessories.find((a: any) => a.id === orderItem.yarnAccessoryId);
+          if (!itemData) throw new Error(`Accessory not found: ${orderItem.yarnAccessoryId}`);
+        } else {
+           throw new Error(`Invalid cart item format`);
         }
-        return total + product.discountedPrice * orderItem.qty;
+        
+        if (!Number.isInteger(orderItem.qty) || orderItem.qty <= 0) {
+          throw new Error(`Invalid quantity for item`);
+        }
+        return total + itemData.discountedPrice * orderItem.qty;
       }, 0);
 
       const deliveryCharge = delivery && amount < 2000 ? 60 : 0;
@@ -83,7 +97,8 @@ export async function POST(req: NextRequest) {
           orderItems: {
             create: cartitems.map((cartItem: any) => ({
               quantity: cartItem.qty,
-              product: { connect: { id: cartItem.productId } },
+              ...(cartItem.productId ? { product: { connect: { id: cartItem.productId } } } : {}),
+              ...(cartItem.yarnAccessoryId ? { yarnAccessory: { connect: { id: cartItem.yarnAccessoryId } } } : {})
             })),
           },
         },
@@ -140,19 +155,33 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, order: existingOrder, message: "Order already completed" }, { status: 200 });
       }
 
-      const productIds = cartitems.map((item: any) => item.productId);
-      const serverProducts = await GetProductPrice(productIds);
+      const productIds = cartitems.filter((item: any) => item.productId).map((item: any) => item.productId);
+      const accessoryIds = cartitems.filter((item: any) => item.yarnAccessoryId).map((item: any) => item.yarnAccessoryId);
+      
+      const [serverProducts, serverAccessories] = await Promise.all([
+        productIds.length > 0 ? prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, discountedPrice: true } }) : Promise.resolve([]),
+        accessoryIds.length > 0 ? prisma.yarnAccessory.findMany({ where: { id: { in: accessoryIds } }, select: { id: true, discountedPrice: true } }) : Promise.resolve([])
+      ]);
 
       let serverCalculatedTotal = 0;
       for (const cartItem of cartitems) {
-        const serverProduct = serverProducts.find((p: any) => p.id === cartItem.productId);
-        if (!serverProduct) {
-          return NextResponse.json({ success: false, error: `Product not found: ${cartItem.productId}` }, { status: 400 });
+        let serverItem;
+        if (cartItem.productId) {
+          serverItem = serverProducts.find((p: any) => p.id === cartItem.productId);
+          if (!serverItem) {
+            return NextResponse.json({ success: false, error: `Product not found: ${cartItem.productId}` }, { status: 400 });
+          }
+        } else if (cartItem.yarnAccessoryId) {
+          serverItem = serverAccessories.find((a: any) => a.id === cartItem.yarnAccessoryId);
+          if (!serverItem) {
+            return NextResponse.json({ success: false, error: `Accessory not found: ${cartItem.yarnAccessoryId}` }, { status: 400 });
+          }
         }
+        
         if (!Number.isInteger(cartItem.qty) || cartItem.qty <= 0) {
-          return NextResponse.json({ success: false, error: `Invalid quantity for product: ${cartItem.productId}` }, { status: 400 });
+          return NextResponse.json({ success: false, error: `Invalid quantity details` }, { status: 400 });
         }
-        serverCalculatedTotal += serverProduct.discountedPrice * cartItem.qty;
+        serverCalculatedTotal += serverItem.discountedPrice * cartItem.qty;
       }
 
       const serverDeliveryCharge = delivery && serverCalculatedTotal < 2000 ? 60 : 0;
@@ -171,14 +200,26 @@ export async function POST(req: NextRequest) {
         });
 
         for (const orderItem of updatedOrder.orderItems) {
-          const updatedProduct = await tx.product.update({
-            where: { id: orderItem.product.id },
-            data: { stock: { decrement: orderItem.quantity } },
-            select: { stock: true, pname: true },
-          });
+          if (orderItem.productId) {
+            const updatedProduct = await tx.product.update({
+              where: { id: orderItem.productId },
+              data: { stock: { decrement: orderItem.quantity } },
+              select: { stock: true, pname: true },
+            });
 
-          if (updatedProduct.stock < 0) {
-            throw new Error(`Insufficient stock for ${updatedProduct.pname}.`);
+            if (updatedProduct.stock < 0) {
+              throw new Error(`Insufficient stock for product ${updatedProduct.pname}.`);
+            }
+          } else if (orderItem.yarnAccessoryId) {
+            const updatedAccessory = await tx.yarnAccessory.update({
+              where: { id: orderItem.yarnAccessoryId },
+              data: { stock: { decrement: orderItem.quantity } },
+              select: { stock: true, name: true },
+            });
+
+            if (updatedAccessory.stock < 0) {
+              throw new Error(`Insufficient stock for accessory ${updatedAccessory.name}.`);
+            }
           }
         }
 

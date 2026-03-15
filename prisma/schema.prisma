@@ -21,7 +21,7 @@ model Brand {
   weight_g        Int              @default(1)
   category        String           @default("")
   products        Product[]
-  yarnAccessories YarnAccessory[]
+   
 }
 
 model Product {
@@ -49,22 +49,15 @@ model Product {
 model YarnAccessory {
   id              String      @id @default(uuid())
   name            String
-  brandId         String
-  brand           Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
-
+ 
   originalPrice   Int
   discountedPrice Int
   isActive        Boolean     @default(true)
   imageUrl        String
-  imageUrl1       String?     // Still allowed separately if needed
   description     String
   category        String
-  subcategory     String?
   stock           Int
-  dimensions      String?
-  material        String?
-  color           String?
-  createdAt       DateTime    @default(now())
+ createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
   orderItems      OrderItem[]

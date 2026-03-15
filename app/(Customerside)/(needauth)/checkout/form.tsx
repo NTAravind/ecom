@@ -27,7 +27,7 @@ import { debounce } from 'lodash';
 import { ErrorBoundary } from 'react-error-boundary';
 import DeliveryModeSelector from './del';
 import { createUser, updateUser } from './action';
-import ProductCart from '@/app/store/store';
+import ProductCart, { CartItem } from '@/app/store/store';
 import { fcurrency } from '@/utils/utils';
 import { MessageSquare, ShoppingCart, Copy } from 'lucide-react';
 
@@ -510,7 +510,7 @@ const ProductCard = memo(function ProductCard({
   onRemove,
   stockValidation,
 }: {
-  item: { item: Product; qty: number };
+  item: CartItem;
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
   stockValidation: StockValidationResult;
@@ -791,7 +791,13 @@ function PurchaseButton({
 
     setPending(true);
     try {
-      const orderItems = cartItems.map(cartItem => ({ productId: cartItem.item.id, qty: cartItem.qty }));
+      const orderItems = cartItems.map(cartItem => {
+        if (cartItem.item.type === 'accessory') {
+          return { yarnAccessoryId: cartItem.item.id, qty: cartItem.qty };
+        }
+        return { productId: cartItem.item.id, qty: cartItem.qty };
+      });
+      
       const createOrderRes = await fetch('/api/razorpay/order', {
         method: 'POST',
         body: JSON.stringify({

@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarGroupContent,
 } from "@/components/ui/sidebar"
-import { Box, CarIcon, Home, FactoryIcon } from "lucide-react"
+import { Box, CarIcon, Home, FactoryIcon, Palette, Database } from "lucide-react"
 import { title } from "process"
 const items = [
   {
@@ -22,6 +22,11 @@ const items = [
     title: "Products",
     url: "/admin/products",
     icon: Box
+  },
+  {
+    title: "Yarn Accessories",
+    url: "/admin/yarn-accessories",
+    icon: Palette
   },
   {
     title: "Orders",
@@ -37,6 +42,11 @@ const items = [
     title: "Stock",
     url: "/admin/stock",
     icon: FactoryIcon,
+  },
+  {
+    title: "Backups",
+    url: "/admin/backups",
+    icon: Database,
   }
 ]
 

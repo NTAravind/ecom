@@ -9,19 +9,18 @@ datasource db {
 }
 
 model Brand {
-  id              String          @id @default(uuid())
-  name            String          @unique
-  discountRate    Float           @default(0)
-  isActive        Boolean         @default(true)
-  defaultImageUrl String          @default("https://example.com/default-brand-img.jpg")
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  desc            String          @default("desc")
-  y_weight        String          @default("")
-  weight_g        Int             @default(1)
-  category        String          @default("")
+  id              String    @id @default(uuid())
+  name            String    @unique
+  discountRate    Float     @default(0)
+  isActive        Boolean   @default(true)
+  defaultImageUrl String    @default("https://example.com/default-brand-img.jpg")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  desc            String    @default("desc")
+  y_weight        String    @default("")
+  weight_g        Int       @default(1)
+  category        String    @default("")
   products        Product[]
-  yarnAccessories YarnAccessory[]
 }
 
 model Product {
@@ -47,23 +46,16 @@ model Product {
 }
 
 model YarnAccessory {
-  id      String @id @default(uuid())
-  name    String
-  brandId String
-  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  id   String @id @default(uuid())
+  name String
 
   originalPrice   Int
   discountedPrice Int
   isActive        Boolean  @default(true)
   imageUrl        String
-  imageUrl1       String? // Still allowed separately if needed
   description     String
   category        String
-  subcategory     String?
   stock           Int
-  dimensions      String?
-  material        String?
-  color           String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

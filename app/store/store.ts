@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { ProductWithBrand } from "@/app/types/products";
+import { UnifiedCartItem } from "@/app/types/products";
 
 export interface CartItem {
-  item: ProductWithBrand;
+  item: UnifiedCartItem;
   qty: number;
 }
 
