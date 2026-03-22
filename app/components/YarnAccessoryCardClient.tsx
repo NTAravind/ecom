@@ -1,8 +1,11 @@
 'use client'
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Check, Loader2 } from "lucide-react";
 import { YarnAccessoryData } from "./YarnAccessoryCard";
+import ProductCart from "@/app/store/store";
+import { CartAccessory } from "@/app/types/products";
+import { toast } from "sonner";
 
 interface YarnAccessoryCardActionsProps {
   accessory: YarnAccessoryData;
@@ -11,11 +14,7 @@ interface YarnAccessoryCardActionsProps {
 export function YarnAccessoryCardActions({ accessory }: YarnAccessoryCardActionsProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-  
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const { AddProduct } = ProductCart();
 
   const isOutOfStock = accessory.stock === 0;
 
@@ -26,10 +25,27 @@ export function YarnAccessoryCardActions({ accessory }: YarnAccessoryCardActions
     if (isAdding || isOutOfStock) return;
     
     setIsAdding(true);
+
+    const cartItem: CartAccessory = {
+      id: accessory.id,
+      pname: accessory.name,
+      irul: accessory.imageUrl,
+      discountedPrice: accessory.discountedPrice,
+      originalPrice: accessory.originalPrice,
+      stock: accessory.stock,
+      Shown: accessory.isActive,
+      type: "accessory",
+      originalItem: accessory as any
+    };
+    
+    AddProduct({ item: cartItem, qty: 1 });
     
     const timer = setTimeout(() => {
       setIsAdding(false);
       setShowSuccess(true);
+      toast?.("Added to cart", {
+        description: `1 × ${accessory.name} added to your cart.`,
+      });
       
       const successTimer = setTimeout(() => {
         setShowSuccess(false);
@@ -39,7 +55,7 @@ export function YarnAccessoryCardActions({ accessory }: YarnAccessoryCardActions
     }, 400);
     
     return () => clearTimeout(timer);
-  }, [accessory, isAdding, isOutOfStock]);
+  }, [accessory, isAdding, isOutOfStock, AddProduct]);
 
   if (isOutOfStock) {
     return (
@@ -54,7 +70,7 @@ export function YarnAccessoryCardActions({ accessory }: YarnAccessoryCardActions
     );
   }
 
-  if (showSuccess || isHydrated) {
+  if (showSuccess) {
     return (
       <Button
         className="w-full font-semibold text-white rounded-lg h-11 bg-emerald-600 hover:bg-emerald-700 transition-colors"

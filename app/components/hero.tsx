@@ -45,8 +45,10 @@ export default function Hero() {
 }
 
 export function NewArrivals({ products = [] }) {
-  const [mounted, setMounted] = useState(false)
-  
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
   // Generate mock products if none provided
   const mockProducts = Array.from({ length: 8 }, (_, i) => ({
     id: i + 1,
@@ -62,131 +64,91 @@ export function NewArrivals({ products = [] }) {
       discountRate: Math.floor(Math.random() * 30)
     }
   }))
-  
+
   const displayProducts = products.length > 0 ? products : mockProducts
-  
+
+  const checkScrollButtons = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    setCanScrollLeft(container.scrollLeft > 0);
+    setCanScrollRight(
+      container.scrollLeft < container.scrollWidth - container.clientWidth
+    );
+  };
+
   useEffect(() => {
-    setMounted(true)
-  }, [])
-  
-  if (!mounted) return null
-  
+    checkScrollButtons();
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", checkScrollButtons);
+      return () => container.removeEventListener("scroll", checkScrollButtons);
+    }
+  }, [displayProducts]);
+
+  const scroll = (direction: "left" | "right") => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const scrollAmount = 300;
+    container.scrollTo({
+      left: container.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount),
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="w-full bg-white py-3 sm:py-4 md:py-6 lg:py-8">
+    <div className="w-full bg-white py-3 sm:py-4 md:py-6 lg:py-8 overflow-hidden">
       {/* Main container with mobile-first responsive layout */}
       <div className="flex flex-col lg:flex-row items-center lg:items-start px-3 sm:px-4 md:px-6 lg:px-10">
-        
+
         {/* Header section - mobile optimized */}
         <div className="w-full lg:w-auto lg:flex-shrink-0 mb-3 sm:mb-4 lg:mb-0 lg:mr-6 xl:mr-8 text-center lg:text-left">
           <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-black tracking-wide leading-tight">
-             LATEST 
+            LATEST
             <br />
             <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-primary">ARRIVALS</span>
           </h2>
         </div>
-        
-        {/* Scrollable product section - mobile optimized */}
-        <div className="w-full lg:flex-1 overflow-hidden">
-          {/* Mobile touch-friendly scrolling container */}
-          <div className="flex gap-2 sm:gap-3 md:gap-4 animate-scroll-mobile sm:animate-scroll-tablet lg:animate-scroll-desktop hover:animate-pause">
-            {/* First set of products - wider mobile cards to prevent content bleeding */}
+
+        {/* Scrollable product section */}
+        <div className="w-full lg:flex-1 relative min-w-0 overflow-hidden">
+          {/* Left scroll button */}
+          {canScrollLeft && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm"
+              onClick={() => scroll("left")}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+          )}
+
+          {/* Right scroll button */}
+          {canScrollRight && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm"
+              onClick={() => scroll("right")}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+
+          {/* Scrollable container */}
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-2 sm:gap-3 md:gap-4 overflow-x-auto pb-4"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
             {displayProducts.map((item, index) => (
-              <div key={`first-${item.id || index}`} className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56">
-                <ProductCard product={item} />
-              </div>
-            ))}
-            
-            {/* Duplicate set for seamless loop */}
-            {displayProducts.map((item, index) => (
-              <div key={`second-${item.id || index}`} className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56">
+              <div key={item.id || index} className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56">
                 <ProductCard product={item} />
               </div>
             ))}
           </div>
         </div>
       </div>
-      
-      {/* Enhanced CSS for mobile responsiveness */}
-      <style jsx>{`
-        @keyframes scroll-infinite {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        
-        /* Mobile-first animation speeds - adjusted for wider cards */
-        .animate-scroll-mobile {
-          animation: scroll-infinite 30s linear infinite;
-        }
-        
-        .animate-scroll-tablet {
-          animation: scroll-infinite 35s linear infinite;
-        }
-        
-        .animate-scroll-desktop {
-          animation: scroll-infinite 40s linear infinite;
-        }
-        
-        .animate-pause {
-          animation-play-state: paused;
-        }
-        
-        /* Mobile-specific optimizations - slower for wider cards */
-        @media (max-width: 475px) {
-          .animate-scroll-mobile {
-            animation-duration: 25s;
-          }
-        }
-        
-        /* Small mobile devices - ensuring content fits */
-        @media (max-width: 320px) {
-          .animate-scroll-mobile {
-            animation-duration: 22s;
-          }
-        }
-        
-        /* Tablet adjustments */
-        @media (min-width: 640px) and (max-width: 1023px) {
-          .animate-scroll-tablet {
-            animation-duration: 30s;
-          }
-        }
-        
-        /* Desktop fine-tuning */
-        @media (min-width: 1024px) {
-          .animate-scroll-desktop {
-            animation-duration: 40s;
-          }
-        }
-        
-        /* Large desktop */
-        @media (min-width: 1280px) {
-          .animate-scroll-desktop {
-            animation-duration: 45s;
-          }
-        }
-        
-        /* Touch device optimization */
-        @media (hover: none) and (pointer: coarse) {
-          .animate-scroll-mobile,
-          .animate-scroll-tablet,
-          .animate-scroll-desktop {
-            animation-play-state: running;
-          }
-        }
-        
-        /* Reduce motion for accessibility */
-        @media (prefers-reduced-motion: reduce) {
-          .animate-scroll-mobile,
-          .animate-scroll-tablet,
-          .animate-scroll-desktop {
-            animation-duration: 60s;
-          }
-        }
-      `}</style>
     </div>
   )
 }
@@ -206,46 +168,7 @@ interface BrandsScrollProps {
 }
 
 // Updated component name and functionality for brands
-export function BrandsScroll({ brands }: BrandsScrollProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const checkScrollButtons = () => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    setCanScrollLeft(container.scrollLeft > 0);
-    setCanScrollRight(
-      container.scrollLeft < container.scrollWidth - container.clientWidth
-    );
-  };
-
-  useEffect(() => {
-    checkScrollButtons();
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.addEventListener("scroll", checkScrollButtons);
-      return () => container.removeEventListener("scroll", checkScrollButtons);
-    }
-  }, [brands]);
-
-  const scroll = (direction: "left" | "right") => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const scrollAmount = 300;
-    const currentScroll = container.scrollLeft;
-    const targetScroll = direction === "left" 
-      ? currentScroll - scrollAmount 
-      : currentScroll + scrollAmount;
-
-    container.scrollTo({
-      left: targetScroll,
-      behavior: "smooth"
-    });
-  };
-
+export function BrandsGrid({ brands }: BrandsScrollProps) {
   if (brands.length === 0) {
     return (
       <div className="text-center py-12">
@@ -254,76 +177,53 @@ export function BrandsScroll({ brands }: BrandsScrollProps) {
     );
   }
 
+  // Wavy yarn-like pattern background (SVG data URI) - Highly visible!
+  const yarnPattern = {
+    backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a855f7' fill-opacity='0.6'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+  };
+
   return (
-    <div className="relative">
-      {/* Left scroll button */}
-      {canScrollLeft && (
-        <Button
-          variant="outline"
-          size="icon"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm"
-          onClick={() => scroll("left")}
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
+      {brands.map((brand) => (
+        <Link
+          key={brand.id}
+          href={`/products?brands=${brand.name}`}
+          className="block group h-full"
         >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-      )}
-
-      {/* Right scroll button */}
-      {canScrollRight && (
-        <Button
-          variant="outline"
-          size="icon"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm"
-          onClick={() => scroll("right")}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      )}
-
-      {/* Scrollable container */}
-      <div
-        ref={scrollContainerRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        {brands.map((brand) => (
-          <Link
-            key={brand.id}
-            href={`/products?brands=${brand.name}`}
-            className="flex-shrink-0"
+          <Card 
+            className="h-full transition-all duration-300 hover:shadow-[0_8px_30px_rgb(168,85,247,0.3)] hover:-translate-y-1 border-2 border-purple-200 hover:border-purple-500 cursor-pointer overflow-hidden relative rounded-xl"
           >
-            <Card className="w-48 transition-all duration-200 hover:shadow-lg hover:scale-105 cursor-pointer rounded-none">
-              <CardContent className="p-4">
-                <div className="aspect-square relative mb-3 overflow-hidden rounded-md">
-                  <Image
-                    src={brand.image}
-                    alt={brand.sampleProductName}
-                    fill
-                    className="object-cover transition-transform duration-200 hover:scale-110"
-                    sizes="350px"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-medium text-center text-lg line-clamp-1 leading-tight">
-                    {brand.name}
-                  </h3>
-                  <div className="flex justify-between items-center text-sm text-gray-600">
-                    <span>{brand.productCount} products</span>
-                    {brand.discountRate > 0 && (
-                      <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
-                        {brand.discountRate}% OFF
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-    </div> 
+            {/* Yarn Pattern Background */}
+            <div 
+              className="absolute inset-0 z-0 opacity-100 bg-purple-50 transition-opacity duration-500"
+              style={yarnPattern}
+            />
+            
+            {/* Decorative Overlay Gradient to keep text readable */}
+            <div className="absolute inset-0 bg-white/40 group-hover:bg-white/0 transition-colors duration-300 z-10" />
+            
+            <CardContent className="p-5 flex flex-col items-center justify-center text-center min-h-[140px] h-full gap-3 relative z-20">
+              <h3 className="font-extrabold text-lg sm:text-xl text-primary drop-shadow-sm group-hover:text-purple-700 transition-colors line-clamp-2">
+                {brand.name}
+              </h3>
+              
+              <div className="min-h-[28px] flex items-center justify-center">
+                {brand.discountRate > 0 ? (
+                  <span className="inline-flex items-center justify-center bg-primary text-white px-3 py-1 rounded-full text-xs font-black tracking-wider shadow-md border border-primary/20">
+                    {brand.discountRate}% OFF
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold text-primary/70 bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                    View Yarn
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      ))}
+    </div>
   );
 }
 
-
-export const CategoriesScroll = BrandsScroll;
+export const CategoriesScroll = BrandsGrid;

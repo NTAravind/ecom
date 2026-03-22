@@ -431,10 +431,10 @@ const OrderSummary = memo(function OrderSummary({
 const PriceBreakdown = memo(function PriceBreakdown({ user, deliveryMode }: { user: UserData; deliveryMode: boolean }) {
   const { getTotalPrice } = ProductCart();
   const subtotal = getTotalPrice();
-  const deliveryCharge = useMemo(() => (deliveryMode && subtotal <= 2000 ? 60 : 0), [deliveryMode, subtotal]);
+  const deliveryCharge = useMemo(() => (deliveryMode && subtotal <= 999 ? 60 : 0), [deliveryMode, subtotal]);
   const total = subtotal + deliveryCharge + 4;
   const isBulkOrder = subtotal > 10000;
-  const isFreeDelivery = deliveryMode && subtotal > 2000;
+  const isFreeDelivery = deliveryMode && subtotal > 999;
 
   return (
     <div className="space-y-3 mb-6">
@@ -459,17 +459,17 @@ const PriceBreakdown = memo(function PriceBreakdown({ user, deliveryMode }: { us
             <Truck className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium text-green-800">Free Delivery Applied!</span>
           </div>
-          <p className="text-xs text-green-700 mt-1">Your order qualifies for free delivery (cart value above ₹2,000)</p>
+          <p className="text-xs text-green-700 mt-1">Your order qualifies for free delivery (cart value above ₹999)</p>
         </div>
       )}
 
-      {deliveryMode && !isFreeDelivery && subtotal < 2000 && (
+      {deliveryMode && !isFreeDelivery && subtotal < 999 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 my-3">
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-800">Add {fcurrency(2000 - subtotal)} for free delivery</span>
+            <span className="text-sm font-medium text-blue-800">Add {fcurrency(999 - subtotal)} for free delivery</span>
           </div>
-          <p className="text-xs text-blue-700 mt-1">Get free delivery on orders above ₹2,000</p>
+          <p className="text-xs text-blue-700 mt-1">Get free delivery on orders above ₹999</p>
         </div>
       )}
 
@@ -548,7 +548,7 @@ const ProductCard = memo(function ProductCard({
             className="object-cover"
             loading="lazy"
             placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLFhiQQehonbkicnzB/V+YmN2bj3KzLIlk/wDi0k7rk9hm"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLFhiQQehonbkicnzB/V+YmN2bj3KzLIlk/wDi0k7rk9hm"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
@@ -680,7 +680,7 @@ function PurchaseButton({
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
   const router = useRouter();
   const subtotal = getTotalPrice();
-  const deliveryCharge = useMemo(() => (del && subtotal < 2000 ? 60 : 0), [del, subtotal]);
+  const deliveryCharge = useMemo(() => (del && subtotal < 999 ? 60 : 0), [del, subtotal]);
   const taxes = 4;
   const totalAmount = subtotal + deliveryCharge + taxes;
 
@@ -745,7 +745,7 @@ function PurchaseButton({
     const orderItems = cartItems
       .map(item => `${item.item.pname} - Qty: ${item.qty} - Price: ${fcurrency(item.item.discountedPrice * item.qty)}`)
       .join('\n');
-    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹2000+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${user.us?.Address || 'N/A'}\nPincode: ${user.us?.pincode || 'N/A'}` : 'Order Type: Pickup'}`;
+    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹999+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${user.us?.Address || 'N/A'}\nPincode: ${user.us?.pincode || 'N/A'}` : 'Order Type: Pickup'}`;
   }, [cartItems, subtotal, deliveryCharge, del, user, totalAmount, taxes]);
 
   const copyOrderDetails = useCallback(async () => {

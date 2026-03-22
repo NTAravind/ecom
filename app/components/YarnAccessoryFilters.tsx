@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Filter, X } from "lucide-react";
 
 interface YarnAccessoryFiltersContentProps {
@@ -38,6 +38,7 @@ function YarnAccessoryFiltersSkeleton() {
 function YarnAccessoryFiltersContent({ categories }: YarnAccessoryFiltersContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -61,13 +62,13 @@ function YarnAccessoryFiltersContent({ categories }: YarnAccessoryFiltersContent
     }
 
     startTransition(() => {
-      router.push(`/yarn-accessories/?${params.toString()}`, { scroll: false });
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
     });
   };
 
   const clearAllFilters = () => {
     startTransition(() => {
-      router.push("/yarn-accessories", { scroll: false });
+      router.push(pathname, { scroll: false });
     });
   };
 

@@ -1,0 +1,752 @@
+[
+  {
+    "name": "D-Ring Silver",
+    "originalPrice": 80,
+    "discountedPrice": 40,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A sturdy silver D-ring perfect for attaching straps and handles to crochet bags and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "D-Ring Gold",
+    "originalPrice": 80,
+    "discountedPrice": 40,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A polished gold D-ring ideal for adding an elegant hardware detail to handmade crochet bags and pouches.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "D-Ring Brass",
+    "originalPrice": 80,
+    "discountedPrice": 40,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A classic brass D-ring with a warm antique finish, great for crochet bag straps and hardware accents.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "D-Ring Buckle Silver",
+    "originalPrice": 80,
+    "discountedPrice": 40,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A silver D-ring buckle that combines function and style, perfect for adjustable straps on crochet bags.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "D-Ring Buckle Gold",
+    "originalPrice": 80,
+    "discountedPrice": 40,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A gold D-ring buckle for a luxe finish on handmade crochet bag handles and adjustable straps.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "D-Ring Buckle Brass",
+    "originalPrice": 80,
+    "discountedPrice": 40,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A vintage-style brass D-ring buckle, ideal for securing and adjusting straps on crochet accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Lobster Clasp Keychain Silver",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A sleek silver lobster clasp keychain hardware piece for attaching keys or charms to your crochet creations.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Lobster Clasp Keychain Gold",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A gold lobster clasp keychain component that adds a refined finishing touch to handmade crochet accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Keyrings Flat Silver with extra links",
+    "originalPrice": 60,
+    "discountedPrice": 36,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Flat silver keyrings with additional links for versatile attachment options in crochet bag and keychain projects.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Golden Metal Keyrings",
+    "originalPrice": 90,
+    "discountedPrice": 63,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Smooth golden metal keyrings for attaching keys, charms, or accessories to your handmade crochet pieces.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Silver Metal Keyrings",
+    "originalPrice": 90,
+    "discountedPrice": 63,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Classic silver metal keyrings, a practical and stylish hardware choice for crochet keychain and bag projects.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Purse Push lock triangle gold",
+    "originalPrice": 100,
+    "discountedPrice": 60,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A triangular gold push-lock clasp that adds a designer touch to handmade crochet purses and clutches.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "square purse push lock gold",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A square gold push-lock closure for a modern, structured finish on crochet purses and evening bags.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "circle purse push lock brass",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A circular brass push-lock clasp with a warm vintage feel, perfect for crochet purse and pouch closures.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "circle purse push lock gold",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A round gold push-lock clasp that gives crochet purses and bags a polished, boutique-quality finish.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "metal chain gold",
+    "originalPrice": 150,
+    "discountedPrice": 90,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A versatile gold metal chain for creating stylish straps and decorative accents on crochet bags and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "metal chain silver",
+    "originalPrice": 150,
+    "discountedPrice": 90,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A sleek silver metal chain ideal for bag straps and embellishments on handmade crochet accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Metal Lobster Claw Clasp Keychain Silver",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A sturdy silver metal lobster claw clasp for secure and easy attachment in crochet keychain and bag projects.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Metal Lobster Claw Clasp Keychain Gold",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A premium gold metal lobster claw clasp that adds a luxe hardware detail to crochet bags and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Self closing Lobster Hook gold",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A self-closing gold lobster hook that provides a secure, easy-to-use clasp for crochet bag straps and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Self closing Lobster Hook silver",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A self-closing silver lobster hook for reliable and effortless fastening on crochet bags and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Self closing Lobster Hook brass",
+    "originalPrice": 180,
+    "discountedPrice": 126,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A self-closing brass lobster hook with a vintage finish, perfect for crochet bag and accessory hardware.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "purse/handbag chain strap",
+    "originalPrice": 250,
+    "discountedPrice": 188,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A ready-to-use metal chain strap for crochet purses and handbags, adding instant style and structure.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Golden Swivel Lobster Claw Hooks",
+    "originalPrice": 150,
+    "discountedPrice": 105,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Gold swivel lobster claw hooks that allow 360° rotation, ideal for crochet bag straps and keychain attachments.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Silver Swivel Lobster Claw Hooks",
+    "originalPrice": 150,
+    "discountedPrice": 105,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Silver swivel lobster claw hooks for smooth, tangle-free strap attachment on crochet bags and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Swivel Clasps Gold",
+    "originalPrice": 150,
+    "discountedPrice": 105,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Gold swivel clasps that pivot freely for easy attachment and a premium finish on crochet bag hardware.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Colorful Metal Swivel Lobster Claw Hook",
+    "originalPrice": 150,
+    "discountedPrice": 105,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Eye-catching colorful metal swivel lobster claw hooks that add a playful, vibrant detail to crochet accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Magnetic snap buttons gold",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Gold magnetic snap buttons for a clean, effortless closure on crochet bags, pouches, and purses.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Magnetic snap buttons silver",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Silver magnetic snap buttons that provide a neat and secure closure for handmade crochet bags and accessories.",
+    "category": "accessory",
+    "stock": 5
+  },
+  {
+    "name": "Stuffing (100g)",
+    "originalPrice": 100,
+    "discountedPrice": 70,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Give your amigurumi that perfectly plump, huggable shape with this premium 100g polyester fiberfill stuffing. Soft, hypoallergenic, and washable — it fills evenly without clumping, keeping your finished crochet toys smooth and fluffy. Ideal for small to medium amigurumi characters.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Stuffing (1kg)",
+    "originalPrice": 450,
+    "discountedPrice": 315,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "For the dedicated amigurumi maker who's always got a project on the hook — this generous 1kg pack of premium polyester fiberfill stuffing keeps you well stocked. Soft, hypoallergenic, and washable, it fills evenly without clumping or going flat over time. Perfect for stuffing multiple projects and larger amigurumi pieces.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 0 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Add personality to your amigurumi with this pack of 12 size 0 safety eyes. These secure clip-back eyes lock firmly into your crochet fabric, ensuring they stay in place wash after wash. The classic glossy finish gives your handmade characters that irresistibly cute, lifelike look.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 0 (100p)",
+    "originalPrice": 200,
+    "discountedPrice": 140,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Stock up and never run out — this value pack of 100 size 0 safety eyes is perfect for prolific amigurumi makers. Each eye features a secure locking back that grips tightly through crochet fabric for a safe, lasting hold. Glossy and expressive, they bring every character you create to life.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 1 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Bring your crochet characters to life with this pack of 12 size 1 safety eyes. Slightly larger than size 0, these eyes are perfect for small to medium amigurumi. The secure locking back clicks firmly into place through your crochet fabric and stays put through play and washing.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 1 (100p)",
+    "originalPrice": 220,
+    "discountedPrice": 154,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A crafter's essential in bulk — 100 size 1 safety eyes ready for all your amigurumi adventures. Each eye has a sturdy locking washer back that holds securely through crochet fabric. Glossy, expressive, and perfectly sized for a wide range of small and medium crochet characters.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 2 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Give your amigurumi that wide-eyed, adorable look with this pack of 12 size 2 safety eyes. A popular mid-size choice for most standard amigurumi projects, these glossy eyes lock securely through your crochet work and stay firmly in place for the long haul.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 2 (100p)",
+    "originalPrice": 240,
+    "discountedPrice": 168,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Never pause a project hunting for eyes again. This 100-piece pack of size 2 safety eyes is the go-to bulk option for serious amigurumi crafters. Secure locking backs, glossy finish, and a versatile size that works beautifully across a huge range of crochet characters and toys.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 3 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Make your crochet creatures even more expressive with these size 3 safety eyes, sold in a pack of 12. Great for medium-sized amigurumi where a slightly larger eye adds more character and charm. The locking washer back grips securely and won't budge once snapped into place.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 3 (100p)",
+    "originalPrice": 260,
+    "discountedPrice": 182,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Keep your amigurumi production going with this 100-piece bulk pack of size 3 safety eyes. Perfectly sized for medium amigurumi characters, each eye locks firmly into your crochet fabric for a secure, professional finish. A must-have for crafters who make and sell handmade crochet toys.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 4 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Add big, bold personality to your amigurumi with this pack of 12 size 4 safety eyes. Ideal for larger crochet characters where bigger eyes make a bigger impact. The secure locking back holds firmly through thick crochet fabric, keeping those expressive eyes exactly where you placed them.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 4 (100p)",
+    "originalPrice": 280,
+    "discountedPrice": 196,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A bulk pack of 100 size 4 safety eyes — perfect for crafters who love making large, statement amigurumi pieces. Each eye snaps securely into place with a locking washer back that grips through crochet fabric and stays put through years of love and cuddles.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 5 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "For those big, dreamy amigurumi faces that make everyone go \"aww\" — this pack of 12 size 5 safety eyes delivers. Larger and more striking, these eyes are ideal for oversized amigurumi, statement plushies, and crochet characters designed to really stand out. Secure locking back included.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 5 (100p)",
+    "originalPrice": 300,
+    "discountedPrice": 210,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Bulk up your supplies with 100 size 5 safety eyes — a fantastic investment for amigurumi makers who work on larger characters or sell their handmade creations. Bold, glossy, and expressive, these eyes lock securely into crochet fabric and make every character instantly loveable.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 6 (12p)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Go big or go home — these size 6 safety eyes are the largest and most striking in the range. This pack of 12 is perfect for creating dramatic, oversized amigurumi faces and large plushie characters with maximum personality. The secure locking back ensures a safe, firm hold through your crochet work.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Eyes 6 (100p)",
+    "originalPrice": 320,
+    "discountedPrice": 224,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "The ultimate bulk pack for makers who think big. These 100 size 6 safety eyes are ideal for large amigurumi, decorative crochet pieces, and statement plushies where bold, expressive eyes are the star of the show. Secure, glossy, and built to last through endless cuddles.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Rings (2 inch)",
+    "originalPrice": 60,
+    "discountedPrice": 42,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "These sturdy 2 inch rings are the perfect hardware addition to your amigurumi and crochet accessory projects. Use them to attach bag straps, keychains, or hanging loops to your finished crochet pieces. Smooth, durable, and easy to attach — a small detail that adds a big professional finish.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Rings (2.5 inch)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A versatile mid-size ring for all your crochet finishing needs. These 2.5 inch rings are ideal for attaching handles to crochet bags, creating keyrings, or adding decorative loops to amigurumi and plushie projects. Sturdy, smooth, and easy to work with for a neat, polished result.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Rings (4 inch)",
+    "originalPrice": 200,
+    "discountedPrice": 140,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "When your crochet project calls for something bold and sturdy, these 4 inch rings deliver. Perfect for attaching large bag handles, creating statement bag hardware, or adding oversized decorative loops to your handmade pieces. Strong, smooth, and built to hold up to everyday use beautifully.",
+    "category": "amigurumi",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Hook Set (9 hooks)",
+    "originalPrice": 350,
+    "discountedPrice": 193,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Take your crochet game to the next level with this complete 9-piece hook set. Designed for crafters of all skill levels, these ergonomic hooks come in sizes ranging from 2mm to 6mm, covering everything from delicate lace work to chunky yarn projects. The soft, non-slip rubber handles keep your hands comfortable through even the longest crochet sessions, while the smooth aluminum tips glide through yarn effortlessly without snagging. Color-coded and size-labelled so you always grab the right hook, every time.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Hook Set (5 hooks)",
+    "originalPrice": 205,
+    "discountedPrice": 174,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Everything you need to get started, all in one place. This handy 5-piece crochet hook set includes the most commonly used sizes, making it perfect for beginners or as a travel-friendly set for crafters on the go. The soft-grip ergonomic handles reduce strain on your fingers and wrists, while the smooth tips ensure clean, consistent stitches every time. Lightweight, compact, and easy to toss into your project bag — your new go-to set for everyday crocheting.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "U Green Pipe (10 piece)",
+    "originalPrice": 120,
+    "discountedPrice": 72,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Keep your crochet florals standing tall and looking gorgeous. This set of 10 U-shaped green floral stem pipes are perfect for giving your handmade crochet flowers a natural, lifelike structure. Lightweight yet sturdy, these green stems blend seamlessly with your yarn work and are easy to wrap, stitch around, or insert directly into your crochet flower bases. Whether you're making bouquets, corsages, hair accessories, or decorative arrangements — these stems give your blooms the posture and polish they deserve.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Green Pipe (10)",
+    "originalPrice": 60,
+    "discountedPrice": 36,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Your crochet flowers just got an upgrade. This pack of 10 green floral stem pipes give your handmade crochet blooms a firm, natural-looking stem that holds its shape beautifully. Simply wrap with green yarn or floral tape to blend in perfectly with your flower work. Ideal for creating crochet bouquets, single stem flowers, wreaths, and decorative arrangements. Lightweight, easy to trim to your desired length, and sturdy enough to keep every petal proudly in place.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Bag Mesh square",
+    "originalPrice": 120,
+    "discountedPrice": 72,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "The perfect base for your next crochet bag project. This sturdy square mesh panel features an open grid pattern that makes it incredibly easy to work your yarn through, stitch by stitch. It holds its shape beautifully, giving your handmade bags a firm, structured foundation that soft yarn alone can't provide. Great for creating tote bags, clutches, baskets, and decorative pouches with a clean, polished finish that looks like it came straight from a boutique.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Plastic Needle (5)",
+    "originalPrice": 45,
+    "discountedPrice": 22,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "No crochet project is truly finished until those yarn ends are neatly woven in — and that's exactly what these large-eye plastic needles are made for. This pack of 5 blunt-tip needles makes threading even the thickest yarn quick and hassle-free. The smooth plastic body glides through your crochet fabric without splitting stitches or snagging. A small tool that makes a big difference in giving your finished pieces that clean, professional look.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Plastic Needle (20)",
+    "originalPrice": 180,
+    "discountedPrice": 90,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Always have a needle ready when you need one. This value pack of 20 large-eye plastic needles is ideal for weaving in yarn ends, seaming crochet pieces together, and adding those finishing touches that make your work look truly polished. The blunt tip protects your stitches while the wide eye accommodates all yarn thicknesses with ease. Perfect for prolific crocheters who always have multiple projects on the go.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Plastic Safety Pin",
+    "originalPrice": 45,
+    "discountedPrice": 31,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "A tiny tool that every crocheter needs in their kit. These plastic safety pins are perfect for marking stitches, holding seams together before joining, and keeping track of pattern repeats as you work. Rust-free and smooth, they won't snag or damage your yarn, making them safe to use even on the most delicate crochet projects. Lightweight, reusable, and endlessly handy — once you start using stitch markers, you'll wonder how you ever crocheted without them.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Gold Wire",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Add a touch of glamour to your crochet creations with this fine metallic gold wire. Perfect for weaving into crochet bags, baskets, and accessories to create a shimmering, high-end finish that catches the light beautifully. Flexible enough to work with easily yet firm enough to hold its shape, this wire is a favourite among crochet crafters who love adding decorative details and embellishments to their handmade pieces. Elevate your everyday crochet project into something truly eye-catching.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Silver Wire",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Bring a sleek, modern edge to your handmade crochet pieces with this fine metallic silver wire. Ideal for weaving through crochet bags and accessories to add a subtle shimmer and a stylish, structured detail. Pliable and easy to work with alongside your yarn, it blends seamlessly into your project while adding that extra-special finishing touch. Perfect for crafters who love mixing textures and adding a metallic accent to their crochet work.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Bag Mesh Design",
+    "originalPrice": 250,
+    "discountedPrice": 150,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Craft a show-stopping crochet bag with this beautifully patterned design mesh panel. Featuring an attractive open-weave grid, this mesh is easy to stitch through and gives your finished bag a designer-quality structure and texture. Whether you're making a tote, clutch, or storage basket, this mesh panel does the heavy lifting — keeping your bag firm and shapely while you focus on the fun part: choosing your yarn and stitching your own unique creation.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Mini Pliers",
+    "originalPrice": 300,
+    "discountedPrice": 210,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "This set of 3 mini pliers gives you everything you need to handle all the detailed hardware finishing on your crochet bag projects. Use them for opening and closing jump rings, attaching bag clasps and handles, bending wire accents, and securing metal findings with precision and ease. Each plier is lightweight and comfortable in hand, designed for the kind of fiddly, detailed work that fingers alone just can't manage. Keep one at your workstation, one in your project bag, and one as a spare — because once you have them, you'll use them constantly.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Punch Needle Set",
+    "originalPrice": 250,
+    "discountedPrice": 175,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Discover a whole new side of yarn crafting with the punch needle — a beautifully simple tool that creates stunning looped textile art with minimal effort. Push yarn through fabric with a smooth, repetitive motion to build up rich, textured designs perfect for wall hangings, coasters, decorative patches, and embellishments for your crochet projects. The ergonomic handle sits comfortably in your hand for extended crafting, and the smooth metal tip punches cleanly through fabric with every stroke. If you love crochet, you're going to love this.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Scissors (small)",
+    "originalPrice": 70,
+    "discountedPrice": 42,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Every crafter's trusty sidekick. These compact, sharp-bladed scissors are perfect for snipping yarn ends, trimming threads between stitches, and doing all the precise little cuts that keep your crochet work looking neat and tidy. Small enough to tuck into any project bag and always within reach when you need them. A simple tool, but an absolutely essential one for any crocheter who takes pride in their finished work.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Scissors (large)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "When you need a clean cut through multiple strands of yarn or a thick fabric panel, these large craft scissors get the job done effortlessly. The sharp stainless steel blades slice smoothly through yarn, mesh, and fabric without fraying or dragging, while the comfortable grip handles keep your hands happy during longer crafting sessions. A reliable workhorse in any crocheter's toolkit — built for the bigger cuts that smaller scissors just can't handle.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (2mm)",
+    "originalPrice": 90,
+    "discountedPrice": 63,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 2mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (2.5mm)",
+    "originalPrice": 90,
+    "discountedPrice": 63,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 2.5mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (3mm)",
+    "originalPrice": 90,
+    "discountedPrice": 63,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 3mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (3.5mm)",
+    "originalPrice": 100,
+    "discountedPrice": 70,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 3.5mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (4mm)",
+    "originalPrice": 100,
+    "discountedPrice": 70,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 4mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (4.5mm)",
+    "originalPrice": 100,
+    "discountedPrice": 70,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 4.5mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (5mm)",
+    "originalPrice": 110,
+    "discountedPrice": 77,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 5mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (5.5mm)",
+    "originalPrice": 110,
+    "discountedPrice": 77,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 5.5mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Crochet Single Hook (6mm)",
+    "originalPrice": 110,
+    "discountedPrice": 77,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "Crafted for precision and comfort, this 6mm crochet hook is a must-have addition to any crocheter's collection. The smooth aluminum head glides through yarn without catching or splitting stitches, giving you clean, even loops every time. The soft-grip ergonomic handle reduces hand and wrist fatigue, so you can crochet longer without discomfort. Clearly size-labelled for easy identification in your hook case.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "B 7000 (110ml)",
+    "originalPrice": 150,
+    "discountedPrice": 105,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "All the power of B7000 in a generously sized tube. This 110ml adhesive is ideal for all your crochet finishing tasks — securing clasps, attaching bag feet, fixing embellishments, or bonding fabric linings to handmade pouches and purses. The precision tip gives you neat, controlled application exactly where you need it. Dries clear, stays flexible, and bonds strongly to fabric, metal, leather, and plastic.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "B 7000 (50ml)",
+    "originalPrice": 80,
+    "discountedPrice": 56,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "All the power of B7000 in a compact, easy-to-handle size. This 50ml tube is ideal for crocheter's who need a reliable adhesive for smaller finishing tasks — securing clasps, attaching bag feet, fixing embellishments, or bonding fabric linings to handmade pouches and purses. Dries clear, stays flexible, and bonds strongly to fabric, metal, leather, and plastic.",
+    "category": "tools",
+    "stock": 5
+  },
+  {
+    "name": "Knitters Needles (2)",
+    "originalPrice": 30,
+    "discountedPrice": 30,
+    "isActive": true,
+    "imageUrl": "",
+    "description": "This set of 2 straight aluminum knitting needles are smooth, lightweight, and perfectly balanced for effortless yarn gliding with every stitch. The polished metal surface means your yarn moves freely without any dragging or catching, helping you maintain an even tension throughout your work. Sturdy enough to handle thick chunky yarns yet precise enough for fine lightweight projects.",
+    "category": "tools",
+    "stock": 5
+  }
+]

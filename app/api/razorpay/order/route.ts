@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         return total + itemData.discountedPrice * orderItem.qty;
       }, 0);
 
-      const deliveryCharge = delivery && amount < 2000 ? 60 : 0;
+      const deliveryCharge = delivery && amount < 999 ? 60 : 0;
       const taxes = 4;
       const totalAmount = amount + deliveryCharge + taxes;
 
@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
         serverCalculatedTotal += serverItem.discountedPrice * cartItem.qty;
       }
 
-      const serverDeliveryCharge = delivery && serverCalculatedTotal < 2000 ? 60 : 0;
+      const serverDeliveryCharge = delivery && serverCalculatedTotal < 999 ? 60 : 0;
       const serverTotalAmount = serverCalculatedTotal + serverDeliveryCharge + 4;
 
       if (Math.abs(pricepaid - serverTotalAmount) > 0.01) {

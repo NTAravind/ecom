@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma"
-import Hero, { NewArrivals, BrandsScroll } from "../components/hero"
+import Hero, { NewArrivals, BrandsGrid } from "../components/hero"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { MessageSquare, DollarSign, Shield } from 'lucide-react'
@@ -11,11 +11,11 @@ import { Metadata } from 'next';
 // SEO Metadata
 export const metadata: Metadata = {
   title: 'Patel Yarn House - Premium Yarns & Bulk Yarn Suppliers in Bangalore',
-  description: 'Shop premium quality yarns at Patel Yarn House, Bangalore. Wide range of cotton, acrylic, wool yarns from top brands. Bulk orders welcome with competitive pricing and free delivery above ₹2000.',
+  description: 'Shop premium quality yarns at Patel Yarn House, Bangalore. Wide range of cotton, acrylic, wool yarns from top brands. Bulk orders welcome with competitive pricing and free delivery above ₹999.',
   keywords: 'yarn shop bangalore, bulk yarn suppliers, cotton yarn, acrylic yarn, wool yarn, yarn wholesaler, knitting yarn, crochet yarn, premium yarn brands',
   openGraph: {
     title: 'Patel Yarn House - Premium Yarns & Bulk Yarn Suppliers',
-    description: 'Discover quality yarns from trusted brands. Competitive bulk pricing, expert guidance, and free delivery above ₹2000. Visit our Bangalore store today!',
+    description: 'Discover quality yarns from trusted brands. Competitive bulk pricing, expert guidance, and free delivery above ₹999. Visit our Bangalore store today!',
     type: 'website',
     locale: 'en_IN',
     siteName: 'Patel Yarn House',
@@ -351,7 +351,7 @@ function Disc() {
             FREE DELIVERY
             <br className="hidden sm:inline" />
             <span className="sm:hidden"> </span>
-            ₹2000 ONWARDS
+            ₹999 ONWARDS
           </p>
         </Card>
       </div>
@@ -371,7 +371,7 @@ function BrandsList({ brands }: { brands: any[] }) {
           Discover premium yarns from trusted brands. The perfect brand for your knitting and crochet projects.
         </p>
       </div>
-      <BrandsScroll brands={brands} />
+      <BrandsGrid brands={brands} />
     </section>
   );
 }
