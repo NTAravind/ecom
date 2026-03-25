@@ -13,7 +13,7 @@ interface OrderCardProps {
     orderItems: {
       id: string;
       quantity: number;
-      product: {
+      product?: {
         id: string;
         pname: string;
         originalPrice: number;
@@ -24,6 +24,13 @@ interface OrderCardProps {
         brand: {
           name: string;
         };
+      };
+      yarnAccessory?: {
+        id: string;
+        name: string;
+        originalPrice: number;
+        discountedPrice: number;
+        imageUrl: string;
       };
     }[];
   };
@@ -170,7 +177,7 @@ export default function OrderCard({ order }: OrderCardProps) {
         {!isExpanded && order.orderItems.length > 0 && (
           <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600">
             <span className="truncate pr-2">
-              {order.orderItems[0].product.pname}
+              {order.orderItems[0].product?.pname || order.orderItems[0].yarnAccessory?.name || 'Item'}
               {order.orderItems.length > 1 && ` and ${order.orderItems.length - 1} more item${order.orderItems.length > 2 ? 's' : ''}`}
             </span>
             <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,7 +201,18 @@ export default function OrderCard({ order }: OrderCardProps) {
           <div className="p-4 sm:p-6">
             <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-4">Order Items</h4>
             <div className="space-y-3 sm:space-y-4">
-              {order.orderItems.map((item) => (
+              {order.orderItems.map((item) => {
+                const isProduct = !!item.product;
+                const itemId = isProduct ? item.product?.id : item.yarnAccessory?.id;
+                const itemName = isProduct ? item.product?.pname : item.yarnAccessory?.name;
+                const itemImage = isProduct ? item.product?.irul : item.yarnAccessory?.imageUrl;
+                const itemPrice = isProduct ? item.product?.discountedPrice : item.yarnAccessory?.discountedPrice;
+                const itemOriginalPrice = isProduct ? item.product?.originalPrice : item.yarnAccessory?.originalPrice;
+                const itemBrand = isProduct ? item.product?.brand?.name : null;
+                const itemColor = isProduct ? item.product?.color : null;
+                const itemWeight = isProduct ? item.product?.weight_g : null;
+
+                return (
                 <div 
                   key={item.id} 
                   className="bg-white rounded-lg p-3 sm:p-4 border border-gray-200 hover:border-gray-300 transition-colors"
@@ -205,25 +223,25 @@ export default function OrderCard({ order }: OrderCardProps) {
                       <Suspense fallback={
                         <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-lg animate-pulse"></div>
                       }>
-                        {imageErrors.has(item.product.id) ? (
+                        {itemId && imageErrors.has(itemId) ? (
                           <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
                             <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                           </div>
-                        ) : (
+                        ) : itemImage ? (
                           <Image
-                            src={item.product.irul}
-                            alt={item.product.pname}
+                            src={itemImage}
+                            alt={itemName || 'Item'}
                             width={64}
                             height={64}
                             className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg border border-gray-200"
-                            onError={() => handleImageError(item.product.id)}
+                            onError={() => itemId && handleImageError(itemId)}
                             loading="lazy"
                             placeholder="blur"
                             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+Wq5wix8qNn8pAuFXv5T2oTKnhQEWUBJVYFCdM9Jcfea7nAdNpzYdFHqFhqwHKCJ0qn/yyMVeRtGwFRPTrr4KQ="
                           />
-                        )}
+                        ) : null}
                       </Suspense>
                     </div>
 
@@ -232,23 +250,23 @@ export default function OrderCard({ order }: OrderCardProps) {
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 space-y-2 sm:space-y-0">
                         <div className="flex-1 min-w-0">
                           <h5 className="font-medium text-gray-900 mb-1 text-sm sm:text-base truncate">
-                            {item.product.pname}
+                            {itemName || 'Item'}
                           </h5>
                           <div className="text-xs sm:text-sm text-gray-600 space-y-1">
-                            <p>Brand: {item.product.brand.name}</p>
+                            {itemBrand && <p>Brand: {itemBrand}</p>}
                             <div className="flex flex-wrap gap-4 text-xs">
-                              <span>Color: {item.product.color}</span>
-                              <span>Weight: {item.product.weight_g}g</span>
+                              {itemColor && <span>Color: {itemColor}</span>}
+                              {itemWeight && <span>Weight: {itemWeight}g</span>}
                             </div>
                           </div>
                         </div>
                         <div className="text-right sm:ml-4 flex-shrink-0">
                           <div className="text-base sm:text-lg font-semibold text-gray-900">
-                            ₹{item.product.discountedPrice.toLocaleString('en-IN')}
+                            ₹{(itemPrice || 0).toLocaleString('en-IN')}
                           </div>
-                          {item.product.originalPrice !== item.product.discountedPrice && (
+                          {itemOriginalPrice && itemPrice && itemOriginalPrice !== itemPrice && (
                             <div className="text-xs sm:text-sm text-gray-500 line-through">
-                              ₹{item.product.originalPrice.toLocaleString('en-IN')}
+                              ₹{itemOriginalPrice.toLocaleString('en-IN')}
                             </div>
                           )}
                         </div>
@@ -264,14 +282,14 @@ export default function OrderCard({ order }: OrderCardProps) {
                         <div className="text-right">
                           <div className="text-xs sm:text-sm text-gray-600">Subtotal:</div>
                           <div className="font-semibold text-gray-900 text-sm sm:text-base">
-                            ₹{(item.product.discountedPrice * item.quantity).toLocaleString('en-IN')}
+                            ₹{((itemPrice || 0) * item.quantity).toLocaleString('en-IN')}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
 
             {/* Order summary */}

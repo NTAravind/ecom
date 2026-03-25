@@ -43,6 +43,7 @@ export default async function Orders() {
               brand: true, // Include brand information
             },
           },
+          yarnAccessory: true,
         },
       },
     },
