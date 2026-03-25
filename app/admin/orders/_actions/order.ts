@@ -14,7 +14,12 @@ export async function getOrderWithDetails(orderId: string) {
         user: true,
         orderItems: {
           include: {
-            product: true
+            product: {
+              include: {
+                brand: true
+              }
+            },
+            yarnAccessory: true
           }
         }
       }

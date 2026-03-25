@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useTransition, Suspense } from "react";
+import { useState, useTransition, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Filter, X } from "lucide-react";
+import { Filter, X, Search } from "lucide-react";
 
 interface YarnAccessoryFiltersContentProps {
   categories: string[];
@@ -41,8 +41,26 @@ function YarnAccessoryFiltersContent({ categories }: YarnAccessoryFiltersContent
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState(searchParams.get("search") || "");
+
+  useEffect(() => {
+    setSearchValue(searchParams.get("search") || "");
+  }, [searchParams]);
 
   const selectedCategories = searchParams.get("categories")?.split(",").filter(Boolean) || [];
+
+  const submitSearch = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('page');
+    if (value.trim()) {
+      params.set('search', value.trim());
+    } else {
+      params.delete('search');
+    }
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    });
+  };
 
   const updateFilters = (
     type: 'categories',
@@ -155,6 +173,36 @@ function YarnAccessoryFiltersContent({ categories }: YarnAccessoryFiltersContent
         </div>
 
         <div className="p-3 space-y-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitSearch(searchValue);
+            }} 
+            className="mb-4"
+          >
+            <h3 className="font-semibold mb-2 text-gray-900">Search Products</h3>
+            <div className="relative">
+              <input 
+                type="text" 
+                placeholder="Search accessories..." 
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                disabled={isPending}
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-[10px]" />
+            </div>
+            {searchValue !== (searchParams.get("search") || "") && (
+              <button 
+                type="submit"
+                className="mt-2 w-full text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 py-1.5 rounded disabled:opacity-50 transition-colors"
+                disabled={isPending}
+              >
+                Apply Search
+              </button>
+            )}
+          </form>
+
           {hasActiveFilters && (
             <div className="pb-3 border-b">
               <button

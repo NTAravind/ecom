@@ -52,9 +52,9 @@ const GetCategories = unstable_cache(
     });
     return categories.map(c => c.category).filter(Boolean).sort();
   },
-  ['yarn-accessory-categories'],
+  ['yarn-accessory-categories-v2'],
   {
-    revalidate: 86400,
+    revalidate: 3600,
     tags: ['yarn-accessories', 'yarn-accessory-categories']
   }
 );

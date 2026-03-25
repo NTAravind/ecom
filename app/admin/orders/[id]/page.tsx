@@ -125,15 +125,25 @@ export default async function OrderDetailPage({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {order.orderItems.map((item: any, index: number) => (
+            {order.orderItems.map((item: any, index: number) => {
+              const isProduct = !!item.product;
+              const itemImage = isProduct ? item.product.irul : item.yarnAccessory?.imageUrl;
+              const itemName = isProduct ? item.product.pname : item.yarnAccessory?.name;
+              const itemCategory = isProduct ? item.product.category : item.yarnAccessory?.category;
+              const itemPrice = isProduct ? item.product.discountedPrice : item.yarnAccessory?.discountedPrice;
+              const itemBrand = isProduct ? item.product.brand?.name : null;
+              const itemColor = isProduct ? item.product.color : null;
+              const itemWeight = isProduct ? item.product.y_weight : null;
+
+              return (
               <div key={item.id}>
                 <div className="flex items-center gap-4 p-4 rounded-lg border">
                   {/* Product Image */}
                   <div className="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                    {item.product.irul ? (
+                    {itemImage ? (
                       <Image
-                        src={item.product.irul}
-                        alt={item.product.pname}
+                        src={itemImage}
+                        alt={itemName || "Product Image"}
                         width={64}
                         height={64}
                         className="w-full h-full object-cover"
@@ -147,33 +157,35 @@ export default async function OrderDetailPage({
 
                   {/* Product Details */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg">{item.product.pname}</h3>
-                    <p className="text-sm text-muted-foreground">Brand: {item.product.Brand}</p>
-                    <p className="text-sm text-muted-foreground">Category: {item.product.category}</p>
+                    <h3 className="font-semibold text-lg">{itemName || "Unknown Product"}</h3>
+                    {itemBrand && <p className="text-sm text-muted-foreground">Brand: {itemBrand}</p>}
+                    <p className="text-sm text-muted-foreground">Category: {itemCategory || "N/A"}</p>
                     <div className="flex items-center gap-4 mt-2">
+                      {itemColor && (
                       <div className="flex items-center gap-2">
                         <div
                           className="w-4 h-4 rounded-full border"
-                          style={{ backgroundColor: item.product.color }}
+                          style={{ backgroundColor: itemColor }}
                         />
-                        <span className="text-sm">{item.product.color}</span>
+                        <span className="text-sm">{itemColor}</span>
                       </div>
-                      <span className="text-sm">Weight: {item.product.y_weight}</span>
+                      )}
+                      {itemWeight && <span className="text-sm">Weight: {itemWeight}</span>}
                     </div>
                   </div>
 
                   {/* Quantity and Price */}
                   <div className="text-right">
-                    <div className="text-lg font-semibold">₹{item.product.discountedPrice.toLocaleString()}</div>
+                    <div className="text-lg font-semibold">₹{(itemPrice || 0).toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">Qty: {item.quantity}</div>
                     <div className="text-sm font-medium">
-                      Total: ₹{(item.product.discountedPrice * item.quantity)}
+                      Total: ₹{((itemPrice || 0) * item.quantity).toLocaleString()}
                     </div>
                   </div>
                 </div>
                 {index < order.orderItems.length - 1 && <Separator className="my-2" />}
               </div>
-            ))}
+            )})}
           </div>
 
           {/* Order Total */}
