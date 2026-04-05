@@ -119,9 +119,11 @@ async function getTopProducts() {
   })
 
   const topProducts = await Promise.all(
-    topProductsRaw.map(async (item) => {
+    topProductsRaw
+      .filter((item) => item.productId !== null)
+      .map(async (item) => {
       const product = await prisma.product.findUnique({
-        where: { id: item.productId },
+        where: { id: item.productId! },
         include: {
           brand: true
         }
