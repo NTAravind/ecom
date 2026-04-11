@@ -200,7 +200,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\ntara\\Desktop\\WEBDEV\\ecom\\app\\generated\\prisma",
+      "value": "/Users/apple/Documents/WEBDEV/ecom/app/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -209,12 +209,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\ntara\\Desktop\\WEBDEV\\ecom\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/apple/Documents/WEBDEV/ecom/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

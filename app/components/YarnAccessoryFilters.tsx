@@ -47,7 +47,7 @@ function YarnAccessoryFiltersContent({ categories }: YarnAccessoryFiltersContent
     setSearchValue(searchParams.get("search") || "");
   }, [searchParams]);
 
-  const selectedCategories = searchParams.get("categories")?.split(",").filter(Boolean) || [];
+  const selectedCategories = searchParams.get("categories")?.toLowerCase().split(",").filter(Boolean) || [];
 
   const submitSearch = (value: string) => {
     const params = new URLSearchParams(searchParams);

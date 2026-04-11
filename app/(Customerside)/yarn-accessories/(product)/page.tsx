@@ -351,7 +351,7 @@ export default async function YarnAccessoriesPage({
   const categoriesData = await GetCategories();
 
   const params = await searchParams;
-  const categories = params.categories?.split(",").filter(Boolean);
+  const categories = params.categories?.toLowerCase().split(",").filter(Boolean);
   const search = params.search;
   const page = parseInt(params.page || "1", 10);
   

@@ -149,8 +149,20 @@ export const columns: ColumnDef<OrderWithUser>[] = [
       const date = new Date(row.original.createdAt);
       return (
         <div className="text-sm">
-          <div className="font-medium">{date.toLocaleDateString()}</div>
-          <div className="text-muted-foreground">{date.toLocaleTimeString()}</div>
+          <div className="font-medium">
+            {date.toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </div>
+          <div className="text-muted-foreground">
+            {date.toLocaleTimeString('en-IN', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true,
+            })}
+          </div>
         </div>
       );
     },

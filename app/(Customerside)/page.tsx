@@ -7,6 +7,7 @@ import { unstable_cache } from "next/cache";
 import { ProductCard } from "../components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Metadata } from 'next';
+import Image from "next/image";
 
 // SEO Metadata
 export const metadata: Metadata = {
@@ -92,6 +93,30 @@ const GetNewArrivals = unstable_cache(
     revalidate: 21600, // 6 hours
     tags: ['products', 'new-arrivals']
   }
+);
+
+// Cache yarn accessory categories (12 hours)
+const GetYarnAccessoryCategories = unstable_cache(
+  async () => {
+    const accessories = await prisma.yarnAccessory.findMany({
+      where: { isActive: true },
+      select: { category: true, imageUrl: true },
+    });
+
+    const categoryMap: Record<string, string> = {};
+    accessories.forEach(acc => {
+      if (!categoryMap[acc.category]) {
+        categoryMap[acc.category] = acc.imageUrl;
+      }
+    });
+
+    return Object.entries(categoryMap).map(([name, imageUrl]) => ({
+      name,
+      imageUrl,
+    }));
+  },
+  ['yarn-accessory-categories'],
+  { revalidate: 43200, tags: ['yarn-accessories'] }
 );
 
 // Cache brands (12 hours - brands don't change often)
@@ -204,7 +229,7 @@ export default async function Home() {
     console.log("Starting Home page data fetch...");
 
     // Fetch all data in parallel for better performance
-    const [newArrivalsData, brandsData, popularProductsData] = await Promise.all([
+    const [newArrivalsData, brandsData, popularProductsData, accessoryCategories] = await Promise.all([
       GetNewArrivals().catch(error => {
         console.error("Error fetching new arrivals:", error);
         return [];
@@ -216,13 +241,18 @@ export default async function Home() {
       GetPopularProducts().catch(error => {
         console.error("Error fetching popular products:", error);
         return [];
+      }),
+      GetYarnAccessoryCategories().catch(error => {
+        console.error("Error fetching accessory categories:", error);
+        return [];
       })
     ]);
 
     console.log("Data fetched successfully:", {
       newArrivals: newArrivalsData.length,
       brands: brandsData.length,
-      popularProducts: popularProductsData.length
+      popularProducts: popularProductsData.length,
+      accessoryCategories: accessoryCategories.length
     });
 
     // Generate JSON-LD structured data
@@ -293,6 +323,7 @@ export default async function Home() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 lg:space-y-16">
               <Disc />
               <BrandsList brands={brandsData} />
+              <YarnAccessoriesSection categories={accessoryCategories} />
               <BulkBenefits />
               <GetPopular products={popularProductsData} />
               <Map />
@@ -372,6 +403,59 @@ function BrandsList({ brands }: { brands: any[] }) {
         </p>
       </div>
       <BrandsGrid brands={brands} />
+    </section>
+  );
+}
+
+// Yarn Accessories Section
+function YarnAccessoriesSection({ categories }: { categories: { name: string; imageUrl: string }[] }) {
+  if (categories.length === 0) return null;
+
+  return (
+    <section className="w-full" aria-labelledby="accessories-heading">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 id="accessories-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">
+          YARN ACCESSORIES
+        </h2>
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600">
+          Essential tools for your crafting journey
+        </p>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
+        {categories.map((category) => (
+          <Link
+            key={category.name}
+            href={`/yarn-accessories?category=${encodeURIComponent(category.name)}`}
+            className="block group"
+          >
+          <Card className="group flex flex-col w-full h-fit pb-0 mb-0 mt-0 pt-1.5 bg-white overflow-hidden transition-all rounded-none duration-300 hover:shadow-lg hover:border-violet-200">
+            <div className="relative block aspect-square overflow-hidden mb-1">
+              <Image
+                src={category.imageUrl}
+                alt={category.name}
+                fill
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                priority={false}
+                loading="lazy"
+              />
+            </div>
+            <CardContent className="p-3 flex flex-col flex-grow text-center">
+              <h3 className="font-semibold text-slate-800 leading-tight line-clamp-1 group-hover:text-violet-800 transition-colors">
+                {category.name}
+              </h3>
+            </CardContent>
+          </Card>
+          </Link>
+        ))}
+      </div>
+      <div className="text-center mt-8">
+        <Button asChild variant="outline" size="lg">
+          <Link href="/yarn-accessories">
+            View All Accessories
+          </Link>
+        </Button>
+      </div>
     </section>
   );
 }

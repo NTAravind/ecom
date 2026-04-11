@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { MessageSquare } from 'lucide-react'
+import { Badge } from "@/components/ui/badge";
 
 
 export default function Hero() {
@@ -177,47 +178,38 @@ export function BrandsGrid({ brands }: BrandsScrollProps) {
     );
   }
 
-  // Wavy yarn-like pattern background (SVG data URI) - Highly visible!
-  const yarnPattern = {
-    backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a855f7' fill-opacity='0.6'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-  };
-
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
       {brands.map((brand) => (
         <Link
           key={brand.id}
           href={`/products?brands=${brand.name}`}
-          className="block group h-full"
+          className="block group"
         >
-          <Card 
-            className="h-full transition-all duration-300 hover:shadow-[0_8px_30px_rgb(168,85,247,0.3)] hover:-translate-y-1 border-2 border-purple-200 hover:border-purple-500 cursor-pointer overflow-hidden relative rounded-xl"
-          >
-            {/* Yarn Pattern Background */}
-            <div 
-              className="absolute inset-0 z-0 opacity-100 bg-purple-50 transition-opacity duration-500"
-              style={yarnPattern}
-            />
-            
-            {/* Decorative Overlay Gradient to keep text readable */}
-            <div className="absolute inset-0 bg-white/40 group-hover:bg-white/0 transition-colors duration-300 z-10" />
-            
-            <CardContent className="p-5 flex flex-col items-center justify-center text-center min-h-[140px] h-full gap-3 relative z-20">
-              <h3 className="font-extrabold text-lg sm:text-xl text-primary drop-shadow-sm group-hover:text-purple-700 transition-colors line-clamp-2">
+          <Card className="group flex flex-col w-full h-fit pb-0 mb-0 mt-0 pt-1.5 bg-white overflow-hidden transition-all rounded-none duration-300 hover:shadow-lg hover:border-violet-200">
+            <div className="relative block aspect-square overflow-hidden">
+              <Image
+                src={brand.image}
+                alt={`${brand.name} yarn`}
+                fill
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                priority={false}
+                loading="lazy"
+              />
+              {brand.discountRate > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute top-2 right-2 bg-red-500 text-white"
+                >
+                  -{brand.discountRate}%
+                </Badge>
+              )}
+            </div>
+            <CardContent className="p-3 flex flex-col flex-grow text-center">
+              <h3 className="font-semibold text-slate-800 leading-tight line-clamp-1 group-hover:text-violet-800 transition-colors">
                 {brand.name}
               </h3>
-              
-              <div className="min-h-[28px] flex items-center justify-center">
-                {brand.discountRate > 0 ? (
-                  <span className="inline-flex items-center justify-center bg-primary text-white px-3 py-1 rounded-full text-xs font-black tracking-wider shadow-md border border-primary/20">
-                    {brand.discountRate}% OFF
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold text-primary/70 bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                    View Yarn
-                  </span>
-                )}
-              </div>
             </CardContent>
           </Card>
         </Link>
