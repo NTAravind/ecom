@@ -11,7 +11,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 9,
+    "stock": 0,
     "color": "#a92741",
     "isYarn": true
   },
@@ -27,7 +27,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#fafffa",
     "isYarn": true
   },
@@ -43,7 +43,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#d41a7f",
     "isYarn": true
   },
@@ -59,7 +59,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#ff8484",
     "isYarn": true
   },
@@ -75,7 +75,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#6152be",
     "isYarn": true
   },
@@ -91,7 +91,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#091b5a",
     "isYarn": true
   },
@@ -107,7 +107,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 1,
+    "stock": 0,
     "color": "#fffffa",
     "isYarn": true
   },
@@ -123,7 +123,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 5,
+    "stock": 0,
     "color": "#080806",
     "isYarn": true
   },
@@ -155,7 +155,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#8d6330",
     "isYarn": true
   },
@@ -171,7 +171,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#e2dca2",
     "isYarn": true
   },
@@ -187,7 +187,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#46236e",
     "isYarn": true
   },
@@ -203,7 +203,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#f2833c",
     "isYarn": true
   },
@@ -219,7 +219,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#ffffff",
     "isYarn": true
   },
@@ -235,7 +235,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#6c272f",
     "isYarn": true
   },
@@ -251,7 +251,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 18,
+    "stock": 0,
     "color": "#99c1f1",
     "isYarn": true
   },
@@ -267,7 +267,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#fba178",
     "isYarn": true
   },
@@ -283,7 +283,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#9b9887",
     "isYarn": true
   },
@@ -299,7 +299,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#94be8f",
     "isYarn": true
   },
@@ -315,7 +315,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#98a69d",
     "isYarn": true
   },
@@ -331,7 +331,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#ea293f",
     "isYarn": true
   },
@@ -347,7 +347,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#b3ba39",
     "isYarn": true
   },
@@ -363,7 +363,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#f04087",
     "isYarn": true
   },
@@ -379,7 +379,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#807063",
     "isYarn": true
   },
@@ -395,7 +395,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 28,
+    "stock": 0,
     "color": "#c01c28",
     "isYarn": true
   },
@@ -411,7 +411,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#dc8add",
     "isYarn": true
   },
@@ -427,7 +427,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#541b16",
     "isYarn": true
   },
@@ -443,7 +443,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#e9cfa8",
     "isYarn": true
   },
@@ -459,7 +459,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#beee99",
     "isYarn": true
   },
@@ -475,7 +475,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#d3019b",
     "isYarn": true
   },
@@ -491,7 +491,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#d8d915",
     "isYarn": true
   },
@@ -507,7 +507,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#613583",
     "isYarn": true
   },
@@ -523,7 +523,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#015f5b",
     "isYarn": true
   },
@@ -539,7 +539,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#02c2ca",
     "isYarn": true
   },
@@ -571,7 +571,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#ea9b8d",
     "isYarn": true
   },
@@ -587,7 +587,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#e54138",
     "isYarn": true
   },
@@ -603,7 +603,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#9e2737",
     "isYarn": true
   },
@@ -619,7 +619,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#202849",
     "isYarn": true
   },
@@ -635,7 +635,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#941037",
     "isYarn": true
   },
@@ -651,7 +651,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#2b7ea1",
     "isYarn": true
   },
@@ -667,7 +667,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 18,
+    "stock": 0,
     "color": "#b195db",
     "isYarn": true
   },
@@ -683,7 +683,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#9d3223",
     "isYarn": true
   },
@@ -699,7 +699,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#25160b",
     "isYarn": true
   },
@@ -715,7 +715,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 3,
+    "stock": 0,
     "color": "#e2cf67",
     "isYarn": true
   },
@@ -731,7 +731,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#ffa348",
     "isYarn": true
   },
@@ -747,7 +747,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#26a269",
     "isYarn": true
   },
@@ -779,7 +779,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 28,
+    "stock": 0,
     "color": "#f9f06b",
     "isYarn": true
   },
@@ -795,7 +795,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 3,
+    "stock": 0,
     "color": "#dab0c3",
     "isYarn": true
   },
@@ -811,7 +811,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#b6aa93",
     "isYarn": true
   },
@@ -827,7 +827,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 9,
+    "stock": 0,
     "color": "#e4dc91",
     "isYarn": true
   },
@@ -843,7 +843,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 1,
+    "stock": 0,
     "color": "#894919",
     "isYarn": true
   },
@@ -859,7 +859,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#e96550",
     "isYarn": true
   },
@@ -875,7 +875,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#f3efae",
     "isYarn": true
   },
@@ -891,7 +891,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#585a57",
     "isYarn": true
   },
@@ -907,7 +907,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#112c80",
     "isYarn": true
   },
@@ -923,7 +923,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#dc8a2e",
     "isYarn": true
   },
@@ -939,7 +939,7 @@
     "y_weight": "jumbo",
     "weight_g": 300,
     "category": "polyester",
-    "stock": 1,
+    "stock": 0,
     "color": "#2b2e2d",
     "isYarn": true
   },
@@ -955,7 +955,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#fff6a3",
     "isYarn": true
   },
@@ -971,7 +971,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 5,
+    "stock": 0,
     "color": "#d87d0a",
     "isYarn": true
   },
@@ -987,7 +987,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 10,
+    "stock": 0,
     "color": "#f6f5f4",
     "isYarn": true
   },
@@ -1003,7 +1003,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#21a8b7",
     "isYarn": true
   },
@@ -1019,7 +1019,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 19,
+    "stock": 0,
     "color": "#8ab960",
     "isYarn": true
   },
@@ -1035,7 +1035,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#b5482c",
     "isYarn": true
   },
@@ -1051,7 +1051,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#b25b93",
     "isYarn": true
   },
@@ -1067,7 +1067,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 11,
+    "stock": 0,
     "color": "#d4c6c7",
     "isYarn": true
   },
@@ -1083,7 +1083,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#fdcb11",
     "isYarn": true
   },
@@ -1099,7 +1099,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#26a269",
     "isYarn": true
   },
@@ -1115,7 +1115,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 9,
+    "stock": 0,
     "color": "#027559",
     "isYarn": true
   },
@@ -1131,7 +1131,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#f9f06b",
     "isYarn": true
   },
@@ -1147,7 +1147,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 16,
+    "stock": 0,
     "color": "#2756ba",
     "isYarn": true
   },
@@ -1163,7 +1163,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#bd4d1c",
     "isYarn": true
   },
@@ -1179,7 +1179,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#98d0b8",
     "isYarn": true
   },
@@ -1195,7 +1195,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#11a32c",
     "isYarn": true
   },
@@ -1211,7 +1211,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#bf9a65",
     "isYarn": true
   },
@@ -1227,7 +1227,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#9bd181",
     "isYarn": true
   },
@@ -1243,7 +1243,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#a1d5c2",
     "isYarn": true
   },
@@ -1259,7 +1259,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#807e6f",
     "isYarn": true
   },
@@ -1275,7 +1275,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 9,
+    "stock": 0,
     "color": "#b59b7d",
     "isYarn": true
   },
@@ -1291,7 +1291,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#d6e0a1",
     "isYarn": true
   },
@@ -1307,7 +1307,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#23ac8e",
     "isYarn": true
   },
@@ -1323,7 +1323,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#95bf6d",
     "isYarn": true
   },
@@ -1339,7 +1339,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#dfac9e",
     "isYarn": true
   },
@@ -1355,7 +1355,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 13,
+    "stock": 0,
     "color": "#df96a7",
     "isYarn": true
   },
@@ -1371,7 +1371,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#d0ad29",
     "isYarn": true
   },
@@ -1387,7 +1387,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#fba783",
     "isYarn": true
   },
@@ -1403,7 +1403,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 9,
+    "stock": 0,
     "color": "#d8e2da",
     "isYarn": true
   },
@@ -1419,7 +1419,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#063b83",
     "isYarn": true
   },
@@ -1435,7 +1435,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#a0e2c1",
     "isYarn": true
   },
@@ -1451,7 +1451,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#ef5d74",
     "isYarn": true
   },
@@ -1467,7 +1467,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#7c6345",
     "isYarn": true
   },
@@ -1483,7 +1483,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#b7606b",
     "isYarn": true
   },
@@ -1499,7 +1499,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#612c94",
     "isYarn": true
   },
@@ -1515,7 +1515,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#dbbf87",
     "isYarn": true
   },
@@ -1547,7 +1547,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 1,
+    "stock": 0,
     "color": "#bab1c5",
     "isYarn": true
   },
@@ -1563,7 +1563,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#63b3a8",
     "isYarn": true
   },
@@ -1579,7 +1579,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#c6b7a9",
     "isYarn": true
   },
@@ -1595,7 +1595,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#3084b9",
     "isYarn": true
   },
@@ -1611,7 +1611,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 11,
+    "stock": 0,
     "color": "#fcde87",
     "isYarn": true
   },
@@ -1627,7 +1627,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#f66151",
     "isYarn": true
   },
@@ -1643,7 +1643,7 @@
     "y_weight": "jumbo",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 4,
+    "stock": 0,
     "color": "#928086",
     "isYarn": true
   },
@@ -1675,7 +1675,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#e2c8c2",
     "isYarn": true
   },
@@ -1691,7 +1691,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#c3194b",
     "isYarn": true
   },
@@ -1707,7 +1707,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#fad867",
     "isYarn": true
   },
@@ -1739,7 +1739,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#602666",
     "isYarn": true
   },
@@ -1787,7 +1787,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#161b4b",
     "isYarn": true
   },
@@ -1803,7 +1803,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 17,
+    "stock": 0,
     "color": "#eae6da",
     "isYarn": true
   },
@@ -1819,7 +1819,7 @@
     "y_weight": "jumbo",
     "weight_g": 300,
     "category": "polyester",
-    "stock": 3,
+    "stock": 0,
     "color": "#d1d5cd",
     "isYarn": true
   },
@@ -1835,7 +1835,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 18,
+    "stock": 0,
     "color": "#000000",
     "isYarn": true
   },
@@ -1867,7 +1867,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 13,
+    "stock": 0,
     "color": "#fa9aac",
     "isYarn": true
   },
@@ -1883,7 +1883,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 4,
+    "stock": 0,
     "color": "#c0a1c7",
     "isYarn": true
   },
@@ -1915,7 +1915,7 @@
     "y_weight": "jumbo",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 10,
+    "stock": 0,
     "color": "#c72e3b",
     "isYarn": true
   },
@@ -1931,7 +1931,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#f6f5f4",
     "isYarn": true
   },
@@ -1963,7 +1963,7 @@
     "y_weight": "jumbo",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 4,
+    "stock": 0,
     "color": "#e0c1b6",
     "isYarn": true
   },
@@ -1979,7 +1979,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 15,
+    "stock": 0,
     "color": "#c7acd2",
     "isYarn": true
   },
@@ -1995,7 +1995,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#ffffff",
     "isYarn": true
   },
@@ -2043,7 +2043,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#efc9ea",
     "isYarn": true
   },
@@ -2075,7 +2075,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#faa3ec",
     "isYarn": true
   },
@@ -2091,7 +2091,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 6,
+    "stock": 0,
     "color": "#cf5c6a",
     "isYarn": true
   },
@@ -2107,7 +2107,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#5e5c64",
     "isYarn": true
   },
@@ -2123,7 +2123,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#f8e45c",
     "isYarn": true
   },
@@ -2139,7 +2139,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#c0bfbc",
     "isYarn": true
   },
@@ -2155,7 +2155,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#1f2226",
     "isYarn": true
   },
@@ -2171,7 +2171,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 6,
+    "stock": 0,
     "color": "#fc8ac9",
     "isYarn": true
   },
@@ -2187,7 +2187,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 7,
+    "stock": 0,
     "color": "#8a3e10",
     "isYarn": true
   },
@@ -2219,7 +2219,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#e587b8",
     "isYarn": true
   },
@@ -2235,7 +2235,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#fcad8a",
     "isYarn": true
   },
@@ -2267,7 +2267,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#c9ac78",
     "isYarn": true
   },
@@ -2283,7 +2283,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 10,
+    "stock": 0,
     "color": "#e3d9b9",
     "isYarn": true
   },
@@ -2299,7 +2299,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#f8618c",
     "isYarn": true
   },
@@ -2315,7 +2315,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#151e72",
     "isYarn": true
   },
@@ -2331,7 +2331,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#257679",
     "isYarn": true
   },
@@ -2347,7 +2347,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 2,
+    "stock": 0,
     "color": "#e52d3d",
     "isYarn": true
   },
@@ -2363,7 +2363,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#f66151",
     "isYarn": true
   },
@@ -2379,7 +2379,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#e01b24",
     "isYarn": true
   },
@@ -2395,7 +2395,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#07543d",
     "isYarn": true
   },
@@ -2411,7 +2411,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#e2376e",
     "isYarn": true
   },
@@ -2427,7 +2427,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#dfc531",
     "isYarn": true
   },
@@ -2443,7 +2443,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#cb9e37",
     "isYarn": true
   },
@@ -2459,7 +2459,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#580909",
     "isYarn": true
   },
@@ -2475,7 +2475,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#750c3f",
     "isYarn": true
   },
@@ -2491,7 +2491,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#a51d2d",
     "isYarn": true
   },
@@ -2507,7 +2507,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 6,
+    "stock": 0,
     "color": "#95d198",
     "isYarn": true
   },
@@ -2523,7 +2523,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#a6d5c3",
     "isYarn": true
   },
@@ -2539,7 +2539,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#f5c211",
     "isYarn": true
   },
@@ -2571,7 +2571,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#24539a",
     "isYarn": true
   },
@@ -2587,7 +2587,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#c072a2",
     "isYarn": true
   },
@@ -2603,7 +2603,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#e18c7a",
     "isYarn": true
   },
@@ -2619,7 +2619,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#b97597",
     "isYarn": true
   },
@@ -2635,7 +2635,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#381541",
     "isYarn": true
   },
@@ -2651,7 +2651,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#dbc734",
     "isYarn": true
   },
@@ -2667,7 +2667,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 10,
+    "stock": 0,
     "color": "#93bec6",
     "isYarn": true
   },
@@ -2683,7 +2683,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#9cc6f5",
     "isYarn": true
   },
@@ -2699,7 +2699,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#b0c3af",
     "isYarn": true
   },
@@ -2715,7 +2715,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#a9bfa9",
     "isYarn": true
   },
@@ -2731,7 +2731,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#ff8c8c",
     "isYarn": true
   },
@@ -2747,7 +2747,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 14,
+    "stock": 0,
     "color": "#fbbeeb",
     "isYarn": true
   },
@@ -2763,7 +2763,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#f95747",
     "isYarn": true
   },
@@ -2779,7 +2779,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#0c4a2e",
     "isYarn": true
   },
@@ -2795,7 +2795,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 3,
+    "stock": 0,
     "color": "#fa663a",
     "isYarn": true
   },
@@ -2811,7 +2811,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#d8c4ff",
     "isYarn": true
   },
@@ -2827,7 +2827,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#037047",
     "isYarn": true
   },
@@ -2843,7 +2843,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 6,
+    "stock": 0,
     "color": "#3b4d44",
     "isYarn": true
   },
@@ -2859,7 +2859,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 6,
+    "stock": 0,
     "color": "#fa8b97",
     "isYarn": true
   },
@@ -2875,7 +2875,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#ee384e",
     "isYarn": true
   },
@@ -2891,7 +2891,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 3,
+    "stock": 0,
     "color": "#fbbb9b",
     "isYarn": true
   },
@@ -2923,7 +2923,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#fab0b0",
     "isYarn": true
   },
@@ -2939,7 +2939,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 14,
+    "stock": 0,
     "color": "#f1c406",
     "isYarn": true
   },
@@ -2955,7 +2955,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#1c71d8",
     "isYarn": true
   },
@@ -2971,7 +2971,7 @@
     "y_weight": "jumbo",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 3,
+    "stock": 0,
     "color": "#cab88f",
     "isYarn": true
   },
@@ -2987,7 +2987,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#4bcc3e",
     "isYarn": true
   },
@@ -3003,7 +3003,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#000000",
     "isYarn": true
   },
@@ -3019,7 +3019,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#221400",
     "isYarn": true
   },
@@ -3035,7 +3035,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#ce8487",
     "isYarn": true
   },
@@ -3051,7 +3051,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#e2b55e",
     "isYarn": true
   },
@@ -3067,7 +3067,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#9facc2",
     "isYarn": true
   },
@@ -3083,7 +3083,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#343c38",
     "isYarn": true
   },
@@ -3099,7 +3099,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#affcbe",
     "isYarn": true
   },
@@ -3115,7 +3115,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 12,
+    "stock": 0,
     "color": "#3d4348",
     "isYarn": true
   },
@@ -3131,7 +3131,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#bcb59e",
     "isYarn": true
   },
@@ -3147,7 +3147,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 3,
+    "stock": 0,
     "color": "#97365b",
     "isYarn": true
   },
@@ -3163,7 +3163,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#7797be",
     "isYarn": true
   },
@@ -3179,7 +3179,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#9e2158",
     "isYarn": true
   },
@@ -3195,7 +3195,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#522c64",
     "isYarn": true
   },
@@ -3211,7 +3211,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#f0d8c4",
     "isYarn": true
   },
@@ -3227,7 +3227,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#c8ffdb",
     "isYarn": true
   },
@@ -3243,7 +3243,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#77ffef",
     "isYarn": true
   },
@@ -3259,7 +3259,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#297d9a",
     "isYarn": true
   },
@@ -3291,7 +3291,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#0081c0",
     "isYarn": true
   },
@@ -3307,7 +3307,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 3,
+    "stock": 0,
     "color": "#78b5c5",
     "isYarn": true
   },
@@ -3323,7 +3323,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#3da7e2",
     "isYarn": true
   },
@@ -3339,7 +3339,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#0b9ec8",
     "isYarn": true
   },
@@ -3355,7 +3355,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#c8b6bd",
     "isYarn": true
   },
@@ -3403,7 +3403,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 3,
+    "stock": 0,
     "color": "#5ab8aa",
     "isYarn": true
   },
@@ -3419,7 +3419,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#0aa198",
     "isYarn": true
   },
@@ -3435,7 +3435,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#04311d",
     "isYarn": true
   },
@@ -3451,7 +3451,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#ddd3ba",
     "isYarn": true
   },
@@ -3467,7 +3467,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#406a60",
     "isYarn": true
   },
@@ -3483,7 +3483,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#95b09a",
     "isYarn": true
   },
@@ -3499,7 +3499,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#6f8740",
     "isYarn": true
   },
@@ -3515,7 +3515,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 17,
+    "stock": 0,
     "color": "#13171b",
     "isYarn": true
   },
@@ -3531,7 +3531,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#2b8862",
     "isYarn": true
   },
@@ -3547,7 +3547,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 19,
+    "stock": 0,
     "color": "#ffffff",
     "isYarn": true
   },
@@ -3563,7 +3563,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#46a9b1",
     "isYarn": true
   },
@@ -3579,7 +3579,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#62a0ea",
     "isYarn": true
   },
@@ -3611,7 +3611,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#241f31",
     "isYarn": true
   },
@@ -3643,7 +3643,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 6,
+    "stock": 0,
     "color": "#dca0b8",
     "isYarn": true
   },
@@ -3659,7 +3659,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 5,
+    "stock": 0,
     "color": "#f4b705",
     "isYarn": true
   },
@@ -3675,7 +3675,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#e097bb",
     "isYarn": true
   },
@@ -3691,7 +3691,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 6,
+    "stock": 0,
     "color": "#fa6898",
     "isYarn": true
   },
@@ -3707,7 +3707,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 17,
+    "stock": 0,
     "color": "#3c6dbb",
     "isYarn": true
   },
@@ -3723,7 +3723,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#848287",
     "isYarn": true
   },
@@ -3739,7 +3739,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#dfd6bb",
     "isYarn": true
   },
@@ -3755,7 +3755,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 18,
+    "stock": 0,
     "color": "#57e389",
     "isYarn": true
   },
@@ -3771,7 +3771,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#ed91b9",
     "isYarn": true
   },
@@ -3787,7 +3787,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 9,
+    "stock": 0,
     "color": "#de5856",
     "isYarn": true
   },
@@ -3803,7 +3803,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#5f9a11",
     "isYarn": true
   },
@@ -3819,7 +3819,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#241f31",
     "isYarn": true
   },
@@ -3835,7 +3835,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#a51d2d",
     "isYarn": true
   },
@@ -3851,7 +3851,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#95735f",
     "isYarn": true
   },
@@ -3867,7 +3867,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 3,
+    "stock": 0,
     "color": "#253f5b",
     "isYarn": true
   },
@@ -3883,7 +3883,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#613583",
     "isYarn": true
   },
@@ -3899,7 +3899,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 11,
+    "stock": 0,
     "color": "#e9db69",
     "isYarn": true
   },
@@ -3915,7 +3915,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 4,
+    "stock": 0,
     "color": "#f4cc2d",
     "isYarn": true
   },
@@ -3931,7 +3931,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#3584e4",
     "isYarn": true
   },
@@ -3947,7 +3947,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#c85aa4",
     "isYarn": true
   },
@@ -3963,7 +3963,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 7,
+    "stock": 0,
     "color": "#e4096e",
     "isYarn": true
   },
@@ -3979,7 +3979,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#db70bb",
     "isYarn": true
   },
@@ -3995,7 +3995,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#f8e45c",
     "isYarn": true
   },
@@ -4011,7 +4011,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#363f38",
     "isYarn": true
   },
@@ -4027,7 +4027,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#7e2323",
     "isYarn": true
   },
@@ -4043,7 +4043,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#ffd2f2",
     "isYarn": true
   },
@@ -4059,7 +4059,7 @@
     "y_weight": "jumbo",
     "weight_g": 300,
     "category": "polyester",
-    "stock": 1,
+    "stock": 0,
     "color": "#93ba7e",
     "isYarn": true
   },
@@ -4075,7 +4075,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#ffa348",
     "isYarn": true
   },
@@ -4091,7 +4091,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#f6f5f4",
     "isYarn": true
   },
@@ -4107,7 +4107,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#5e7129",
     "isYarn": true
   },
@@ -4123,7 +4123,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#ada594",
     "isYarn": true
   },
@@ -4139,7 +4139,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#43bcd3",
     "isYarn": true
   },
@@ -4155,7 +4155,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 19,
+    "stock": 0,
     "color": "#a7946e",
     "isYarn": true
   },
@@ -4171,7 +4171,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 4,
+    "stock": 0,
     "color": "#3584e4",
     "isYarn": true
   },
@@ -4187,7 +4187,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#9fa99d",
     "isYarn": true
   },
@@ -4203,7 +4203,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#cda902",
     "isYarn": true
   },
@@ -4219,7 +4219,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#8bd99c",
     "isYarn": true
   },
@@ -4235,7 +4235,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#f83897",
     "isYarn": true
   },
@@ -4251,7 +4251,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#94bbdd",
     "isYarn": true
   },
@@ -4267,7 +4267,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 10,
+    "stock": 0,
     "color": "#c8d1cd",
     "isYarn": true
   },
@@ -4283,7 +4283,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 9,
+    "stock": 0,
     "color": "#da423c",
     "isYarn": true
   },
@@ -4299,7 +4299,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 14,
+    "stock": 0,
     "color": "#eca713",
     "isYarn": true
   },
@@ -4315,7 +4315,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 5,
+    "stock": 0,
     "color": "#a68579",
     "isYarn": true
   },
@@ -4331,7 +4331,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 19,
+    "stock": 0,
     "color": "#1f1f1f",
     "isYarn": true
   },
@@ -4347,7 +4347,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#fa7541",
     "isYarn": true
   },
@@ -4363,7 +4363,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#fcb146",
     "isYarn": true
   },
@@ -4379,7 +4379,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 9,
+    "stock": 0,
     "color": "#324868",
     "isYarn": true
   },
@@ -4395,7 +4395,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 16,
+    "stock": 0,
     "color": "#a9e3de",
     "isYarn": true
   },
@@ -4411,7 +4411,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#ad75a8",
     "isYarn": true
   },
@@ -4427,7 +4427,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#272727",
     "isYarn": true
   },
@@ -4443,7 +4443,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#f1704d",
     "isYarn": true
   },
@@ -4459,7 +4459,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 11,
+    "stock": 0,
     "color": "#e7ddce",
     "isYarn": true
   },
@@ -4475,7 +4475,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#d46165",
     "isYarn": true
   },
@@ -4491,7 +4491,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#86827c",
     "isYarn": true
   },
@@ -4507,7 +4507,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#d5a6e1",
     "isYarn": true
   },
@@ -4523,7 +4523,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#1a5fb4",
     "isYarn": true
   },
@@ -4539,7 +4539,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#ab7019",
     "isYarn": true
   },
@@ -4555,7 +4555,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#0d2034",
     "isYarn": true
   },
@@ -4571,7 +4571,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 1,
+    "stock": 0,
     "color": "#87968e",
     "isYarn": true
   },
@@ -4587,7 +4587,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#61213d",
     "isYarn": true
   },
@@ -4603,7 +4603,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#61e2cb",
     "isYarn": true
   },
@@ -4619,7 +4619,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#74585a",
     "isYarn": true
   },
@@ -4635,7 +4635,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#2d1c17",
     "isYarn": true
   },
@@ -4651,7 +4651,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#b4a2dc",
     "isYarn": true
   },
@@ -4667,7 +4667,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 14,
+    "stock": 0,
     "color": "#a6455c",
     "isYarn": true
   },
@@ -4683,7 +4683,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 15,
+    "stock": 0,
     "color": "#591217",
     "isYarn": true
   },
@@ -4699,7 +4699,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#b8b9ff",
     "isYarn": true
   },
@@ -4715,7 +4715,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#e5eed4",
     "isYarn": true
   },
@@ -4731,7 +4731,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#e9b69b",
     "isYarn": true
   },
@@ -4747,7 +4747,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#000000",
     "isYarn": true
   },
@@ -4763,7 +4763,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#62a0ea",
     "isYarn": true
   },
@@ -4779,7 +4779,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#27395e",
     "isYarn": true
   },
@@ -4795,7 +4795,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#fff7c2",
     "isYarn": true
   },
@@ -4811,7 +4811,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 13,
+    "stock": 0,
     "color": "#e8afc9",
     "isYarn": true
   },
@@ -4827,7 +4827,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 10,
+    "stock": 0,
     "color": "#f8dd3c",
     "isYarn": true
   },
@@ -4843,7 +4843,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#001101",
     "isYarn": true
   },
@@ -4859,7 +4859,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#ddfcd9",
     "isYarn": true
   },
@@ -4875,7 +4875,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#cb5860",
     "isYarn": true
   },
@@ -4891,7 +4891,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 16,
+    "stock": 0,
     "color": "#efc1ca",
     "isYarn": true
   },
@@ -4907,7 +4907,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 8,
+    "stock": 0,
     "color": "#960d0d",
     "isYarn": true
   },
@@ -4923,7 +4923,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#17bdb3",
     "isYarn": true
   },
@@ -4939,7 +4939,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#d5d3d3",
     "isYarn": true
   },
@@ -4955,7 +4955,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#d97f85",
     "isYarn": true
   },
@@ -4971,7 +4971,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 10,
+    "stock": 0,
     "color": "#adf9ad",
     "isYarn": true
   },
@@ -4987,7 +4987,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 3,
+    "stock": 0,
     "color": "#fd661e",
     "isYarn": true
   },
@@ -5003,7 +5003,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 19,
+    "stock": 0,
     "color": "#99d1c5",
     "isYarn": true
   },
@@ -5019,7 +5019,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#e01b24",
     "isYarn": true
   },
@@ -5035,7 +5035,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#897346",
     "isYarn": true
   },
@@ -5051,7 +5051,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#dcc663",
     "isYarn": true
   },
@@ -5067,7 +5067,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#8ff0a4",
     "isYarn": true
   },
@@ -5083,7 +5083,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 6,
+    "stock": 0,
     "color": "#f6d32d",
     "isYarn": true
   },
@@ -5099,7 +5099,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#fd3939",
     "isYarn": true
   },
@@ -5115,7 +5115,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#571b15",
     "isYarn": true
   },
@@ -5131,7 +5131,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#f6d32d",
     "isYarn": true
   },
@@ -5147,7 +5147,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#026464",
     "isYarn": true
   },
@@ -5163,7 +5163,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#3f2206",
     "isYarn": true
   },
@@ -5179,7 +5179,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#02b273",
     "isYarn": true
   },
@@ -5195,7 +5195,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#8ff0a4",
     "isYarn": true
   },
@@ -5211,7 +5211,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#ffd2f2",
     "isYarn": true
   },
@@ -5227,7 +5227,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#f1ff3f",
     "isYarn": true
   },
@@ -5243,7 +5243,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 28,
+    "stock": 0,
     "color": "#f6d32d",
     "isYarn": true
   },
@@ -5259,7 +5259,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#c061cb",
     "isYarn": true
   },
@@ -5275,7 +5275,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#eec7e5",
     "isYarn": true
   },
@@ -5291,7 +5291,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#000000",
     "isYarn": true
   },
@@ -5307,7 +5307,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#430348",
     "isYarn": true
   },
@@ -5323,7 +5323,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#eeddea",
     "isYarn": true
   },
@@ -5339,7 +5339,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 5,
+    "stock": 0,
     "color": "#93329a",
     "isYarn": true
   },
@@ -5355,7 +5355,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#43482c",
     "isYarn": true
   },
@@ -5371,7 +5371,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#3e3e40",
     "isYarn": true
   },
@@ -5387,7 +5387,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#8f9094",
     "isYarn": true
   },
@@ -5403,7 +5403,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#536466",
     "isYarn": true
   },
@@ -5419,7 +5419,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#595c92",
     "isYarn": true
   },
@@ -5435,7 +5435,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#71539d",
     "isYarn": true
   },
@@ -5451,7 +5451,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#f5c3b6",
     "isYarn": true
   },
@@ -5467,7 +5467,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#2b823c",
     "isYarn": true
   },
@@ -5483,7 +5483,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 25,
+    "stock": 0,
     "color": "#32363a",
     "isYarn": true
   },
@@ -5499,7 +5499,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#48361b",
     "isYarn": true
   },
@@ -5515,7 +5515,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#673166",
     "isYarn": true
   },
@@ -5531,7 +5531,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#5f854e",
     "isYarn": true
   },
@@ -5547,7 +5547,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#54174a",
     "isYarn": true
   },
@@ -5563,7 +5563,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#262a6b",
     "isYarn": true
   },
@@ -5579,7 +5579,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#ec980f",
     "isYarn": true
   },
@@ -5595,7 +5595,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#e67223",
     "isYarn": true
   },
@@ -5611,7 +5611,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#5c3e20",
     "isYarn": true
   },
@@ -5627,7 +5627,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#26a269",
     "isYarn": true
   },
@@ -5643,7 +5643,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 26,
+    "stock": 0,
     "color": "#6f5949",
     "isYarn": true
   },
@@ -5659,7 +5659,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 25,
+    "stock": 0,
     "color": "#54362d",
     "isYarn": true
   },
@@ -5675,7 +5675,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#cfd9ba",
     "isYarn": true
   },
@@ -5691,7 +5691,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 34,
+    "stock": 0,
     "color": "#cdd2d7",
     "isYarn": true
   },
@@ -5707,7 +5707,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 20,
+    "stock": 0,
     "color": "#111111",
     "isYarn": true
   },
@@ -5723,7 +5723,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#f2bf3b",
     "isYarn": true
   },
@@ -5739,7 +5739,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#a00624",
     "isYarn": true
   },
@@ -5755,7 +5755,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#dc8add",
     "isYarn": true
   },
@@ -5771,7 +5771,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 2,
+    "stock": 0,
     "color": "#d3e0de",
     "isYarn": true
   },
@@ -5787,7 +5787,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 4,
+    "stock": 0,
     "color": "#683b36",
     "isYarn": true
   },
@@ -5803,7 +5803,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#9c6d6d",
     "isYarn": true
   },
@@ -5819,7 +5819,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 21,
+    "stock": 0,
     "color": "#cac0db",
     "isYarn": true
   },
@@ -5835,7 +5835,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 9,
+    "stock": 0,
     "color": "#0289a6",
     "isYarn": true
   },
@@ -5851,7 +5851,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 8,
+    "stock": 0,
     "color": "#03421f",
     "isYarn": true
   },
@@ -5867,7 +5867,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 28,
+    "stock": 0,
     "color": "#813d9c",
     "isYarn": true
   },
@@ -5883,7 +5883,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 16,
+    "stock": 0,
     "color": "#dc8add",
     "isYarn": true
   },
@@ -5899,7 +5899,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 9,
+    "stock": 0,
     "color": "#63c3c5",
     "isYarn": true
   },
@@ -5915,7 +5915,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 32,
+    "stock": 0,
     "color": "#462580",
     "isYarn": true
   },
@@ -5931,7 +5931,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#ffffff",
     "isYarn": true
   },
@@ -5963,7 +5963,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#ded9d9",
     "isYarn": true
   },
@@ -5979,7 +5979,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#2f4627",
     "isYarn": true
   },
@@ -5995,7 +5995,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#986a44",
     "isYarn": true
   },
@@ -6011,7 +6011,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#de77af",
     "isYarn": true
   },
@@ -6027,7 +6027,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#fa72bb",
     "isYarn": true
   },
@@ -6043,7 +6043,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#f9f06b",
     "isYarn": true
   },
@@ -6059,7 +6059,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#c061cb",
     "isYarn": true
   },
@@ -6075,7 +6075,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#47bca5",
     "isYarn": true
   },
@@ -6091,7 +6091,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 28,
+    "stock": 0,
     "color": "#0aa198",
     "isYarn": true
   },
@@ -6107,7 +6107,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#f9f06b",
     "isYarn": true
   },
@@ -6123,7 +6123,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#deddda",
     "isYarn": true
   },
@@ -6139,7 +6139,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#515e4b",
     "isYarn": true
   },
@@ -6155,7 +6155,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 15,
+    "stock": 0,
     "color": "#62a0ea",
     "isYarn": true
   },
@@ -6171,7 +6171,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#5d0e17",
     "isYarn": true
   },
@@ -6187,7 +6187,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#8ff0a4",
     "isYarn": true
   },
@@ -6203,7 +6203,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#fa72bb",
     "isYarn": true
   },
@@ -6219,7 +6219,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#515e4b",
     "isYarn": true
   },
@@ -6235,7 +6235,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#031f12",
     "isYarn": true
   },
@@ -6251,7 +6251,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#072b1b",
     "isYarn": true
   },
@@ -6267,7 +6267,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#82143d",
     "isYarn": true
   },
@@ -6283,7 +6283,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 18,
+    "stock": 0,
     "color": "#27242a",
     "isYarn": true
   },
@@ -6299,7 +6299,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 20,
+    "stock": 0,
     "color": "#ffffff",
     "isYarn": true
   },
@@ -6315,7 +6315,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 28,
+    "stock": 0,
     "color": "#57e389",
     "isYarn": true
   },
@@ -6331,7 +6331,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 28,
+    "stock": 0,
     "color": "#865e3c",
     "isYarn": true
   },
@@ -6347,7 +6347,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#ff7800",
     "isYarn": true
   },
@@ -6363,7 +6363,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#9141ac",
     "isYarn": true
   },
@@ -6379,7 +6379,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 26,
+    "stock": 0,
     "color": "#363b2a",
     "isYarn": true
   },
@@ -6395,7 +6395,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#b26e1e",
     "isYarn": true
   },
@@ -6411,7 +6411,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 18,
+    "stock": 0,
     "color": "#9e7f35",
     "isYarn": true
   },
@@ -6427,7 +6427,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#6152be",
     "isYarn": true
   },
@@ -6443,7 +6443,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#a51d2d",
     "isYarn": true
   },
@@ -6459,7 +6459,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic-blend",
-    "stock": 20,
+    "stock": 0,
     "color": "#f6d32d",
     "isYarn": true
   },
@@ -6475,7 +6475,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#f7f5cd",
     "isYarn": true
   },
@@ -6491,7 +6491,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#e5ceb8",
     "isYarn": true
   },
@@ -6507,7 +6507,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 26,
+    "stock": 0,
     "color": "#a51d2d",
     "isYarn": true
   },
@@ -6523,7 +6523,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#8a3131",
     "isYarn": true
   },
@@ -6539,7 +6539,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 28,
+    "stock": 0,
     "color": "#c64600",
     "isYarn": true
   },
@@ -6555,7 +6555,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 26,
+    "stock": 0,
     "color": "#ff7800",
     "isYarn": true
   },
@@ -6587,7 +6587,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 7,
+    "stock": 0,
     "color": "#ef6c6b",
     "isYarn": true
   },
@@ -6603,7 +6603,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#1a5fb4",
     "isYarn": true
   },
@@ -6619,7 +6619,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#613583",
     "isYarn": true
   },
@@ -6635,7 +6635,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#05cb4c",
     "isYarn": true
   },
@@ -6651,7 +6651,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#c59ec5",
     "isYarn": true
   },
@@ -6667,7 +6667,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#dc8add",
     "isYarn": true
   },
@@ -6683,7 +6683,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 10,
+    "stock": 0,
     "color": "#1eadbb",
     "isYarn": true
   },
@@ -6699,7 +6699,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#031f12",
     "isYarn": true
   },
@@ -6715,7 +6715,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#2e5d68",
     "isYarn": true
   },
@@ -6731,7 +6731,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 28,
+    "stock": 0,
     "color": "#35b6e4",
     "isYarn": true
   },
@@ -6747,7 +6747,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 17,
+    "stock": 0,
     "color": "#033f23",
     "isYarn": true
   },
@@ -6763,7 +6763,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#827567",
     "isYarn": true
   },
@@ -6779,7 +6779,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 4,
+    "stock": 0,
     "color": "#d5d3ba",
     "isYarn": true
   },
@@ -6795,7 +6795,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#1c1b3a",
     "isYarn": true
   },
@@ -6811,7 +6811,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#6c8552",
     "isYarn": true
   },
@@ -6843,7 +6843,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 2,
+    "stock": 0,
     "color": "#e7b7d2",
     "isYarn": true
   },
@@ -6859,7 +6859,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 4,
+    "stock": 0,
     "color": "#ffbe6f",
     "isYarn": true
   },
@@ -6875,7 +6875,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 4,
+    "stock": 0,
     "color": "#c3b8c4",
     "isYarn": true
   },
@@ -6891,7 +6891,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 4,
+    "stock": 0,
     "color": "#be6b82",
     "isYarn": true
   },
@@ -6907,7 +6907,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#ff7800",
     "isYarn": true
   },
@@ -6923,7 +6923,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 4,
+    "stock": 0,
     "color": "#a1bba7",
     "isYarn": true
   },
@@ -6939,7 +6939,7 @@
     "y_weight": "jumbo",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 10,
+    "stock": 0,
     "color": "#f2efe5",
     "isYarn": true
   },
@@ -6955,7 +6955,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#dc8add",
     "isYarn": true
   },
@@ -6971,7 +6971,7 @@
     "y_weight": "super-fine",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#cdab8f",
     "isYarn": true
   },
@@ -6987,7 +6987,7 @@
     "y_weight": "jumbo",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 9,
+    "stock": 0,
     "color": "#273a6d",
     "isYarn": true
   },
@@ -7003,7 +7003,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#ffbe6f",
     "isYarn": true
   },
@@ -7019,7 +7019,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#8ff0a4",
     "isYarn": true
   },
@@ -7035,7 +7035,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#c45e9f",
     "isYarn": true
   },
@@ -7051,7 +7051,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 19,
+    "stock": 0,
     "color": "#f0d5f1",
     "isYarn": true
   },
@@ -7067,7 +7067,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#0370a6",
     "isYarn": true
   },
@@ -7083,7 +7083,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#86c1b5",
     "isYarn": true
   },
@@ -7099,7 +7099,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#6d3609",
     "isYarn": true
   },
@@ -7115,7 +7115,7 @@
     "y_weight": "light-dk",
     "weight_g": 130,
     "category": "cotton",
-    "stock": 18,
+    "stock": 0,
     "color": "#13967e",
     "isYarn": true
   },
@@ -7131,7 +7131,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#e5a50a",
     "isYarn": true
   },
@@ -7147,7 +7147,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#1c513a",
     "isYarn": true
   },
@@ -7163,7 +7163,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 2,
+    "stock": 0,
     "color": "#ccc0af",
     "isYarn": true
   },
@@ -7179,7 +7179,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 14,
+    "stock": 0,
     "color": "#f2d159",
     "isYarn": true
   },
@@ -7195,7 +7195,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#d5b2d5",
     "isYarn": true
   },
@@ -7211,7 +7211,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 7,
+    "stock": 0,
     "color": "#acc8f0",
     "isYarn": true
   },
@@ -7227,7 +7227,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#3584e4",
     "isYarn": true
   },
@@ -7243,7 +7243,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 6,
+    "stock": 0,
     "color": "#63452c",
     "isYarn": true
   },
@@ -7259,7 +7259,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#f9f06b",
     "isYarn": true
   },
@@ -7275,7 +7275,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#1c71d8",
     "isYarn": true
   },
@@ -7291,7 +7291,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#241f31",
     "isYarn": true
   },
@@ -7307,7 +7307,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 9,
+    "stock": 0,
     "color": "#474b2a",
     "isYarn": true
   },
@@ -7323,7 +7323,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#b89cb8",
     "isYarn": true
   },
@@ -7339,7 +7339,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#9f8f00",
     "isYarn": true
   },
@@ -7355,7 +7355,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 12,
+    "stock": 0,
     "color": "#f6d32d",
     "isYarn": true
   },
@@ -7371,7 +7371,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 1,
+    "stock": 0,
     "color": "#a8a6be",
     "isYarn": true
   },
@@ -7387,7 +7387,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 3,
+    "stock": 0,
     "color": "#9ab6ca",
     "isYarn": true
   },
@@ -7403,7 +7403,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#b5835a",
     "isYarn": true
   },
@@ -7419,7 +7419,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 20,
+    "stock": 0,
     "color": "#3e5126",
     "isYarn": true
   },
@@ -7435,7 +7435,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#26a269",
     "isYarn": true
   },
@@ -7451,7 +7451,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 10,
+    "stock": 0,
     "color": "#d0ceb4",
     "isYarn": true
   },
@@ -7467,7 +7467,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 7,
+    "stock": 0,
     "color": "#f6f5f4",
     "isYarn": true
   },
@@ -7483,7 +7483,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 23,
+    "stock": 0,
     "color": "#d01c38",
     "isYarn": true
   },
@@ -7499,7 +7499,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 7,
+    "stock": 0,
     "color": "#ee6a53",
     "isYarn": true
   },
@@ -7515,7 +7515,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "cotton",
-    "stock": 7,
+    "stock": 0,
     "color": "#eb958d",
     "isYarn": true
   },
@@ -7531,7 +7531,7 @@
     "y_weight": "super-bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 8,
+    "stock": 0,
     "color": "#62a0ea",
     "isYarn": true
   },
@@ -7547,7 +7547,7 @@
     "y_weight": "light-dk",
     "weight_g": 50,
     "category": "cotton",
-    "stock": 8,
+    "stock": 0,
     "color": "#3d3846",
     "isYarn": true
   },
@@ -7563,7 +7563,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#813d9c",
     "isYarn": true
   },
@@ -7579,7 +7579,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#c0bfbc",
     "isYarn": true
   },
@@ -7595,7 +7595,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#74c8ff",
     "isYarn": true
   },
@@ -7611,7 +7611,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 9,
+    "stock": 0,
     "color": "#eacbcc",
     "isYarn": true
   },
@@ -7627,7 +7627,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#363117",
     "isYarn": true
   },
@@ -7643,7 +7643,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#deddda",
     "isYarn": true
   },
@@ -7659,7 +7659,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#99c1f1",
     "isYarn": true
   },
@@ -7675,7 +7675,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#3584e4",
     "isYarn": true
   },
@@ -7691,7 +7691,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#8ff0a4",
     "isYarn": true
   },
@@ -7707,7 +7707,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#57e389",
     "isYarn": true
   },
@@ -7723,7 +7723,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#d88ad2",
     "isYarn": true
   },
@@ -7739,7 +7739,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#856ca2",
     "isYarn": true
   },
@@ -7755,7 +7755,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#208a79",
     "isYarn": true
   },
@@ -7771,7 +7771,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#e5a50a",
     "isYarn": true
   },
@@ -7787,7 +7787,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#d88ad2",
     "isYarn": true
   },
@@ -7803,7 +7803,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#122c20",
     "isYarn": true
   },
@@ -7819,7 +7819,7 @@
     "y_weight": "light-dk",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 12,
+    "stock": 0,
     "color": "#f6d32d",
     "isYarn": true
   },
@@ -7835,7 +7835,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 12,
+    "stock": 0,
     "color": "#193905",
     "isYarn": true
   },
@@ -7851,7 +7851,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "cotton-blend",
-    "stock": 6,
+    "stock": 0,
     "color": "#22102d",
     "isYarn": true
   },
@@ -7867,7 +7867,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 3,
+    "stock": 0,
     "color": "#de748a",
     "isYarn": true
   },
@@ -7883,7 +7883,7 @@
     "y_weight": "fine",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 6,
+    "stock": 0,
     "color": "#64a52f",
     "isYarn": true
   },
@@ -7915,7 +7915,7 @@
     "y_weight": "bulky",
     "weight_g": 100,
     "category": "polyester",
-    "stock": 15,
+    "stock": 0,
     "color": "#e8d9e1",
     "isYarn": true
   },
@@ -7931,7 +7931,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 39,
+    "stock": 0,
     "color": "#e5e5ca",
     "isYarn": true
   },
@@ -7947,7 +7947,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 1,
+    "stock": 0,
     "color": "#c7bd8c",
     "isYarn": true
   },
@@ -7963,7 +7963,7 @@
     "y_weight": "medium",
     "weight_g": 100,
     "category": "acrylic",
-    "stock": 9,
+    "stock": 0,
     "color": "#ae0216",
     "isYarn": true
   }

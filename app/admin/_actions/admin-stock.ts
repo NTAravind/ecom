@@ -64,12 +64,9 @@ export async function getStockItems(searchParams: {
   }
 
   // Build YarnAccessory query if applicable
-  if (typeFilter === "all" || typeFilter === "accessory") {
+  // Accessories do not have a brandId. Only query them if no specific brand is selected.
+  if ((typeFilter === "all" || typeFilter === "accessory") && (!searchParams.brandId || searchParams.brandId === "all")) {
     const where: any = {}
-    
-    if (searchParams.brandId && searchParams.brandId !== "all") {
-      where.brandId = searchParams.brandId
-    }
     
     if (searchFilter) {
       where.name = { contains: searchFilter, mode: "insensitive" }
