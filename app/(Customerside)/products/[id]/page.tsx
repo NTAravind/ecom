@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { getproduct } from "@/lib/actions"
 import Image from "next/image"
-import { getColorName } from "@/lib/utils"
 import prisma from "@/lib/prisma"
 import { ProductCard } from "@/app/components/ProductCard"
 import Header from "@/app/components/Header"
@@ -270,8 +269,6 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
     return <div className="text-center mt-10 text-destructive">Product not found.</div>
   }
 
-  const color = getColorName(data.color)
-  
   // Get static similar products data (cached for 24 hours)
   const simprods = await getStaticSimilarProducts(data.category, data.id)
 
@@ -305,9 +302,9 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
         </div>
 
         <div className="space-y-6">
-          <h1 className="text-3xl font-bold">{data.brand.name}, {data.pname}, {color} {data.y_weight} - {data.category}</h1>
+          <h1 className="text-3xl font-bold">{data.pname}, {data.y_weight} - {data.category}</h1>
           
-          {/* Dynamic price section with loading fallback */}
+          {/* Dynamic price section with loading fallback*/}
           <Suspense fallback={
             <div className="space-y-2">
               <div className="bg-gray-200 h-8 w-32 rounded animate-pulse"></div>
