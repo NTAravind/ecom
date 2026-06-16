@@ -22,6 +22,7 @@ const shopCategories = [
       { name: "Ganga Desire", href: "/products?categories=acrylic&brands=Ganga%20Desire" },
       { name: "Acrylic Hobby India", href: "/products?categories=acrylic&brands=Hobby" },
       { name: "Ganga Spectrum", href: "/products?categories=acrylic&brands=Ganga%20Spectrum" },
+       { name: "Olivia", href: "/products?categories=acrylic&brands=Olivia" }
     ]
   },
   {

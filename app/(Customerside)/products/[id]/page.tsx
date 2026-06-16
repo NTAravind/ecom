@@ -319,16 +319,6 @@ export default async function ProductPage({ params }: { params: Promise<{id:stri
               <span className="text-muted-foreground">{data.brand.name}</span>
             </div>
             
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium min-w-[80px]">Color:</span>
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-7 h-7 rounded-none border-2 shadow-sm" 
-                  style={{ backgroundColor: data.color }}
-                />
-               
-              </div>
-            </div>
             
             <div className="flex items-center gap-2 text-sm">
               <span className="font-medium min-w-[80px]">Weight:</span>
