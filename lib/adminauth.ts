@@ -1,12 +1,5 @@
 export async function checkpass(password: string, hashedpass: string) {
   const inputHash = await hashedPass(password);
-  
-  console.log("=== PASSWORD CHECK DEBUG ===");
-  console.log("Input password hash:", inputHash);
-  console.log("Stored hash:", hashedpass);
-  console.log("Hashes match:", inputHash === hashedpass);
-  console.log("============================");
-  
   return inputHash === hashedpass;
 }
 

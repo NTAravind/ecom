@@ -17,7 +17,7 @@ import {
   AlertDialogFooter,
 } from '@/components/ui/alert-dialog';
 import { Edit3, Minus, Plus, X, UserIcon, MapPin, Phone, ShoppingBag, CreditCard, Truck, ServerIcon, Loader2, AlertTriangle, Package } from 'lucide-react';
-import { useEffect, useState, useMemo, useCallback, memo, lazy, Suspense } from 'react';
+import { useEffect, useState, useMemo, useCallback, memo, lazy, Suspense, useRef } from 'react';
 import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -675,7 +675,11 @@ function PurchaseButton({
   const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+  // FIX #1: Use useRef instead of useState so callbacks always read the live orderId
+  // (useState closures inside Razorpay options capture the stale value at init time)
+  const currentOrderIdRef = useRef<string | null>(null);
+  // FIX #2: Track whether user actually initiated a payment attempt before dismissing
+  const paymentAttemptedRef = useRef(false);
 
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
   const router = useRouter();
@@ -825,7 +829,10 @@ function PurchaseButton({
         throw new Error('Invalid order response');
       }
 
-      setCurrentOrderId(orderData.orderId);
+      // FIX #1: Write to ref so all callbacks see the current value
+      currentOrderIdRef.current = orderData.orderId;
+      // FIX #2: Reset attempt flag for this new payment session
+      paymentAttemptedRef.current = false;
 
       const razorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORKEY,
@@ -902,8 +909,11 @@ function PurchaseButton({
           ondismiss: async () => {
             console.log('Payment modal dismissed');
             setPending(false);
-            if (currentOrderId) {
-              await pollOrderStatus(currentOrderId);
+            // FIX #2: Only poll if user actually attempted payment — not on immediate close
+            if (paymentAttemptedRef.current && currentOrderIdRef.current) {
+              await pollOrderStatus(currentOrderIdRef.current);
+            } else {
+              console.log('Modal closed before payment attempt — skipping poll');
             }
           },
         },
@@ -920,18 +930,20 @@ function PurchaseButton({
         );
       });
 
+      // FIX #2: Mark that user has initiated payment right before opening modal
+      paymentAttemptedRef.current = true;
       rzp.open();
     } catch (err) {
       console.error('Order creation error:', err);
       setPending(false);
       showAlert(
         'Payment Pending',
-        `Your order #${currentOrderId?.slice(-8) || 'unknown'} is still processing. Check the status on the orders page.`,
+        `Your order #${currentOrderIdRef.current?.slice(-8) || 'unknown'} is still processing. Check the status on the orders page.`,
         'warning',
         () => router.push('/orders')
       );
     }
-  }, [user, cartItems, scriptLoaded, showAlert, ClearBasket, router, stockValidation, totalAmount, currentOrderId, pollOrderStatus, del]);
+  }, [user, cartItems, scriptLoaded, showAlert, ClearBasket, router, stockValidation, totalAmount, pollOrderStatus, del]);
 
   const canProceed = useMemo(
     () => user.us?.name && user.us?.Address && user.us?.pincode && cartItems.length > 0 && stockValidation.isValid && totalAmount > 0,
@@ -1010,7 +1022,7 @@ function PurchaseButton({
         {canProceed && !isBulkOrder && (
           <div className="text-xs text-gray-500 text-center space-y-1">
             <div>Items: {cartItems.length} • Total Qty: {cartItems.reduce((sum, item) => sum + item.qty, 0)}</div>
-            {currentOrderId && <div className="font-mono">Order ID: {currentOrderId.slice(-8)}</div>}
+            {currentOrderIdRef.current && <div className="font-mono">Order ID: {currentOrderIdRef.current.slice(-8)}</div>}
           </div>
         )}
       </div>

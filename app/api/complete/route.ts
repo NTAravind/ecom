@@ -1,11 +1,19 @@
 // app/api/orders/complete/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { auth } from '@/auth'
 
 export async function POST(request: NextRequest) {
+  // Security: This endpoint is admin-only. Middleware covers /admin/* pages,
+  // but the /api/complete route is a separate path — guard it explicitly.
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { id, phone } = await request.json()
-    console.log('Received request to complete order:', { id, phone })
+    console.log('Received request to complete order:', { id })
     
     if (!id) {
       return NextResponse.json(
