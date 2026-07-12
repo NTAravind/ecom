@@ -858,37 +858,17 @@ function PurchaseButton({
 
             const verifyData = await verifyRes.json();
             if (!verifyRes.ok || !verifyData.success) {
+              if (verifyData.error?.includes('stock') || verifyData.error?.includes('Insufficient')) {
+                showAlert('Stock Issue', 'Items became unavailable. Payment will be refunded.', 'error', () => router.push('/orders'));
+                return;
+              }
               console.log('Verification failed, polling order:', orderData.orderId);
               await pollOrderStatus(orderData.orderId);
               return;
             }
 
-            const completeOrderRes = await fetch('/api/razorpay/order', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-                userId: user.us.id,
-                cartitems: orderItems,
-                pricepaid: orderData.amount,
-                delivery: del,
-                pincode: del ? user.us.pincode : null,
-              }),
-            });
-
-            const completeData = await completeOrderRes.json();
-            if (!completeOrderRes.ok || !completeData.success) {
-              if (completeData.error?.includes('stock') || completeData.error?.includes('Insufficient')) {
-                showAlert('Stock Issue', 'Items became unavailable. Payment will be refunded.', 'error', () => router.push('/orders'));
-                return;
-              }
-              console.log('Completion failed, polling order:', orderData.orderId);
-              await pollOrderStatus(orderData.orderId);
-              return;
-            }
-
+            // /api/razorpay/verify is now the single source of truth:
+            // it verifies payment, marks the order paid, and decrements stock.
             showAlert(
               'Order Placed Successfully!',
               `Your ${del ? 'delivery' : 'pickup'} order #${orderData.orderId.slice(-8)} has been confirmed.`,

@@ -1,12 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import prisma from "@/lib/prisma";
 import Razorpay from "razorpay";
+import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
+import { finalizePaidOrder } from "@/lib/razorpay/finalize-order";
+
+function getRazorpayClient() {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error("Razorpay credentials not configured");
+  }
+
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID.trim(),
+    key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
     let body;
+
     try {
       body = JSON.parse(rawBody);
     } catch (error) {
@@ -16,157 +30,46 @@ export async function POST(req: NextRequest) {
 
     if (body.event) {
       return handleWebhook(req, body, rawBody);
-    } else {
-      return handlePaymentVerification(body);
     }
+
+    return handlePaymentVerification(body);
   } catch (error) {
     console.error("Verification error:", error);
     return NextResponse.json({ success: false, error: "Verification failed" }, { status: 500 });
   }
 }
 
-// Helper that runs the heavy DB work for a captured payment.
-// Isolated so it can be called from setImmediate without async leaking into the response.
-async function processCapture(payment: any, body: any) {
-  const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
-  });
+async function finalizeCapturedPayment(paymentId: string, orderId: string) {
+  const razorpay = getRazorpayClient();
+  const razorpayPayment = await razorpay.payments.fetch(paymentId);
 
-  const razorpayPayment = await razorpay.payments.fetch(payment.id);
+  if (razorpayPayment.order_id !== orderId) {
+    throw new Error(`Payment ${paymentId} does not belong to order ${orderId}`);
+  }
+
   if (razorpayPayment.status !== "captured") {
-    console.error(`❌ Payment ${payment.id} not captured`);
-    return;
+    throw new Error(`Payment ${paymentId} is not captured`);
   }
 
-  // FIX #4: Minimum 6 retries × 1500ms to avoid missing DB record written concurrently by client
-  let existingOrder = null;
-  const maxRetries = 6;
-  const retryDelay = 1500;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    existingOrder = await prisma.order.findUnique({
-      where: { id: payment.order_id },
-      include: { orderItems: { include: { product: true, yarnAccessory: true } }, user: true },
-    });
-
-    if (existingOrder) {
-      console.log(`✅ Order found on attempt ${attempt}: ${payment.order_id}`);
-      break;
-    }
-
-    if (attempt < maxRetries) {
-      console.log(`⏳ Order not found, retrying in ${retryDelay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, retryDelay));
-    }
-  }
-
-  if (!existingOrder) {
-    console.error(`❌ Order not found after retries: ${payment.order_id}`);
-    try {
-      const razorpayOrder = await razorpay.orders.fetch(payment.order_id);
-      const { phone, delivery_mode } = razorpayOrder.notes;
-
-      const productIds = body.payload.order?.entity?.items?.map((item: any) => item.id) || [];
-      const products = await prisma.product.findMany({
-        where: { id: { in: productIds } },
-        select: { id: true, discountedPrice: true, stock: true, pname: true },
-      });
-
-      let serverCalculatedTotal = 0;
-      const cartItems = (body.payload.order?.entity?.items || []).map((item: any) => {
-        const product = products.find((p: any) => p.id === item.id);
-        if (!product) throw new Error(`Product not found: ${item.id}`);
-        serverCalculatedTotal += product.discountedPrice * item.quantity;
-        return { productId: item.id, qty: item.quantity };
-      });
-
-      const serverDeliveryCharge = delivery_mode === "delivery" && serverCalculatedTotal < 2000 ? 60 : 0;
-      const serverTotalAmount = serverCalculatedTotal + serverDeliveryCharge + 4;
-
-      await prisma.$transaction(async (tx) => {
-        const order = await tx.order.create({
-          data: {
-            id: payment.order_id,
-            pricepaid: serverTotalAmount,
-            paymentid: payment.id,
-            paid: true,
-            complete: true,
-            delivered: delivery_mode === "delivery",
-            user: { connect: { phone: phone.toString() } },
-            orderItems: {
-              create: cartItems.map((cartItem: any) => ({
-                quantity: cartItem.qty,
-                product: { connect: { id: cartItem.productId } },
-              })),
-            },
-          },
-          include: { orderItems: { include: { product: true } } },
-        });
-
-        for (const cartItem of cartItems) {
-          const updatedProduct = await tx.product.update({
-            where: { id: cartItem.productId },
-            data: { stock: { decrement: cartItem.qty } },
-            select: { stock: true, pname: true },
-          });
-
-          if (updatedProduct.stock < 0) {
-            throw new Error(`Insufficient stock for ${updatedProduct.pname}.`);
-          }
-        }
-
-        return order;
-      });
-
-      console.log(`✅ Order created by webhook (orphan recovery): ${payment.order_id}`);
-    } catch (createError: any) {
-      console.error(`❌ Failed to create orphan order:`, createError);
-    }
-    return;
-  }
-
-  // FIX #7: Idempotency — skip if already paid (webhook + client handler race guard)
-  if (existingOrder.paid) {
-    console.log(`✅ Order ${payment.order_id} already processed — skipping duplicate`);
-    return;
-  }
-
-  await prisma.$transaction(async (tx) => {
-    const updatedOrder = await tx.order.update({
-      where: { id: payment.order_id },
-      data: { paid: true, paymentid: payment.id, complete: true },
-      include: { orderItems: { include: { product: true, yarnAccessory: true } } },
-    });
-
-    for (const orderItem of existingOrder!.orderItems) {
-      if (orderItem.product) {
-        // Decrement product stock
-        const updatedProduct = await tx.product.update({
-          where: { id: orderItem.product.id },
-          data: { stock: { decrement: orderItem.quantity } },
-          select: { stock: true, pname: true },
-        });
-        if (updatedProduct.stock < 0) {
-          throw new Error(`Insufficient stock for product ${updatedProduct.pname}.`);
-        }
-      } else if (orderItem.yarnAccessory) {
-        // Decrement yarn accessory stock
-        const updatedAccessory = await tx.yarnAccessory.update({
-          where: { id: orderItem.yarnAccessory.id },
-          data: { stock: { decrement: orderItem.quantity } },
-          select: { stock: true, name: true },
-        });
-        if (updatedAccessory.stock < 0) {
-          throw new Error(`Insufficient stock for accessory ${updatedAccessory.name}.`);
-        }
-      }
-    }
-
-    return updatedOrder;
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { id: true, pricepaid: true },
   });
 
-  console.log(`✅ Order completed via webhook: ${payment.order_id}`);
+  if (!order) {
+    throw new Error(`Order not found: ${orderId}`);
+  }
+
+  if (razorpayPayment.amount !== Math.round(order.pricepaid * 100)) {
+    throw new Error(`Amount mismatch for order ${orderId}`);
+  }
+
+  // This is the only local completion path: mark paid + complete + reduce stock.
+  // It is safe for both frontend verification and webhook recovery to call it.
+  return finalizePaidOrder({
+    razorpayOrderId: orderId,
+    razorpayPaymentId: paymentId,
+  });
 }
 
 async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
@@ -186,17 +89,14 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
 
   console.log("✅ Webhook signature verified");
 
-  // FIX #3: Return 200 IMMEDIATELY after signature check so Razorpay never times out
-  // and retries, which would cause duplicate processing. All DB work runs in setImmediate.
   if (body.event === "payment.captured") {
     const payment = body.payload.payment.entity;
 
-    setImmediate(() => {
-      processCapture(payment, body).catch((err) => {
-        console.error(`❌ Unhandled error in processCapture for ${payment.order_id}:`, err);
-      });
-    });
+    // Webhook is backup recovery, but it uses the same finalizer as the frontend.
+    // Razorpay gets 200 only after DB completion succeeds, so failed attempts can retry.
+    await finalizeCapturedPayment(payment.id, payment.order_id);
 
+    console.log(`✅ Order completed via webhook: ${payment.order_id}`);
     return new Response("Accepted", { status: 200 });
   }
 
@@ -204,23 +104,18 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
     const payment = body.payload.payment.entity;
     console.log("❌ Payment failed:", payment.id);
 
-    setImmediate(() => {
-      prisma.order.findUnique({
-        where: { id: payment.order_id },
-        select: { id: true, paid: true },
-      }).then((existingOrder) => {
-        if (existingOrder && !existingOrder.paid) {
-          return prisma.order.update({
-            where: { id: payment.order_id },
-            data: { paid: false },
-          }).then(() => {
-            console.log(`✅ Marked order ${payment.order_id} as failed`);
-          });
-        }
-      }).catch((error) => {
-        console.error("❌ Error handling failed payment:", error);
-      });
+    const existingOrder = await prisma.order.findUnique({
+      where: { id: payment.order_id },
+      select: { id: true, paid: true },
     });
+
+    if (existingOrder && !existingOrder.paid) {
+      await prisma.order.update({
+        where: { id: payment.order_id },
+        data: { paid: false },
+      });
+      console.log(`✅ Marked order ${payment.order_id} as failed`);
+    }
 
     return new Response("Accepted", { status: 200 });
   }
@@ -231,6 +126,11 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
 
 async function handlePaymentVerification(body: any) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -243,19 +143,19 @@ async function handlePaymentVerification(body: any) {
       return NextResponse.json({ success: false, error: "Configuration error" }, { status: 500 });
     }
 
-    const generated_signature = crypto
+    const generatedSignature = crypto
       .createHmac("sha256", secret)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
-    if (generated_signature !== razorpay_signature) {
+    if (generatedSignature !== razorpay_signature) {
       console.log("❌ Payment signature verification failed");
       return NextResponse.json({ success: false, error: "Invalid signature" }, { status: 400 });
     }
 
     const order = await prisma.order.findUnique({
       where: { id: razorpay_order_id },
-      select: { id: true, paid: true, paymentid: true, complete: true, pricepaid: true },
+      select: { id: true, userId: true },
     });
 
     if (!order) {
@@ -263,17 +163,36 @@ async function handlePaymentVerification(body: any) {
       return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
     }
 
-    console.log("✅ Payment verified:", razorpay_payment_id);
+    if (order.userId !== session.user.id) {
+      console.error(`❌ Unauthorized payment verification for order ${razorpay_order_id}`);
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
+    }
 
-    return NextResponse.json({
-      success: true,
-      message: "Payment verified successfully",
-      payment_id: razorpay_payment_id,
-      order_id: razorpay_order_id,
-      order,
-    }, { status: 200 });
-  } catch (error) {
+    const completedOrder = await finalizeCapturedPayment(razorpay_payment_id, razorpay_order_id);
+
+    console.log("✅ Payment verified and order completed:", razorpay_payment_id);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Payment verified and order completed successfully",
+        payment_id: razorpay_payment_id,
+        order_id: razorpay_order_id,
+        order: completedOrder,
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
     console.error("❌ Payment verification error:", error);
-    return NextResponse.json({ success: false, error: "Payment verification failed" }, { status: 500 });
+    const isStockError = error.message?.includes("Insufficient stock");
+    const isPaymentError = error.message?.includes("not captured") || error.message?.includes("Amount mismatch");
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: isStockError || isPaymentError ? error.message : "Payment verification failed",
+      },
+      { status: isStockError ? 409 : 500 }
+    );
   }
 }

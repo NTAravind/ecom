@@ -24,7 +24,7 @@ export async function GET(
         pricepaid: true,
         delivered: true,
         userId: true,
-        orderItems: { include: { product: true } },
+        orderItems: { include: { product: true, yarnAccessory: true } },
       },
     });
 
@@ -49,8 +49,8 @@ export async function GET(
         pricepaid: order.pricepaid,
         delivered: order.delivered,
         orderItems: order.orderItems.map(item => ({
-          productId: item.product.id,
-          productName: item.product.pname,
+          productId: item.product?.id || item.yarnAccessory?.id,
+          productName: item.product?.pname || item.yarnAccessory?.name || "Unknown item",
           quantity: item.quantity,
         })),
       },
