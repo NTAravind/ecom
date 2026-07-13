@@ -48,7 +48,7 @@ async function finalizeCapturedPayment(paymentId: string, orderId: string) {
   }
 
   if (razorpayPayment.status !== "captured") {
-    throw new Error(`Payment ${paymentId} is not captured`);
+    throw new Error(`Payment ${paymentId} is not captured (status: ${razorpayPayment.status})`);
   }
 
   const order = await prisma.order.findUnique({
@@ -60,12 +60,48 @@ async function finalizeCapturedPayment(paymentId: string, orderId: string) {
     throw new Error(`Order not found: ${orderId}`);
   }
 
-  if (razorpayPayment.amount !== Math.round(order.pricepaid * 100)) {
-    throw new Error(`Amount mismatch for order ${orderId}`);
+  // BUG FIX: Razorpay SDK can return `amount` as string or number depending on the version.
+  // Prisma Decimal fields also don't compare cleanly with !== against plain numbers.
+  // Coerce both sides to Number and use a small tolerance (1 paisa) to avoid false mismatches.
+  const razorpayAmountPaise = Number(razorpayPayment.amount);
+  const expectedAmountPaise = Math.round(Number(order.pricepaid) * 100);
+  if (Math.abs(razorpayAmountPaise - expectedAmountPaise) > 1) {
+    throw new Error(
+      `Amount mismatch for order ${orderId}: expected ${expectedAmountPaise} paise, got ${razorpayAmountPaise} paise`
+    );
   }
 
   // This is the only local completion path: mark paid + complete + reduce stock.
   // It is safe for both frontend verification and webhook recovery to call it.
+  return finalizePaidOrder({
+    razorpayOrderId: orderId,
+    razorpayPaymentId: paymentId,
+  });
+}
+
+// Lightweight finalizer used by the webhook — trusts Razorpay's payment.captured event
+// and only verifies the order/payment linkage before completing locally.
+// We do NOT re-check razorpayPayment.status here because:
+//   1. The webhook event type already guarantees captured status.
+//   2. Re-fetching could see a transient non-captured state and throw,
+//      causing Razorpay to retry the webhook indefinitely.
+async function finalizeWebhookPayment(paymentId: string, orderId: string, paymentAmount: number) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { id: true, pricepaid: true },
+  });
+
+  if (!order) {
+    throw new Error(`Order not found: ${orderId}`);
+  }
+
+  const expectedAmountPaise = Math.round(Number(order.pricepaid) * 100);
+  if (Math.abs(paymentAmount - expectedAmountPaise) > 1) {
+    throw new Error(
+      `Webhook amount mismatch for order ${orderId}: expected ${expectedAmountPaise} paise, got ${paymentAmount} paise`
+    );
+  }
+
   return finalizePaidOrder({
     razorpayOrderId: orderId,
     razorpayPaymentId: paymentId,
@@ -92,9 +128,9 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
   if (body.event === "payment.captured") {
     const payment = body.payload.payment.entity;
 
-    // Webhook is backup recovery, but it uses the same finalizer as the frontend.
-    // Razorpay gets 200 only after DB completion succeeds, so failed attempts can retry.
-    await finalizeCapturedPayment(payment.id, payment.order_id);
+    // Use the webhook-specific finalizer that trusts the payment.captured event
+    // rather than re-fetching the payment status (which can cause infinite retries).
+    await finalizeWebhookPayment(payment.id, payment.order_id, Number(payment.amount));
 
     console.log(`✅ Order completed via webhook: ${payment.order_id}`);
     return new Response("Accepted", { status: 200 });

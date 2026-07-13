@@ -916,12 +916,23 @@ function PurchaseButton({
     } catch (err) {
       console.error('Order creation error:', err);
       setPending(false);
-      showAlert(
-        'Payment Pending',
-        `Your order #${currentOrderIdRef.current?.slice(-8) || 'unknown'} is still processing. Check the status on the orders page.`,
-        'warning',
-        () => router.push('/orders')
-      );
+      // Only show "Payment Pending" if we actually got an orderId (i.e. the order was
+      // created before the error occurred). If order creation itself failed, no money
+      // was taken and we should show a plain error rather than mislead the user.
+      if (currentOrderIdRef.current) {
+        showAlert(
+          'Payment Pending',
+          `Your order #${currentOrderIdRef.current.slice(-8)} is still processing. Check the orders page for its status.`,
+          'warning',
+          () => router.push('/orders')
+        );
+      } else {
+        showAlert(
+          'Order Creation Failed',
+          'Something went wrong while creating your order. No payment was taken. Please try again.',
+          'error'
+        );
+      }
     }
   }, [user, cartItems, scriptLoaded, showAlert, ClearBasket, router, stockValidation, totalAmount, pollOrderStatus, del]);
 
