@@ -169,7 +169,7 @@ export function NavBar() {
     }
   }, [isMobileMenuOpen, isClient, resetMobileMenu])
 
-  // Escape key handler
+  
   useEffect(() => {
     if (!isShopOpen && !isMobileMenuOpen) return
     const handleEscapeKey = (event: KeyboardEvent) => {
