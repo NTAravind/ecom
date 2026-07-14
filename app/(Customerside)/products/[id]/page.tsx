@@ -121,7 +121,7 @@ async function getStaticSimilarProducts(category: string, currentProductId: stri
   return simprods
 }
 
-// Get dynamic data (price and stock) - always fresh
+ 
 async function getDynamicProductData(productId: string): Promise<DynamicProductData> {
   try {
     const product = await prisma.product.findUnique({
