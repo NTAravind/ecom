@@ -47,8 +47,9 @@ async function finalizeCapturedPayment(paymentId: string, orderId: string) {
     throw new Error(`Payment ${paymentId} does not belong to order ${orderId}`);
   }
 
-  if (razorpayPayment.status !== "captured") {
-    throw new Error(`Payment ${paymentId} is not captured (status: ${razorpayPayment.status})`);
+  // Accept both "captured" (auto-capture on) and "authorized" (manual capture)
+  if (razorpayPayment.status !== "captured" && razorpayPayment.status !== "authorized") {
+    throw new Error(`Payment ${paymentId} has unexpected status: ${razorpayPayment.status}`);
   }
 
   const order = await prisma.order.findUnique({
@@ -60,48 +61,18 @@ async function finalizeCapturedPayment(paymentId: string, orderId: string) {
     throw new Error(`Order not found: ${orderId}`);
   }
 
-  // BUG FIX: Razorpay SDK can return `amount` as string or number depending on the version.
-  // Prisma Decimal fields also don't compare cleanly with !== against plain numbers.
-  // Coerce both sides to Number and use a small tolerance (1 paisa) to avoid false mismatches.
+  // Razorpay SDK can return amount as string or number — coerce before comparing
   const razorpayAmountPaise = Number(razorpayPayment.amount);
-  const expectedAmountPaise = Math.round(Number(order.pricepaid) * 100);
-  if (Math.abs(razorpayAmountPaise - expectedAmountPaise) > 1) {
-    throw new Error(
-      `Amount mismatch for order ${orderId}: expected ${expectedAmountPaise} paise, got ${razorpayAmountPaise} paise`
+  const expectedAmountPaise = Math.round(order.pricepaid * 100);
+  if (razorpayAmountPaise !== expectedAmountPaise) {
+    console.error(
+      `Amount mismatch for order ${orderId}: Razorpay=${razorpayAmountPaise} paise, DB=${expectedAmountPaise} paise`
     );
+    throw new Error(`Amount mismatch for order ${orderId}`);
   }
 
   // This is the only local completion path: mark paid + complete + reduce stock.
   // It is safe for both frontend verification and webhook recovery to call it.
-  return finalizePaidOrder({
-    razorpayOrderId: orderId,
-    razorpayPaymentId: paymentId,
-  });
-}
-
-// Lightweight finalizer used by the webhook — trusts Razorpay's payment.captured event
-// and only verifies the order/payment linkage before completing locally.
-// We do NOT re-check razorpayPayment.status here because:
-//   1. The webhook event type already guarantees captured status.
-//   2. Re-fetching could see a transient non-captured state and throw,
-//      causing Razorpay to retry the webhook indefinitely.
-async function finalizeWebhookPayment(paymentId: string, orderId: string, paymentAmount: number) {
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    select: { id: true, pricepaid: true },
-  });
-
-  if (!order) {
-    throw new Error(`Order not found: ${orderId}`);
-  }
-
-  const expectedAmountPaise = Math.round(Number(order.pricepaid) * 100);
-  if (Math.abs(paymentAmount - expectedAmountPaise) > 1) {
-    throw new Error(
-      `Webhook amount mismatch for order ${orderId}: expected ${expectedAmountPaise} paise, got ${paymentAmount} paise`
-    );
-  }
-
   return finalizePaidOrder({
     razorpayOrderId: orderId,
     razorpayPaymentId: paymentId,
@@ -128,9 +99,9 @@ async function handleWebhook(req: NextRequest, body: any, rawBody: string) {
   if (body.event === "payment.captured") {
     const payment = body.payload.payment.entity;
 
-    // Use the webhook-specific finalizer that trusts the payment.captured event
-    // rather than re-fetching the payment status (which can cause infinite retries).
-    await finalizeWebhookPayment(payment.id, payment.order_id, Number(payment.amount));
+    // Webhook is backup recovery, but it uses the same finalizer as the frontend.
+    // Razorpay gets 200 only after DB completion succeeds, so failed attempts can retry.
+    await finalizeCapturedPayment(payment.id, payment.order_id);
 
     console.log(`✅ Order completed via webhook: ${payment.order_id}`);
     return new Response("Accepted", { status: 200 });
@@ -221,7 +192,11 @@ async function handlePaymentVerification(body: any) {
   } catch (error: any) {
     console.error("❌ Payment verification error:", error);
     const isStockError = error.message?.includes("Insufficient stock");
-    const isPaymentError = error.message?.includes("not captured") || error.message?.includes("Amount mismatch");
+    const isPaymentError =
+      error.message?.includes("not captured") ||
+      error.message?.includes("unexpected status") ||
+      error.message?.includes("Amount mismatch") ||
+      error.message?.includes("does not belong");
 
     return NextResponse.json(
       {

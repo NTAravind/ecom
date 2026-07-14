@@ -680,6 +680,8 @@ function PurchaseButton({
   const currentOrderIdRef = useRef<string | null>(null);
   // FIX #2: Track whether user actually initiated a payment attempt before dismissing
   const paymentAttemptedRef = useRef(false);
+  // FIX #3: Track if payment already succeeded to avoid duplicate polls from ondismiss
+  const paymentSucceededRef = useRef(false);
 
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
   const router = useRouter();
@@ -833,6 +835,8 @@ function PurchaseButton({
       currentOrderIdRef.current = orderData.orderId;
       // FIX #2: Reset attempt flag for this new payment session
       paymentAttemptedRef.current = false;
+      // FIX #3: Reset succeeded flag for this new payment session
+      paymentSucceededRef.current = false;
 
       const razorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORKEY,
@@ -869,6 +873,7 @@ function PurchaseButton({
 
             // /api/razorpay/verify is now the single source of truth:
             // it verifies payment, marks the order paid, and decrements stock.
+            paymentSucceededRef.current = true;
             showAlert(
               'Order Placed Successfully!',
               `Your ${del ? 'delivery' : 'pickup'} order #${orderData.orderId.slice(-8)} has been confirmed.`,
@@ -890,10 +895,11 @@ function PurchaseButton({
             console.log('Payment modal dismissed');
             setPending(false);
             // FIX #2: Only poll if user actually attempted payment — not on immediate close
-            if (paymentAttemptedRef.current && currentOrderIdRef.current) {
+            // FIX #3: Skip polling if payment already succeeded (handler already ran)
+            if (paymentAttemptedRef.current && currentOrderIdRef.current && !paymentSucceededRef.current) {
               await pollOrderStatus(currentOrderIdRef.current);
             } else {
-              console.log('Modal closed before payment attempt — skipping poll');
+              console.log('Modal closed — skipping poll (no attempt or already succeeded)');
             }
           },
         },
