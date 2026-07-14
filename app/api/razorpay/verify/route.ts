@@ -170,7 +170,14 @@ async function handlePaymentVerification(body: any) {
       return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
     }
 
-    if (order.userId !== session.user.id) {
+    // session.user.id is the phone number (set by verifyOtp returning { id: phone }).
+    // order.userId is the Prisma User UUID — we must resolve it before comparing.
+    const dbUser = await prisma.user.findUnique({
+      where: { phone: session.user.id as string },
+      select: { id: true },
+    });
+
+    if (!dbUser || order.userId !== dbUser.id) {
       console.error(`❌ Unauthorized payment verification for order ${razorpay_order_id}`);
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }

@@ -33,7 +33,14 @@ export async function GET(
       return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
     }
 
-    if (order.userId !== session.user.id) {
+    // session.user.id is the phone number (set by verifyOtp returning { id: phone }).
+    // order.userId is the Prisma User UUID — resolve it before comparing.
+    const dbUser = await prisma.user.findUnique({
+      where: { phone: session.user.id as string },
+      select: { id: true },
+    });
+
+    if (!dbUser || order.userId !== dbUser.id) {
       console.error(`❌ Unauthorized access to order ${orderId}`);
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
