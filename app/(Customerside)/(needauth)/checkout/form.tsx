@@ -708,44 +708,46 @@ function PurchaseButton({
     }
   }, [scriptLoaded, showAlert]);
 
-  const pollOrderStatus = useCallback(async (orderId: string, maxAttempts: number = 5, delay: number = 2000) => {
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        const res = await fetch(`/api/check-order/${orderId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (!res.ok) {
-          console.log(`Polling attempt ${attempt}/${maxAttempts} failed: ${res.status}`);
-          continue;
-        }
-        const data = await res.json();
-        if (data.success && data.order?.paid && data.order?.complete) {
-          showAlert(
-            'Order Placed Successfully!',
-            `Your ${del ? 'delivery' : 'pickup'} order #${orderId.slice(-8)} has been confirmed.`,
-            'success',
-            () => {
-              ClearBasket();
-              router.push('/orders');
-            }
-          );
-          return true;
-        }
-        console.log(`Polling attempt ${attempt}/${maxAttempts}: Order ${orderId} not yet paid`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      } catch (err) {
-        console.error(`Polling error for order ${orderId}:`, err);
+ const pollOrderStatus = useCallback(async (orderId: string, maxAttempts: number = 5, delay: number = 2000) => {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(`/api/check-order/${orderId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) {
+        console.log(`Polling attempt ${attempt}/${maxAttempts} failed: ${res.status}`);
+        continue;
       }
+      const data = await res.json();
+      // `paid` is the payment-success signal now. `complete` means
+      // fulfilled/delivered and is unrelated to payment — don't gate on it.
+      if (data.success && data.order?.paid) {
+        showAlert(
+          'Order Placed Successfully!',
+          `Your ${del ? 'delivery' : 'pickup'} order #${orderId.slice(-8)} has been confirmed.`,
+          'success',
+          () => {
+            ClearBasket();
+            router.push('/orders');
+          }
+        );
+        return true;
+      }
+      console.log(`Polling attempt ${attempt}/${maxAttempts}: Order ${orderId} not yet paid`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    } catch (err) {
+      console.error(`Polling error for order ${orderId}:`, err);
     }
-    showAlert(
-      'Payment Pending',
-      `Your order #${orderId.slice(-8)} is still processing. Check the status on the orders page.`,
-      'warning',
-      () => router.push('/orders')
-    );
-    return false;
-  }, [showAlert, ClearBasket, router, del]);
+  }
+  showAlert(
+    'Payment Pending',
+    `Your order #${orderId.slice(-8)} is still processing. Check the status on the orders page.`,
+    'warning',
+    () => router.push('/orders')
+  );
+  return false;
+}, [showAlert, ClearBasket, router, del]);
 
   const generateOrderText = useCallback(() => {
     const orderItems = cartItems
