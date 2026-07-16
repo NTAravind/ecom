@@ -78,7 +78,7 @@ export default function DeliveryModeSelector({
         {value ? (
           <div className="flex items-center gap-1">
             <Truck className="h-3 w-3" />
-            Delivery within 24-48 hours
+            Delivery within 4-5 days
           </div>
         ) : (
           <div className="flex items-center gap-1">
