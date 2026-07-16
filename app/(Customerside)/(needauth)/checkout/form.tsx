@@ -655,9 +655,11 @@ const ProductCard = memo(function ProductCard({
   );
 });
 
-interface StockValidationResult {
-  isValid: boolean;
-  errors: Array<{ productId: string; productName: string; requested: number; available: number; message: string }>;
+interface StockRanOutError {
+  id: string;
+  name: string;
+  requested: number;
+  available: number;
 }
 
 function PurchaseButton({
@@ -672,16 +674,11 @@ function PurchaseButton({
   stockValidation: StockValidationResult;
 }) {
   const [isPending, setPending] = useState(false);
-  const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  // FIX #1: Use useRef instead of useState so callbacks always read the live orderId
-  // (useState closures inside Razorpay options capture the stale value at init time)
+  const [outOfStockErrors, setOutOfStockErrors] = useState<StockRanOutError[]>([]);
+  // Keep ref so Razorpay callbacks (closures) always read the live orderId
   const currentOrderIdRef = useRef<string | null>(null);
-  // FIX #2: Track whether user actually initiated a payment attempt before dismissing
-  const paymentAttemptedRef = useRef(false);
-  // FIX #3: Track if payment already succeeded to avoid duplicate polls from ondismiss
-  const paymentSucceededRef = useRef(false);
 
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
   const router = useRouter();
@@ -690,6 +687,7 @@ function PurchaseButton({
   const taxes = 4;
   const totalAmount = subtotal + deliveryCharge + taxes;
 
+  // Load Razorpay checkout script once
   useEffect(() => {
     if (!scriptLoaded && !window.Razorpay) {
       const script = document.createElement('script');
@@ -707,47 +705,6 @@ function PurchaseButton({
       setScriptLoaded(true);
     }
   }, [scriptLoaded, showAlert]);
-
- const pollOrderStatus = useCallback(async (orderId: string, maxAttempts: number = 5, delay: number = 2000) => {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const res = await fetch(`/api/check-order/${orderId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (!res.ok) {
-        console.log(`Polling attempt ${attempt}/${maxAttempts} failed: ${res.status}`);
-        continue;
-      }
-      const data = await res.json();
-      // `paid` is the payment-success signal now. `complete` means
-      // fulfilled/delivered and is unrelated to payment — don't gate on it.
-      if (data.success && data.order?.paid) {
-        showAlert(
-          'Order Placed Successfully!',
-          `Your ${del ? 'delivery' : 'pickup'} order #${orderId.slice(-8)} has been confirmed.`,
-          'success',
-          () => {
-            ClearBasket();
-            router.push('/orders');
-          }
-        );
-        return true;
-      }
-      console.log(`Polling attempt ${attempt}/${maxAttempts}: Order ${orderId} not yet paid`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    } catch (err) {
-      console.error(`Polling error for order ${orderId}:`, err);
-    }
-  }
-  showAlert(
-    'Payment Pending',
-    `Your order #${orderId.slice(-8)} is still processing. Check the status on the orders page.`,
-    'warning',
-    () => router.push('/orders')
-  );
-  return false;
-}, [showAlert, ClearBasket, router, del]);
 
   const generateOrderText = useCallback(() => {
     const orderItems = cartItems
@@ -771,43 +728,44 @@ function PurchaseButton({
   }, [generateOrderText]);
 
   const handlePayment = useCallback(async () => {
+    // ── 1. Client-side guards ────────────────────────────────────────────────
     if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
       showAlert('Missing Information', 'Please complete your profile with name, address, and pincode.', 'warning');
       return;
     }
-
     if (cartItems.length === 0) {
       showAlert('Empty Cart', 'Add items to your cart.', 'warning');
       return;
     }
-
     if (!stockValidation.isValid) {
-      const errorMessages = stockValidation.errors.map(error => `• ${error.productName}: ${error.message} (Available: ${error.available})`).join('\n');
+      const errorMessages = stockValidation.errors
+        .map(e => `• ${e.productName}: ${e.message} (Available: ${e.available})`)
+        .join('\n');
       showAlert('Stock Validation Failed', `Stock issues:\n${errorMessages}`, 'error');
       return;
     }
-
     if (totalAmount > 10000) {
       setShowBulkDialog(true);
       return;
     }
-
     if (!scriptLoaded || !window.Razorpay) {
       showAlert('Payment System Error', 'Payment system not loaded. Try again.', 'error');
       return;
     }
 
     setPending(true);
+
     try {
-      const orderItems = cartItems.map(cartItem => {
-        if (cartItem.item.type === 'accessory') {
-          return { yarnAccessoryId: cartItem.item.id, qty: cartItem.qty };
-        }
-        return { productId: cartItem.item.id, qty: cartItem.qty };
-      });
-      
+      // ── 2. Create Razorpay order (server validates stock from DB) ──────────
+      const orderItems = cartItems.map(cartItem =>
+        cartItem.item.type === 'accessory'
+          ? { yarnAccessoryId: cartItem.item.id, qty: cartItem.qty }
+          : { productId: cartItem.item.id, qty: cartItem.qty }
+      );
+
       const createOrderRes = await fetch('/api/razorpay/order', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.us.id,
           phoneno: user.phone,
@@ -815,31 +773,33 @@ function PurchaseButton({
           pincode: del ? user.us.pincode : null,
           delivery: del,
         }),
-        headers: { 'Content-Type': 'application/json' },
       });
 
+      const orderData = await createOrderRes.json();
+
       if (!createOrderRes.ok) {
-        const errorData = await createOrderRes.json().catch(() => ({ error: 'Unknown error' }));
+        // Bulk order threshold exceeded
         if (createOrderRes.status === 501) {
           setShowBulkDialog(true);
           setPending(false);
           return;
         }
-        throw new Error(errorData.error || 'Failed to create order');
+        // Server-side stock check failed — show which items ran out
+        if (createOrderRes.status === 409 && orderData.outOfStock) {
+          setOutOfStockErrors(orderData.errors ?? []);
+          setPending(false);
+          return;
+        }
+        throw new Error(orderData.error || 'Failed to create order');
       }
 
-      const orderData = await createOrderRes.json();
       if (!orderData.success || !orderData.orderId) {
-        throw new Error('Invalid order response');
+        throw new Error('Invalid order response from server');
       }
 
-      // FIX #1: Write to ref so all callbacks see the current value
       currentOrderIdRef.current = orderData.orderId;
-      // FIX #2: Reset attempt flag for this new payment session
-      paymentAttemptedRef.current = false;
-      // FIX #3: Reset succeeded flag for this new payment session
-      paymentSucceededRef.current = false;
 
+      // ── 3. Open Razorpay modal ─────────────────────────────────────────────
       const razorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORKEY,
         amount: Math.round(orderData.amount * 100),
@@ -850,6 +810,8 @@ function PurchaseButton({
         prefill: { name: user.us?.name || '', contact: user.phone },
         notes: { delivery_mode: del ? 'delivery' : 'pickup', pincode: del ? user.us?.pincode : 'N/A' },
         theme: { color: '#2563eb' },
+
+        // ── 4. Payment success — verify signature and finalize order ──────────
         handler: async function (response: any) {
           try {
             const verifyRes = await fetch('/api/razorpay/verify', {
@@ -863,19 +825,29 @@ function PurchaseButton({
             });
 
             const verifyData = await verifyRes.json();
+
             if (!verifyRes.ok || !verifyData.success) {
+              // Stock ran out between order creation and payment capture (very rare)
               if (verifyData.error?.includes('stock') || verifyData.error?.includes('Insufficient')) {
-                showAlert('Stock Issue', 'Items became unavailable. Payment will be refunded.', 'error', () => router.push('/orders'));
+                showAlert(
+                  'Stock Issue After Payment',
+                  'An item became unavailable after your payment. Your payment will be refunded shortly.',
+                  'error',
+                  () => router.push('/orders')
+                );
                 return;
               }
-              console.log('Verification failed, polling order:', orderData.orderId);
-              await pollOrderStatus(orderData.orderId);
+              // Any other verify failure — money was taken, send to orders page
+              showAlert(
+                'Payment Received — Processing',
+                `Your payment was received but we are still confirming your order. Check the orders page for status.`,
+                'warning',
+                () => router.push('/orders')
+              );
               return;
             }
 
-            // /api/razorpay/verify is now the single source of truth:
-            // it verifies payment, marks the order paid, and decrements stock.
-            paymentSucceededRef.current = true;
+            // ── 5. Success — clear cart and redirect ──────────────────────────
             showAlert(
               'Order Placed Successfully!',
               `Your ${del ? 'delivery' : 'pickup'} order #${orderData.orderId.slice(-8)} has been confirmed.`,
@@ -886,23 +858,25 @@ function PurchaseButton({
               }
             );
           } catch (err) {
-            console.error('Client-side processing error:', err);
-            await pollOrderStatus(orderData.orderId);
+            console.error('Verify error after payment:', err);
+            // Money was taken — do not show a generic error. Send to orders page.
+            showAlert(
+              'Payment Received — Confirming',
+              'Your payment was received. Please check the orders page for your order status.',
+              'warning',
+              () => router.push('/orders')
+            );
           } finally {
             setPending(false);
           }
         },
+
         modal: {
-          ondismiss: async () => {
-            console.log('Payment modal dismissed');
+          // User dismissed the modal without paying — just re-enable the button.
+          // The webhook at /api/webhooks/razorpay handles the edge case where
+          // payment completed but the handler callback was missed.
+          ondismiss: () => {
             setPending(false);
-            // FIX #2: Only poll if user actually attempted payment — not on immediate close
-            // FIX #3: Skip polling if payment already succeeded (handler already ran)
-            if (paymentAttemptedRef.current && currentOrderIdRef.current && !paymentSucceededRef.current) {
-              await pollOrderStatus(currentOrderIdRef.current);
-            } else {
-              console.log('Modal closed — skipping poll (no attempt or already succeeded)');
-            }
           },
         },
       };
@@ -912,37 +886,22 @@ function PurchaseButton({
         setPending(false);
         showAlert(
           'Payment Failed',
-          `Payment failed: ${response.error.description || 'Unknown error'}. Check the orders page to retry.`,
-          'error',
-          () => router.push('/orders')
+          `Payment failed: ${response.error.description || 'Unknown error'}. You can try again.`,
+          'error'
         );
       });
 
-      // FIX #2: Mark that user has initiated payment right before opening modal
-      paymentAttemptedRef.current = true;
       rzp.open();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Order creation error:', err);
       setPending(false);
-      // Only show "Payment Pending" if we actually got an orderId (i.e. the order was
-      // created before the error occurred). If order creation itself failed, no money
-      // was taken and we should show a plain error rather than mislead the user.
-      if (currentOrderIdRef.current) {
-        showAlert(
-          'Payment Pending',
-          `Your order #${currentOrderIdRef.current.slice(-8)} is still processing. Check the orders page for its status.`,
-          'warning',
-          () => router.push('/orders')
-        );
-      } else {
-        showAlert(
-          'Order Creation Failed',
-          'Something went wrong while creating your order. No payment was taken. Please try again.',
-          'error'
-        );
-      }
+      showAlert(
+        'Order Creation Failed',
+        'Something went wrong while creating your order. No payment was taken. Please try again.',
+        'error'
+      );
     }
-  }, [user, cartItems, scriptLoaded, showAlert, ClearBasket, router, stockValidation, totalAmount, pollOrderStatus, del]);
+  }, [user, cartItems, scriptLoaded, showAlert, ClearBasket, router, stockValidation, totalAmount, del]);
 
   const canProceed = useMemo(
     () => user.us?.name && user.us?.Address && user.us?.pincode && cartItems.length > 0 && stockValidation.isValid && totalAmount > 0,
@@ -954,14 +913,13 @@ function PurchaseButton({
   const isEmptyCart = cartItems.length === 0;
 
   const getButtonText = useCallback(() => {
-    if (isCheckingStock) return 'Checking Stock...';
     if (isPending) return 'Processing...';
     if (isEmptyCart) return 'Add Items to Cart';
     if (hasStockIssues) return 'Resolve Stock Issues';
     if (isBulkOrder) return 'Contact for Bulk Order';
     if (!canProceed) return 'Complete Profile Details';
     return `Pay ${fcurrency(totalAmount)}`;
-  }, [isCheckingStock, isPending, isEmptyCart, hasStockIssues, isBulkOrder, canProceed, totalAmount]);
+  }, [isPending, isEmptyCart, hasStockIssues, isBulkOrder, canProceed, totalAmount]);
 
   const getButtonColor = useCallback(() => {
     if (isEmptyCart || hasStockIssues) return 'bg-red-600 hover:bg-red-700 text-white';
@@ -976,15 +934,10 @@ function PurchaseButton({
         {scriptLoaded ? (
           <Button
             onClick={handlePayment}
-            disabled={isPending || isCheckingStock || (hasStockIssues && !isBulkOrder) || isEmptyCart}
+            disabled={isPending || (hasStockIssues && !isBulkOrder) || isEmptyCart}
             className={`w-full py-3 px-4 flex items-center gap-2 ${getButtonColor()}`}
           >
-            {isCheckingStock ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                Checking Stock...
-              </>
-            ) : isPending ? (
+            {isPending ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Processing...
@@ -1104,6 +1057,36 @@ function PurchaseButton({
               <MessageSquare className="h-4 w-4" />
               Send to WhatsApp
             </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Stock Ran Out Dialog — shown when server returns 409 outOfStock on order creation */}
+      <AlertDialog open={outOfStockErrors.length > 0} onOpenChange={(open) => { if (!open) setOutOfStockErrors([]); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              Stock Ran Out
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Sorry, the following items no longer have enough stock. Please update your cart and try again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="my-4 space-y-2">
+            {outOfStockErrors.map((err) => (
+              <div key={err.id} className="flex justify-between items-center p-3 bg-red-50 border border-red-200 rounded-lg text-sm">
+                <span className="font-medium text-red-900">{err.name}</span>
+                <span className="text-red-700">
+                  Requested: {err.requested} &nbsp;·&nbsp; Available: {err.available}
+                </span>
+              </div>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setOutOfStockErrors([])}>
+              Update Cart
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -14,16 +14,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Payment service configuration error" }, { status: 500 });
     }
 
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID.trim(),
-      key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
-    });
-
     const body = await req.json();
     const { phoneno, cartitems, pincode, delivery, userId } = body;
 
-    // This endpoint only creates unpaid Razorpay/DB orders.
-    // Paid completion now happens in /api/razorpay/verify via the shared finalizer.
     if (!phoneno || !cartitems || !Array.isArray(cartitems) || cartitems.length === 0 || !userId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
@@ -35,33 +28,80 @@ export async function POST(req: NextRequest) {
     const productIds = cartitems.filter((item: any) => item.productId).map((item: any) => item.productId);
     const accessoryIds = cartitems.filter((item: any) => item.yarnAccessoryId).map((item: any) => item.yarnAccessoryId);
 
+    // --- Fetch prices AND stock in a single query ---
     const [products, accessories] = await Promise.all([
       productIds.length > 0
-        ? prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, discountedPrice: true } })
+        ? prisma.product.findMany({
+            where: { id: { in: productIds } },
+            select: { id: true, pname: true, discountedPrice: true, stock: true },
+          })
         : Promise.resolve([]),
       accessoryIds.length > 0
-        ? prisma.yarnAccessory.findMany({ where: { id: { in: accessoryIds } }, select: { id: true, discountedPrice: true } })
+        ? prisma.yarnAccessory.findMany({
+            where: { id: { in: accessoryIds } },
+            select: { id: true, name: true, discountedPrice: true, stock: true },
+          })
         : Promise.resolve([]),
     ]);
 
-    const amount = cartitems.reduce((total: number, orderItem: any) => {
-      let itemData;
+    // --- Server-side stock check BEFORE creating any order ---
+    const stockErrors: Array<{ id: string; name: string; requested: number; available: number }> = [];
 
-      if (orderItem.productId) {
-        itemData = products.find((product: any) => product.id === orderItem.productId);
-        if (!itemData) throw new Error(`Product not found: ${orderItem.productId}`);
-      } else if (orderItem.yarnAccessoryId) {
-        itemData = accessories.find((accessory: any) => accessory.id === orderItem.yarnAccessoryId);
-        if (!itemData) throw new Error(`Accessory not found: ${orderItem.yarnAccessoryId}`);
+    for (const cartItem of cartitems) {
+      if (cartItem.productId) {
+        const product = products.find((p: any) => p.id === cartItem.productId);
+        if (!product) {
+          return NextResponse.json({ error: `Product not found: ${cartItem.productId}` }, { status: 404 });
+        }
+        if (!Number.isInteger(cartItem.qty) || cartItem.qty <= 0) {
+          return NextResponse.json({ error: "Invalid quantity for item" }, { status: 400 });
+        }
+        if (cartItem.qty > product.stock) {
+          stockErrors.push({
+            id: product.id,
+            name: product.pname,
+            requested: cartItem.qty,
+            available: product.stock,
+          });
+        }
+      } else if (cartItem.yarnAccessoryId) {
+        const accessory = accessories.find((a: any) => a.id === cartItem.yarnAccessoryId);
+        if (!accessory) {
+          return NextResponse.json({ error: `Accessory not found: ${cartItem.yarnAccessoryId}` }, { status: 404 });
+        }
+        if (!Number.isInteger(cartItem.qty) || cartItem.qty <= 0) {
+          return NextResponse.json({ error: "Invalid quantity for item" }, { status: 400 });
+        }
+        if (cartItem.qty > accessory.stock) {
+          stockErrors.push({
+            id: accessory.id,
+            name: accessory.name,
+            requested: cartItem.qty,
+            available: accessory.stock,
+          });
+        }
       } else {
-        throw new Error("Invalid cart item format");
+        return NextResponse.json({ error: "Invalid cart item format" }, { status: 400 });
       }
+    }
 
-      if (!Number.isInteger(orderItem.qty) || orderItem.qty <= 0) {
-        throw new Error("Invalid quantity for item");
+    if (stockErrors.length > 0) {
+      console.log("❌ Stock check failed:", stockErrors);
+      return NextResponse.json(
+        { success: false, outOfStock: true, errors: stockErrors },
+        { status: 409 }
+      );
+    }
+
+    // --- Calculate total amount ---
+    const amount = cartitems.reduce((total: number, orderItem: any) => {
+      if (orderItem.productId) {
+        const product = products.find((p: any) => p.id === orderItem.productId)!;
+        return total + (product as any).discountedPrice * orderItem.qty;
+      } else {
+        const accessory = accessories.find((a: any) => a.id === orderItem.yarnAccessoryId)!;
+        return total + (accessory as any).discountedPrice * orderItem.qty;
       }
-
-      return total + itemData.discountedPrice * orderItem.qty;
     }, 0);
 
     const deliveryCharge = delivery && amount < 999 ? 60 : 0;
@@ -75,6 +115,11 @@ export async function POST(req: NextRequest) {
     if (totalAmount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });
     }
+
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID.trim(),
+      key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
+    });
 
     const orderOptions = {
       amount: Math.round(totalAmount * 100),
