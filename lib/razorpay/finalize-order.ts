@@ -114,7 +114,7 @@ export async function finalizePaidOrder({
 
       return tx.order.update({
         where: { id: razorpayOrderId },
-        data: { complete: true },
+        data: {},
         include: orderInclude,
       });
     });
