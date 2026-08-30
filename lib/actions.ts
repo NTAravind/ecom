@@ -23,7 +23,7 @@ export async function GetProductPrice(cartItems: string[]) {
   const products = await prisma.product.findMany({
     where: {
       id: {
-        in: cartItems // Use 'in' operator for array of IDs
+        in: cartItems  
       }
     },
     select: {
