@@ -13,6 +13,7 @@ const categories = [
   { value: "cotton-blend", label: "Cotton Blend" },
   { value: "mohair-wool-blend", label: "Mohair Wool Blend" },
   { value: "polyester", label: "Polyester - 100%" },
+  { value: "polyester-blend", label: "Polyester Blend" },
   { value: "wool", label: "Wool - 100%" },
   { value: "wool-blend", label: "Wool Blend" }
 ];
@@ -37,7 +38,10 @@ const brands = [
   {value:"Hobby", label:"Hobby India"},
   {value:"Ganga Blanket", label:"Ganga Blanket Velvety"},
   {value:"Plush",label:"plush"},
-  { value: "Ply Cotton", label: "4Ply Cotton" }
+  { value: "Ply Cotton", label: "4Ply Cotton" },
+  { value: "Magnus", label: "Magnus" },
+  { value: "Magnus Multicolor", label: "Magnus Multicolor" },
+  { value: "Cool Knit", label: "Cool Knit" }
 ];
 
 // Loading component for the sidebar

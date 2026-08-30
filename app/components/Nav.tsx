@@ -22,7 +22,9 @@ const shopCategories = [
       { name: "Ganga Desire", href: "/products?categories=acrylic&brands=Ganga%20Desire" },
       { name: "Acrylic Hobby India", href: "/products?categories=acrylic&brands=Hobby" },
       { name: "Ganga Spectrum", href: "/products?categories=acrylic&brands=Ganga%20Spectrum" },
-       { name: "Olivia", href: "/products?categories=acrylic&brands=Olivia" }
+       { name: "Olivia", href: "/products?categories=acrylic&brands=Olivia" },
+      { name: "Magnus", href: "/products?categories=acrylic&brands=Magnus" },
+      { name: "Magnus Multicolor", href: "/products?categories=acrylic&brands=Magnus%20Multicolor" }
     ]
   },
   {
@@ -44,6 +46,7 @@ const shopCategories = [
       { name: "Super Stitch", href: "/products?&brands=Ganga%20SuperStitch" },
       { name: "plush", href: "/products?categories=polyester&brands=Plush" },
       { name: "Blankie", href: "/products?categories=polyester&brands=Blankie" },
+      { name: "Cool Knit", href: "/products?categories=polyester&brands=Cool%20Knit" },
     ]
   },
   {

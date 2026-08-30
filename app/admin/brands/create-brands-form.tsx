@@ -310,6 +310,7 @@ export function BrandForm({ brand }: BrandFormProps) {
                   <SelectItem value="cotton-blend">Cotton Blend</SelectItem>
                   <SelectItem value="mohair-wool-blend">Mohair Wool Blend</SelectItem>
                   <SelectItem value="polyester">Polyester - 100%</SelectItem>
+                  <SelectItem value="polyester-blend">Polyester Blend</SelectItem>
                   <SelectItem value="wool">Wool - 100%</SelectItem>
                   <SelectItem value="wool-blend">Wool Blend</SelectItem>
                 </SelectContent>
