@@ -4,6 +4,7 @@ import { Product, User } from '@/app/generated/prisma';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { decodeAddress } from '@/utils/address';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -135,6 +136,9 @@ const CheckoutForm = memo(function CheckoutForm({
     user: null,
   });
 
+  // Decode stored address parts for pre-filling on edit
+  const addr = decodeAddress(user.us?.Address);
+
   useEffect(() => {
     if (state.success && state.user) {
       onSuccess(state.user);
@@ -161,21 +165,73 @@ const CheckoutForm = memo(function CheckoutForm({
           />
         </div>
 
+        {/* Street / House / Flat */}
         <div>
-          <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-            Address <span className="text-red-500">*</span>
+          <Label htmlFor="street" className="text-sm font-medium text-gray-700">
+            Street / House / Flat No. <span className="text-red-500">*</span>
           </Label>
           <Input
             type="text"
-            id="address"
-            name="address"
-            defaultValue={user.us?.Address || ''}
+            id="street"
+            name="street"
+            defaultValue={addr.street}
             className="mt-1"
-            placeholder="Enter your complete address"
+            placeholder="e.g. 12B, 3rd Cross, Indiranagar"
             required
             maxLength={200}
           />
-          <p className="text-xs text-gray-500 mt-1">Required for both delivery and pickup orders</p>
+        </div>
+
+        {/* City + State side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="city" className="text-sm font-medium text-gray-700">
+              City <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              type="text"
+              id="city"
+              name="city"
+              defaultValue={addr.city}
+              className="mt-1"
+              placeholder="e.g. Bangalore"
+              required
+              maxLength={100}
+            />
+          </div>
+          <div>
+            <Label htmlFor="state" className="text-sm font-medium text-gray-700">
+              State <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              type="text"
+              id="state"
+              name="state"
+              defaultValue={addr.state}
+              className="mt-1"
+              placeholder="e.g. Karnataka"
+              required
+              maxLength={100}
+            />
+          </div>
+        </div>
+
+        {/* Landmark (required) */}
+        <div>
+          <Label htmlFor="landmark" className="text-sm font-medium text-gray-700">
+            Landmark <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            type="text"
+            id="landmark"
+            name="landmark"
+            defaultValue={addr.landmark}
+            className="mt-1"
+            placeholder="e.g. Near SBI Bank, Opp. Post Office"
+            required
+            maxLength={150}
+          />
+          <p className="text-xs text-gray-500 mt-1">Helps us locate your address easily</p>
         </div>
 
         <div>
@@ -215,7 +271,7 @@ const CheckoutForm = memo(function CheckoutForm({
         <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white px-6">
           {isPending ? 'Saving...' : user.us ? 'Update Details' : 'Save Details'}
         </Button>
-        {user.us && (
+        {user.us && user.us.name && user.us.pincode && addr.street && addr.city && addr.state && addr.landmark && (
           <Button type="button" variant="outline" onClick={() => onSuccess(user.us!)}>
             Cancel
           </Button>
@@ -249,11 +305,24 @@ const UserDetails = memo(function UserDetails({ user, deliveryMode }: { user: Us
       </div>
 
       <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-        <MapPin className="h-5 w-5 text-gray-600" />
+        <MapPin className="h-5 w-5 text-gray-600 flex-shrink-0" />
         <div>
           <p className="text-sm text-gray-600">Address</p>
-          <p className="font-medium text-gray-900">{user.us.Address}</p>
-          <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
+          {(() => {
+            const addr = decodeAddress(user.us.Address);
+            return (
+              <>
+                <p className="font-medium text-gray-900">{addr.street}</p>
+                {(addr.city || addr.state) && (
+                  <p className="text-sm text-gray-700">{[addr.city, addr.state].filter(Boolean).join(', ')}</p>
+                )}
+                {addr.landmark && (
+                  <p className="text-xs text-gray-500">📍 {addr.landmark}</p>
+                )}
+                <p className="font-medium text-gray-700">Pincode: {user.us.pincode}</p>
+              </>
+            );
+          })()}
         </div>
       </div>
 
@@ -710,7 +779,11 @@ function PurchaseButton({
     const orderItems = cartItems
       .map(item => `${item.item.pname} - Qty: ${item.qty} - Price: ${fcurrency(item.item.discountedPrice * item.qty)}`)
       .join('\n');
-    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹999+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${user.us?.Address || 'N/A'}\nPincode: ${user.us?.pincode || 'N/A'}` : 'Order Type: Pickup'}`;
+    const addr = decodeAddress(user.us?.Address);
+    const fullAddress = addr.street
+      ? `${addr.street}, ${addr.city}, ${addr.state} - ${user.us?.pincode || 'N/A'}${addr.landmark ? `\nLandmark: ${addr.landmark}` : ''}`
+      : `${user.us?.Address || 'N/A'}\nPincode: ${user.us?.pincode || 'N/A'}`;
+    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹999+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${fullAddress}` : 'Order Type: Pickup'}`;
   }, [cartItems, subtotal, deliveryCharge, del, user, totalAmount, taxes]);
 
   const copyOrderDetails = useCallback(async () => {
@@ -1095,7 +1168,13 @@ function PurchaseButton({
 }
 
 function CheckoutContent({ user }: { user: UserData }) {
-  const [isEditing, setIsEditing] = useState(!user.us?.name || !user.us?.Address || !user.us?.pincode);
+  const checkMissingDetails = (u: UserData) => {
+    if (!u.us?.name || !u.us?.pincode || !u.us?.Address) return true;
+    const addr = decodeAddress(u.us.Address);
+    return !addr.street || !addr.city || !addr.state || !addr.landmark;
+  };
+
+  const [isEditing, setIsEditing] = useState(() => checkMissingDetails(user));
   const [currentUser, setCurrentUser] = useState<UserData>(user);
   const [deliveryMode, setDeliveryMode] = useState(true);
   const [isClient, setIsClient] = useState(false);
@@ -1112,7 +1191,7 @@ function CheckoutContent({ user }: { user: UserData }) {
 
   useEffect(() => {
     setCurrentUser(user);
-    if (!user.us?.name || !user.us?.Address || !user.us?.pincode) {
+    if (checkMissingDetails(user)) {
       setIsEditing(true);
     }
   }, [user]);
@@ -1168,7 +1247,7 @@ function CheckoutContent({ user }: { user: UserData }) {
                         {deliveryMode ? 'Delivery Information' : 'Pickup Information'}
                       </CardTitle>
                     </div>
-                    {user.us?.name && user.us?.Address && user.us?.pincode && (
+                    {!checkMissingDetails(user) && (
                       <Button
                         variant="outline"
                         size="sm"

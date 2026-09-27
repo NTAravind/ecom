@@ -10,6 +10,7 @@ import Image from "next/image"
 
 import { getOrderWithDetails } from "../_actions/order"
 import MarkToComplete from "../components/mark"
+import { decodeAddress } from "@/utils/address"
 
 export default async function OrderDetailPage({
   params,
@@ -105,8 +106,21 @@ export default async function OrderDetailPage({
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                 <div>
-                  <p>{order.user.Address}</p>
-                  <p className="text-sm text-muted-foreground">PIN: {order.user.pincode}</p>
+                  {(() => {
+                    const addr = decodeAddress(order.user.Address);
+                    return (
+                      <>
+                        <p>{addr.street || order.user.Address}</p>
+                        {(addr.city || addr.state) && (
+                          <p className="text-sm">{[addr.city, addr.state].filter(Boolean).join(', ')} — {order.user.pincode}</p>
+                        )}
+                        {!addr.city && <p className="text-sm text-muted-foreground">PIN: {order.user.pincode}</p>}
+                        {addr.landmark && (
+                          <p className="text-xs text-muted-foreground">📍 {addr.landmark}</p>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

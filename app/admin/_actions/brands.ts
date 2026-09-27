@@ -169,18 +169,44 @@ export async function updateBrand(
       }
     }
 
-    const updatedBrand = await prisma.brand.update({
-      where: { id },
-      data: {
-        name: validatedData.name,
-        discountRate: validatedData.discountRate,
-        isActive: validatedData.isActive,
-        category: validatedData.category,
-        y_weight: validatedData.weight,
-        weight_g: validatedData.gweight,
-        desc: validatedData.desc,
-        defaultImageUrl: validatedData.iurl1 || existingBrand.defaultImageUrl
+    const discountRateChanged = existingBrand.discountRate !== validatedData.discountRate
+
+    const updatedBrand = await prisma.$transaction(async (tx) => {
+      const brand = await tx.brand.update({
+        where: { id },
+        data: {
+          name: validatedData.name,
+          discountRate: validatedData.discountRate,
+          isActive: validatedData.isActive,
+          category: validatedData.category,
+          y_weight: validatedData.weight,
+          weight_g: validatedData.gweight,
+          desc: validatedData.desc,
+          defaultImageUrl: validatedData.iurl1 || existingBrand.defaultImageUrl
+        }
+      })
+
+      // Recalculate discountedPrice for all products if discountRate changed
+      if (discountRateChanged) {
+        const products = await tx.product.findMany({
+          where: { brandId: id },
+          select: { id: true, originalPrice: true }
+        })
+
+        if (products.length > 0) {
+          const updatePromises = products.map(product => {
+            const discountAmount = (product.originalPrice * validatedData.discountRate) / 100
+            const newDiscountedPrice = Math.round(product.originalPrice - discountAmount)
+            return tx.product.update({
+              where: { id: product.id },
+              data: { discountedPrice: newDiscountedPrice }
+            })
+          })
+          await Promise.all(updatePromises)
+        }
       }
+
+      return brand
     })
 
     revalidateBrandPaths(id)
@@ -189,7 +215,9 @@ export async function updateBrand(
       success: true,
       error: null,
       fieldErrors: {},
-      message: 'Brand updated successfully',
+      message: discountRateChanged
+        ? 'Brand updated and product prices recalculated successfully'
+        : 'Brand updated successfully',
       data: updatedBrand
     }
   } catch (error) {
