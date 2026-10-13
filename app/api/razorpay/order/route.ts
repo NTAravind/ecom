@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       }
     }, 0);
 
-    const deliveryCharge = delivery && amount < 999 ? 60 : 0;
+    const deliveryCharge = delivery && amount < 1999 ? 100 : 0;
     const taxes = 4;
     const totalAmount = amount + deliveryCharge + taxes;
 

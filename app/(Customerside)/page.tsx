@@ -12,11 +12,11 @@ import Image from "next/image";
 // SEO Metadata
 export const metadata: Metadata = {
   title: 'Patel Yarn House - Premium Yarns & Bulk Yarn Suppliers in Bangalore',
-  description: 'Shop premium quality yarns at Patel Yarn House, Bangalore. Wide range of cotton, acrylic, wool yarns from top brands. Bulk orders welcome with competitive pricing and free delivery above ₹999.',
+  description: 'Shop premium quality yarns at Patel Yarn House, Bangalore. Wide range of cotton, acrylic, wool yarns from top brands. Bulk orders welcome with competitive pricing and free delivery above ₹1999.',
   keywords: 'yarn shop bangalore, bulk yarn suppliers, cotton yarn, acrylic yarn, wool yarn, yarn wholesaler, knitting yarn, crochet yarn, premium yarn brands',
   openGraph: {
     title: 'Patel Yarn House - Premium Yarns & Bulk Yarn Suppliers',
-    description: 'Discover quality yarns from trusted brands. Competitive bulk pricing, expert guidance, and free delivery above ₹999. Visit our Bangalore store today!',
+    description: 'Discover quality yarns from trusted brands. Competitive bulk pricing, expert guidance, and free delivery above ₹1999. Visit our Bangalore store today!',
     type: 'website',
     locale: 'en_IN',
     siteName: 'Patel Yarn House',
@@ -382,7 +382,7 @@ function Disc() {
             FREE DELIVERY
             <br className="hidden sm:inline" />
             <span className="sm:hidden"> </span>
-            ₹999 ONWARDS
+            ₹1999 ONWARDS
           </p>
         </Card>
       </div>

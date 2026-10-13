@@ -5,8 +5,8 @@ export default function MarqueeComponent() {
   const messages = [
     { 
       icon: Truck, 
-      text: "Order Above ₹999 - Free Delivery", 
-      highlight: "₹999" 
+      text: "Order Above ₹1999 - Free Delivery", 
+      highlight: "₹1999" 
     },
     { 
       icon: Home, 

@@ -500,10 +500,10 @@ const OrderSummary = memo(function OrderSummary({
 const PriceBreakdown = memo(function PriceBreakdown({ user, deliveryMode }: { user: UserData; deliveryMode: boolean }) {
   const { getTotalPrice } = ProductCart();
   const subtotal = getTotalPrice();
-  const deliveryCharge = useMemo(() => (deliveryMode && subtotal <= 999 ? 60 : 0), [deliveryMode, subtotal]);
+  const deliveryCharge = useMemo(() => (deliveryMode && subtotal < 1999 ? 100 : 0), [deliveryMode, subtotal]);
   const total = subtotal + deliveryCharge + 4;
   const isBulkOrder = subtotal > 10000;
-  const isFreeDelivery = deliveryMode && subtotal > 999;
+  const isFreeDelivery = deliveryMode && subtotal >= 1999;
 
   return (
     <div className="space-y-3 mb-6">
@@ -528,17 +528,17 @@ const PriceBreakdown = memo(function PriceBreakdown({ user, deliveryMode }: { us
             <Truck className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium text-green-800">Free Delivery Applied!</span>
           </div>
-          <p className="text-xs text-green-700 mt-1">Your order qualifies for free delivery (cart value above ₹999)</p>
+          <p className="text-xs text-green-700 mt-1">Your order qualifies for free delivery (cart value above ₹1999)</p>
         </div>
       )}
 
-      {deliveryMode && !isFreeDelivery && subtotal < 999 && (
+      {deliveryMode && !isFreeDelivery && subtotal < 1999 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 my-3">
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-800">Add {fcurrency(999 - subtotal)} for free delivery</span>
+            <span className="text-sm font-medium text-blue-800">Add {fcurrency(1999 - subtotal)} for free delivery</span>
           </div>
-          <p className="text-xs text-blue-700 mt-1">Get free delivery on orders above ₹999</p>
+          <p className="text-xs text-blue-700 mt-1">Get free delivery on orders above ₹1999</p>
         </div>
       )}
 
@@ -752,7 +752,7 @@ function PurchaseButton({
   const { cartItems, getTotalPrice, ClearBasket } = ProductCart();
   const router = useRouter();
   const subtotal = getTotalPrice();
-  const deliveryCharge = useMemo(() => (del && subtotal < 999 ? 60 : 0), [del, subtotal]);
+  const deliveryCharge = useMemo(() => (del && subtotal < 1999 ? 100 : 0), [del, subtotal]);
   const taxes = 4;
   const totalAmount = subtotal + deliveryCharge + taxes;
 
@@ -783,7 +783,7 @@ function PurchaseButton({
     const fullAddress = addr.street
       ? `${addr.street}, ${addr.city}, ${addr.state} - ${user.us?.pincode || 'N/A'}${addr.landmark ? `\nLandmark: ${addr.landmark}` : ''}`
       : `${user.us?.Address || 'N/A'}\nPincode: ${user.us?.pincode || 'N/A'}`;
-    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹999+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${fullAddress}` : 'Order Type: Pickup'}`;
+    return `🛒 *Bulk Order Request*\n\n📋 *Order Details:*\n${orderItems}\n\n💰 *Order Summary:*\nSubtotal: ${fcurrency(subtotal)}\n${del ? `Delivery Charge: ${deliveryCharge === 0 ? 'Free (₹1999+ order)' : fcurrency(deliveryCharge)}` : 'Pickup: Free'}\nTaxes: ${fcurrency(taxes)}\n*Total: ${fcurrency(totalAmount)}*\n\n👤 *Customer Details:*\nName: ${user.us?.name || 'N/A'}\nPhone: ${user.phone}\n${del ? `Address: ${fullAddress}` : 'Order Type: Pickup'}`;
   }, [cartItems, subtotal, deliveryCharge, del, user, totalAmount, taxes]);
 
   const copyOrderDetails = useCallback(async () => {

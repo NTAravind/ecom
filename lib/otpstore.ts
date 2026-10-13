@@ -4,7 +4,7 @@ type OtpEntry = {
 }
 
 const otpStore = new Map<string, OtpEntry>()
-const OTP_EXPIRATION_TIME_MS = 5 * 60 * 1000 // 5 minutes
+const OTP_EXPIRATION_TIME_MS = 5 * 60 * 1000 // 5 minute
 
 export function saveOtp(phone: string, otp: string): void {
   const expiresAt = Date.now() + OTP_EXPIRATION_TIME_MS
